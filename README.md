@@ -9,6 +9,7 @@ El desafío de realizar este juego nos permitirá a nosotros como estudiantes de
 * Control de versiones mediante la plataforma github.
 * Desarrollo de un GUI para el usuario.
 * Desarrollo de los graficos del juego.
+* La portabilidad del software en distintos ambientes.
 
 ## Planteamiento del problema
 Se propone un juego de hockey de mesa en 2D cuyo campo tenga caracteristicas variables, de tal manera que dinamicen el gameplay y aumenten la no predictabilidad del juego. Los siguientes eventos plantean la modificación de estas variables:
@@ -19,11 +20,11 @@ Se propone un juego de hockey de mesa en 2D cuyo campo tenga caracteristicas var
 * Alterar el tamaño de las puertas de cada uno de los jugadores.
 * Alteración aletoria repentina en las componentes de velocidad del disco.
 * Alteración de la restitución de las paredes del campo y/o de los mazos (que manejan los jugadores para darle al disco).
-* Alteración del tamaño del disco.
+* Alteración del tamaño y masa del disco.
 
-Dichos eventos podrían ser provocados de distintas maneras, sin embargo por los momentos no inclinamos a que en el campo de juego aparezcan unas "cajas sorpresa", al estilo de Mario Kart, de tal manera que cuando la pelota toque dicha caja aletoriamente ocurra alguno de ellos. La duración de los cambios realizados está bajo discución: si son permanentes en el campo o no. En principio prefiero que sean por un tiempo determinado y no permanentes.
+Dichos eventos podrían ser provocados de distintas maneras, sin embargo por los momentos no inclinamos a que en el campo de juego aparezcan unas "cajas sorpresa", al estilo de Mario Kart, de tal manera que cuando la pelota toque dicha caja aletoriamente ocurra alguno de ellos. La posicion de la caja esta aún por definir pero se propone que sea aletoria en una rango del campo. La duración de los cambios realizados está bajo discución tambien: si son permanentes en el campo o no. En principio se prefiere que sean por un tiempo determinado y no permanentes.
 
-El cuanto a los controles del juego se propone usar joysticks implementados en arduino (ver [este link](https://www.brainy-bits.com/arduino-joystick-tutorial/)), sin embargo puede ser utíl dar la posibilidad al usuario de elegir entre el teclado y el joystick.
+El cuanto a los controles del juego se propone usar joysticks implementados en arduino (ver [este link](https://www.brainy-bits.com/arduino-joystick-tutorial/)), sin embargo puede ser utíl dar la posibilidad al usuario de elegir entre el teclado y el joystick. Se puede explorar de usar otras formas de control en base a otros sensores pero esto será evaluado luego de conseguir el objetivo mas simple de manejarlo con controles tradicionales.
 
 ###### Control de acceso.
 Se plantea usar usuario y contraseña para ambos jugadores. A su vez se ofrece la posibilidad de ingresar si se olvido la contraseña mediante una pregunta y respuesta secreta. Se ofrece tambien la posibilidad de creación y eliminación de usuarios, así como un score board de partidos ganados y perdidos y un historial de los partidos jugados entre usuarios.
@@ -37,7 +38,36 @@ Esto se ve implementado directamente por el cambio de las propiedades del campo 
 Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cuando alguno de los dos llegué a un puntaje determinado (que a su vez puede ser definido por el usuario).
 
 ###### Grabar sesión - Cargar sesión.
-Se permitirá salvar el estado exacto de una partida, y a su vez su restitución a partir de ese punto exacto.
+Se permitirá salvar el estado exacto de una partida, y a su vez su restitución a partir de ese punto exacto. Esto solo si son los mismo usuarios que estaban originalmente en la partida. En este sentido debe haber un estado de logged in y de logged out para dos jugadores simultaneamente.
+
+
+## Objetivos (General y Específico)
+
+###### Objetivos Generales
+* Desarrollar un juego que cumpla con los requerimientos planteados por el curso y que a su vez haga buen uso de lo impartido en este.
+
+##### Objetivos Específicos
+* Modelar el campo de juego, el disco y los mazos de manera eficiente y simple.
+* Establecer limites a los parámetros del juego para que no se lleguen a extremos que dificulten el gameplay -es decir injugable-.
+* Desarrollar el aspecto visual de manera agradable a la vista pero minimalista (es decir simple).
+* Implementar un sistema donde los datos de los usuarios sean guardados en documentos encriptados, y los mismo con las partidas e historial de ellas.
+* Implementar la comunicación con el arduino de tal manera que los controles respondan correctamente a los movimientos del usuario.
+* Desarrollar el motor físico del juego de manera a que corresponda correctamente a los principios de la fisica mecánica.
+* Usar el control de versiones a nuestro favor para aumentar la productividad (y minimizar el tiempo requerido en el desarrollo).
+* Implementar el juego de la manera mas portable posible entre distintos ambientes.
+
+# Cronograma de actividades.
+Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga será distribuida de la siguiente manera:
+S1: Modelamiento mediante clases del campo, disco y mazos.
+S2: Desarrollo del juego en crudo sin facilidades al usuario.
+S3: Implementacion del arduino para los controles y las visuales del juego.
+S4: Desarrollo de la interfaz grafica y del manejo de archivos para el juego.
+S5: Pruebas y retoques finales.
+
+# Presupuesto.
+Se cuenta ya con arduinos, así que lo faltante serían los joysticks. Se estima que el costo es consdirablemente menor a los 10000 pesos por joystick por lo que siendo pesismistas el costo total serían de 20000 pesos.
+
+
 
 
 
