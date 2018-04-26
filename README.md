@@ -58,11 +58,11 @@ Se permitirá salvar el estado exacto de una partida, y a su vez su restitución
 
 # Cronograma de actividades.
 Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga será distribuida de la siguiente manera:
-S1: Modelamiento mediante clases del campo, disco y mazos.
-S2: Desarrollo del juego en crudo sin facilidades al usuario.
-S3: Implementacion del arduino para los controles y las visuales del juego.
-S4: Desarrollo de la interfaz grafica y del manejo de archivos para el juego.
-S5: Pruebas y retoques finales.
+* S1: Modelamiento mediante clases del campo, disco y mazos.
+* S2: Desarrollo del juego en crudo sin facilidades al usuario.
+* S3: Implementacion del arduino para los controles y las visuales del juego.
+* S4: Desarrollo de la interfaz grafica y del manejo de archivos para el juego.
+* S5: Pruebas y retoques finales.
 
 # Presupuesto.
 Se cuenta ya con arduinos, así que lo faltante serían los joysticks. Se estima que el costo es consdirablemente menor a los 10000 pesos por joystick por lo que siendo pesismistas el costo total serían de 20000 pesos.
