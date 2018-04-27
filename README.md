@@ -2,6 +2,7 @@
 
 ## Justificación
 El desafío de realizar este juego nos permitirá a nosotros como estudiantes desarrollar habilidades relacionadas con:
+
 * La programación orientada a objetos (Object Oriented Programming en inglés).
 * El modelado de sistemas físicos usando código, en particular sistemas basados en las leyes de la física mecánica.
 * La comunicación de software con microcontroladores de la familia Arduino.
@@ -26,27 +27,30 @@ Dichos eventos podrían ser provocados de distintas maneras, sin embargo por los
 
 El cuanto a los controles del juego se propone usar joysticks implementados en arduino (ver [este link](https://www.brainy-bits.com/arduino-joystick-tutorial/)), sin embargo puede ser utíl dar la posibilidad al usuario de elegir entre el teclado y el joystick. Se puede explorar de usar otras formas de control en base a otros sensores pero esto será evaluado luego de conseguir el objetivo mas simple de manejarlo con controles tradicionales.
 
-###### Control de acceso.
+#### Control de acceso.
 Se plantea usar usuario y contraseña para ambos jugadores. A su vez se ofrece la posibilidad de ingresar si se olvido la contraseña mediante una pregunta y respuesta secreta. Se ofrece tambien la posibilidad de creación y eliminación de usuarios, así como un score board de partidos ganados y perdidos y un historial de los partidos jugados entre usuarios.
-###### Multijugador.
+
+#### Multijugador.
 El juego en sí esta planteado para ser multijugador. **NO SE PLANTEA LA CREACION DE BOTS PARA PODER SER USADO EN SINGLE PLAYER**
 
-###### Varios niveles de dificultad.
+#### Varios niveles de dificultad.
 Esto se ve implementado directamente por el cambio de las propiedades del campo y del disco. Sin embargo si es necesario establecerlo explicitamente se puede correlacionar con el tamaño de las puertas y del disco. Tambien se tiene la idea de disponer de distintos campos (como por ejemplo puede ser campos con una propiedad especial como viscocidad muy baja, algun atractor o repulsor permanente en él, etc). En resumen una propiedad permanente del disco o del campo durante la partida.
 
-###### Manejar Puntaje/Vidas.
+#### Manejar Puntaje/Vidas.
 Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cuando alguno de los dos llegué a un puntaje determinado (que a su vez puede ser definido por el usuario).
 
-###### Grabar sesión - Cargar sesión.
+#### Grabar sesión - Cargar sesión.
 Se permitirá salvar el estado exacto de una partida, y a su vez su restitución a partir de ese punto exacto. Esto solo si son los mismo usuarios que estaban originalmente en la partida. En este sentido debe haber un estado de logged in y de logged out para dos jugadores simultaneamente.
 
 
 ## Objetivos (General y Específico)
 
-###### Objetivos Generales
+#### Objetivos Generales
+
 * Desarrollar un juego que cumpla con los requerimientos planteados por el curso y que a su vez haga buen uso de lo impartido en este.
 
-##### Objetivos Específicos
+#### Objetivos Específicos
+
 * Modelar el campo de juego, el disco y los mazos de manera eficiente y simple.
 * Establecer limites a los parámetros del juego para que no se lleguen a extremos que dificulten el gameplay -es decir injugable-.
 * Desarrollar el aspecto visual de manera agradable a la vista pero minimalista (es decir simple).
@@ -66,10 +70,3 @@ Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga ser�
 
 # Presupuesto.
 Se cuenta ya con arduinos, así que lo faltante serían los joysticks. Se estima que el costo es consdirablemente menor a los 10000 pesos por joystick por lo que siendo pesismistas el costo total serían de 20000 pesos.
-
-
-
-
-
-
-
