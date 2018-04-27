@@ -70,3 +70,8 @@ Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga ser�
 
 # Presupuesto.
 Se cuenta ya con arduinos, así que lo faltante serían los joysticks. Se estima que el costo es consdirablemente menor a los 10000 pesos por joystick por lo que siendo pesismistas el costo total serían de 20000 pesos.
+
+# Integrantes del equipo
+
+* Esteban Rodríguez Ordoñez
+* Yorguin José Mantilla Ramos
