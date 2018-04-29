@@ -69,7 +69,18 @@ Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga ser�
 * S5: Pruebas y retoques finales.
 
 # Presupuesto.
-Se cuenta ya con arduinos, así que lo faltante serían los joysticks. Se estima que el costo es consdirablemente menor a los 10000 pesos por joystick por lo que siendo pesismistas el costo total serían de 20000 pesos.
+
+| Artículo                                   | Cantidad | Valor unitario | Valor Total |
+|--------------------------------------------|----------|----------------|-------------|
+| Transporte                                 | 2        | 60.000         | 120.000     |
+| Alimentación                               | 2        | 35.000         | 70.000      |
+| Desgaste de las computadoras               | 2        | 100.000        | 200.000     |
+| Joysticks                                  | 2        | 10.000         | 20.000      |
+| Arduino                                    | 2        | 30.000         | 60.000      |
+| Consumo de energía                         | 1        | 15.000         | 15.000      |
+| Internet                                   | 1        | 70.000         | 70.000      |
+| Tiempo invertido en el proyecto (en horas) | 420      | 4000           | 1.680.000   |
+|                                            |          | Total          | 2.235.000   |
 
 # Integrantes del equipo
 
