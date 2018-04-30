@@ -46,7 +46,11 @@ Se propone un juego de hockey de mesa en 2D que tenga caracteristicas variables,
 
 Dichos eventos podrían ser provocados de distintas maneras, sin embargo por los momentos no inclinamos a que en el campo de juego aparezcan unas "cajas sorpresa", al estilo de Mario Kart, de tal manera que cuando la pelota toque dicha caja aletoriamente ocurra alguno de ellos. La posicion de la caja esta aún por definir pero se propone que sea aletoria en una rango del campo. La duración de los cambios realizados está bajo discución tambien: si son permanentes en el campo o no. En principio se prefiere que sean por un tiempo determinado y no permanentes.
 
-El cuanto a los controles del juego se propone usar joysticks implementados en arduino (ver [este link](https://www.brainy-bits.com/arduino-joystick-tutorial/)), sin embargo puede ser utíl dar la posibilidad al usuario de elegir entre el teclado y el joystick. Se puede explorar de usar otras formas de control en base a otros sensores pero esto será evaluado luego de conseguir el objetivo mas simple de manejarlo con controles tradicionales.
+Todas estas características y eventos serán implementados mediante el modelamiento mediante clases, atributos y métodos.
+
+El cuanto a los controles del juego se propone usar joysticks implementados en arduino (ver [este link](https://www.brainy-bits.com/arduino-joystick-tutorial/)), sin embargo puede ser utíl dar la posibilidad al usuario de elegir entre el teclado y el joystick. Se puede explorar de usar otras formas de control en base a otros sensores pero esto será evaluado luego de conseguir el objetivo mas simple de manejarlo con controles tradicionales. La comunicación serial con el arduino se realizará mediante la librería <Qt Serial Port>.
+  
+Para el GUI (la interfaz grafica del usuario) y las visuales del juego aún no se ha elegido el método de implementacion.
 
 #### Control de acceso.
 Se plantea usar usuario y contraseña para ambos jugadores. A su vez se ofrece la posibilidad de ingresar si se olvido la contraseña mediante una pregunta y respuesta secreta. Se ofrece tambien la posibilidad de creación y eliminación de usuarios, así como un score board de partidos ganados y perdidos y un historial de los partidos jugados entre usuarios.
@@ -63,6 +67,7 @@ Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cu
 #### Grabar sesión - Cargar sesión.
 Se permitirá salvar el estado exacto de una partida, y a su vez su restitución a partir de ese punto exacto. Esto solo si son los mismo usuarios que estaban originalmente en la partida. En este sentido debe haber un estado de logged in y de logged out para dos jugadores simultaneamente.
 
+A partir de la primera versión funcional del juego en crudo se realizarán pruebas paulatinas con terceros para evaluar la respuesta de ellos al juego. A su vez se llevarán a cabo pruebas que permitan explotar el juego a sus condiciones limites para vislumbrar fallos, bugs, problemas en la mecánica, etc.
 
 # Cronograma de actividades.
 Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga será distribuida de la siguiente manera:
