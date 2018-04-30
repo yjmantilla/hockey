@@ -1,19 +1,40 @@
-# Juego de hockey de mesa 2D con un campo de propiedades físicas variables usando C++ y Arduino
+# (NOT) Air Hockey
 
 ## Justificación
-El desafío de realizar este juego nos permitirá a nosotros como estudiantes desarrollar habilidades relacionadas con:
+El desafío de realizar este juego se justifica en base a que nos permitirá a nosotros como estudiantes desarrollar habilidades relacionadas con:
 
 * La programación orientada a objetos (Object Oriented Programming en inglés).
 * El modelado de sistemas físicos usando código, en particular sistemas basados en las leyes de la física mecánica.
 * La comunicación de software con microcontroladores de la familia Arduino.
-* Trabajo en equipo (que como ingenieros nos interesá al formar parte de las llamadas *soft skills*.
+* Trabajo en equipo y gerencia de proyectos (que como ingenieros nos interesá al formar parte de las llamadas *soft skills*.
 * Control de versiones mediante la plataforma github.
 * Desarrollo de un GUI para el usuario.
 * Desarrollo de los graficos del juego.
 * La portabilidad del software en distintos ambientes.
 
 ## Planteamiento del problema
-Se propone un juego de hockey de mesa en 2D cuyo campo tenga caracteristicas variables, de tal manera que dinamicen el gameplay y aumenten la no predictabilidad del juego. Los siguientes eventos plantean la modificación de estas variables:
+Se plantea realizar un juego de hockey de mesa en 2D que tenga propiedades variables, y en particular las propiedades físicas que modelan el movimiento del disco. Lo anterior usando C++, y Arduino para los controles de los usuarios. Para ello es necesario usar las habilidades aprendidas durante el curso, en especial las de la programación orientada a objetos y la comunicación mediante el puerto serial con arduino. A su vez será importante el trabajo en equipo, el control de versiones y la gerencia de proyectos. El nombre del juego será (NOT) Air Hockey.
+
+## Objetivos (General y Específico)
+
+#### Objetivos Generales
+
+* Desarrollar un juego que cumpla con los requerimientos planteados por el curso y que a su vez haga buen uso de lo impartido en este.
+
+#### Objetivos Específicos
+
+* Modelar el campo de juego, el disco y los mazos de manera eficiente y simple.
+* Establecer limites a los parámetros del juego para que no se lleguen a extremos que dificulten el gameplay -es decir injugable-.
+* Desarrollar el aspecto visual de manera agradable a la vista pero minimalista (es decir simple).
+* Implementar un sistema donde los datos de los usuarios sean guardados en documentos encriptados, y los mismo con las partidas e historial de ellas.
+* Implementar la comunicación con el arduino de tal manera que los controles respondan correctamente a los movimientos del usuario.
+* Desarrollar el motor físico del juego de manera a que corresponda correctamente a los principios de la fisica mecánica.
+* Usar el control de versiones a nuestro favor para aumentar la productividad (y minimizar el tiempo requerido en el desarrollo).
+* Implementar el juego de la manera mas portable posible entre distintos ambientes.
+
+## Metodología
+
+Se propone un juego de hockey de mesa en 2D que tenga caracteristicas variables, de tal manera que dinamicen el gameplay y aumenten la no-predictabilidad del juego. Los siguientes eventos plantean la modificación de estas variables:
 
 * Alteración de la viscocidad del medio (es decir que tan facil la pelota se mueve por el campo debido a la fricción con este).
 * Disco invisible por un corto periodo de tiempo.
@@ -42,23 +63,6 @@ Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cu
 #### Grabar sesión - Cargar sesión.
 Se permitirá salvar el estado exacto de una partida, y a su vez su restitución a partir de ese punto exacto. Esto solo si son los mismo usuarios que estaban originalmente en la partida. En este sentido debe haber un estado de logged in y de logged out para dos jugadores simultaneamente.
 
-
-## Objetivos (General y Específico)
-
-#### Objetivos Generales
-
-* Desarrollar un juego que cumpla con los requerimientos planteados por el curso y que a su vez haga buen uso de lo impartido en este.
-
-#### Objetivos Específicos
-
-* Modelar el campo de juego, el disco y los mazos de manera eficiente y simple.
-* Establecer limites a los parámetros del juego para que no se lleguen a extremos que dificulten el gameplay -es decir injugable-.
-* Desarrollar el aspecto visual de manera agradable a la vista pero minimalista (es decir simple).
-* Implementar un sistema donde los datos de los usuarios sean guardados en documentos encriptados, y los mismo con las partidas e historial de ellas.
-* Implementar la comunicación con el arduino de tal manera que los controles respondan correctamente a los movimientos del usuario.
-* Desarrollar el motor físico del juego de manera a que corresponda correctamente a los principios de la fisica mecánica.
-* Usar el control de versiones a nuestro favor para aumentar la productividad (y minimizar el tiempo requerido en el desarrollo).
-* Implementar el juego de la manera mas portable posible entre distintos ambientes.
 
 # Cronograma de actividades.
 Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga será distribuida de la siguiente manera:
