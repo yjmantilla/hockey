@@ -40,7 +40,7 @@ Se propone un juego de hockey de mesa en 2D que tenga caracteristicas variables,
 * Disco invisible por un corto periodo de tiempo.
 * Inclusión de un atractor o repulsor en una posición determinada que altere el campo de fuerzas presente (y por consiguiente la aceleracion del disco).
 * Alterar el tamaño de las puertas de cada uno de los jugadores.
-* Alteración aletoria repentina en las componentes de velocidad del disco.
+* Alteración aleatoria repentina en las componentes de velocidad del disco.
 * Alteración de la restitución de las paredes del campo y/o de los mazos (que manejan los jugadores para darle al disco).
 * Alteración del tamaño y masa del disco.
 
