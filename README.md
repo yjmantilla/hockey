@@ -36,7 +36,7 @@ Se plantea realizar un juego de hockey de mesa en 2D que tenga propiedades varia
 
 Se propone un juego de hockey de mesa en 2D que tenga caracteristicas variables, de tal manera que dinamicen el gameplay y aumenten la no-predictabilidad del juego. Los siguientes eventos plantean la modificación de estas variables:
 
-* Alteración de la viscocidad del medio (es decir que tan facil la pelota se mueve por el campo debido a la fricción con este).
+* Alteración de la viscosidad del medio (es decir que tan facil la pelota se mueve por el campo debido a la fricción con este).
 * Disco invisible por un corto periodo de tiempo.
 * Inclusión de un atractor o repulsor en una posición determinada que altere el campo de fuerzas presente (y por consiguiente la aceleracion del disco).
 * Alterar el tamaño de las puertas de cada uno de los jugadores.
