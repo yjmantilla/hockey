@@ -67,7 +67,9 @@ Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cu
 #### Grabar sesión - Cargar sesión.
 Se permitirá salvar el estado exacto de una partida, y a su vez su restitución a partir de ese punto exacto. Esto solo si son los mismo usuarios que estaban originalmente en la partida. En este sentido debe haber un estado de logged in y de logged out para dos jugadores simultaneamente.
 
-A partir de la primera versión funcional del juego en crudo se realizarán pruebas paulatinas con terceros para evaluar la respuesta de ellos al juego. A su vez se llevarán a cabo pruebas que permitan explotar el juego a sus condiciones limites para vislumbrar fallos, bugs, problemas en la mecánica, etc.
+Se plantea que los datos del juego sean guardados de manera binaria y encriptados en archivos pero es si da tiempo.
+
+A partir de la primera versión funcional del juego en crudo se realizarán pruebas paulatinas con terceros para evaluar la respuesta de ellos al juego. A su vez se llevarán a cabo pruebas que permitan explotar el juego a sus condiciones limites para vislumbrar fallos, bugs, problemas en la mecánica, etc. 
 
 # Cronograma de actividades.
 Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga será distribuida de la siguiente manera:
@@ -90,6 +92,97 @@ Se cuenta con aproximadamente 5 semanas para concluir el proyecto. La carga ser�
 | Internet                                   |     1    |     70.000     |    70.000   |
 | Tiempo invertido en el proyecto (en horas) |    420   |      4000      |  1.680.000  |
 |                                            |          |      Total     |  2.235.000  |
+
+# Clases
+
+### Puck
+Es el disco del juego. Hija de la clase QGraphicsEllipseItem. Algunos atributos son:
+* radio
+* color
+* masa
+* aceleracionX
+* aceleracionY
+* velocidadX
+* velocidadY
+* posicionX
+* posicionY
+
+### Striker
+Un mazo de un jugador. Hija de la clase QGraphicsRectItem. Algunos atributos son:
+* posicionX
+* posicionY (fija en el lado del jugador)
+* color
+* alto
+* ancho
+* velocidadX
+* velocidadY (fija en 0)
+* coeficiente de restitucion
+
+### Goal
+La puerta de un jugador. Hija de la clase QGraphicsRectItem. Algunos atributos son:
+* alto
+* ancho
+* posicionX (fija)
+* posicionY (fija para el lado del jugador)
+
+### Field
+El campo de juego. Algunos atributos son:
+* viscosidad [fuente](http://fluidmechanicssolutions.blogspot.com.co/2017/02/viscosity-air-hockey-puck.html)
+* densidad [fuente](http://fluidmechanicssolutions.blogspot.com.co/2017/02/viscosity-air-hockey-puck.html)
+* coeficiente de restitución (de las paredes del campo)
+
+### Accelerator
+Cuerpo que afecta la aceleracion del disco, atrayendolo o repeliondolo segun el caso. Hija de la clase QGraphicsRectItem. Si el disco toca el cuerpo este desaparace. Contiene:
+* posicionX
+* posicionY
+* masa
+* coeficiente de atraccion: positivo o negativo según sea atractor o repulsor. Mientras mayor la magnitud mayor la interacción.
+
+### Box
+Es la caja sorpresa. Hija de la clase QGraphicsRectItem. Se genera cada cierto tiempo y produce un cambio en el juego de manera aleatoria al ser tocada. Al tocarla desaparece e invoca una aleatoriamente un metodo que altera algun atributo de la fisica del juego. Contiene:
+* posicionX
+* posicionY
+* metodos que cambian el juego
+
+### Player
+Un jugador. Contiene:
+* Nombre
+* Contraseña
+* Estado de login (on/off)
+* Pregunta secreta
+* Respuesta secreta
+* partidas ganadas
+* partidas perdidas
+* nemesis (apuntador a el jugador que mas le ha ganado en Players)
+* mejor_match (apuntador al match donde ha ganado con mayor diferencia)
+* peor_match (apuntador al match donde ha perdido con mayor diferencia)
+
+### Match
+Una partida entre dos jugadores. Tiene todas las propiedades de una partida de tal manera que tenga la informacion suficiente para salvar y cargar una partida. Para cargar un juego se debe asegurar que los dos jugadores logueados sean los mismos que estaban en la partida. Contiene:
+* Apuntador a Jugador 1 (que se encuentra en Players)
+* Apuntador a Jugador 2 (que se encuentra en Players)
+* Score Jugador 1 (entero)
+* Score Jugador 2 (entero)
+* Goal Jugador 1
+* Goal Jugador 2
+* Field de la partida
+* Striker Jugador 1
+* Striker Jugador 2
+* Puck de la partida
+* Box de la partida
+* Estado de la partida (finalizada o no)
+
+### Matches
+Lista de partidas historicas. Se consideran solo las partidas finalizadas. Y solo se guarda el nombre de los jugadores involucrados y el score.
+
+### Players
+Lista de jugadores historicos.
+
+A partir de Matches y Players se debe poder generar una tabla de highscores ordenada por la cantidad de partidas ganadas. Esta tabla en principio consistirá en:
+
+| Nombre_Jugador | Partidas_Ganadas | Partidas_Perdidas | Mejor_Match | Peor_Match | Nemesis |
+|:--------------:|:----------------:|:-----------------:|:-----------:|------------|---------|
+
 
 # Integrantes del equipo
 
