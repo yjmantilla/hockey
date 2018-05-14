@@ -95,6 +95,12 @@ Game::~Game()
 
 void Game::animate()
 {
+
+    if(this->striker1->collidesWithItem(this->wallVL)){this->moveL1=false;}
+    if(this->striker1->collidesWithItem(this->wallVR)){this->moveR1=false;}
+    if(this->striker2->collidesWithItem(this->wallVL)){this->moveL2=false;}
+    if(this->striker2->collidesWithItem(this->wallVR)){this->moveR2=false;}
+
     if(this->moveL1)
     {
         this->striker1->setPos(this->striker1->x()-this->striker1->xVelocity,this->striker1->y());
