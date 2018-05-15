@@ -60,6 +60,7 @@ El juego en sí esta planteado para ser multijugador. **NO SE PLANTEA LA CREACIO
 
 #### Varios niveles de dificultad.
 Esto se ve implementado directamente por el cambio de las propiedades del campo y del disco. Sin embargo si es necesario establecerlo explicitamente se puede correlacionar con el tamaño de las puertas y del disco. Tambien se tiene la idea de disponer de distintos campos (como por ejemplo puede ser campos con una propiedad especial como viscocidad muy baja, algun atractor o repulsor permanente en él, etc). En resumen una propiedad permanente del disco o del campo durante la partida.
+Otra idea que se tiene es que a medida que pase el tiempo el tamaño de las puertas aumente.
 
 #### Manejar Puntaje/Vidas.
 Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cuando alguno de los dos llegué a un puntaje determinado (que a su vez puede ser definido por el usuario).
