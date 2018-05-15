@@ -12,15 +12,11 @@ class Striker:public QObject,public QGraphicsRectItem
 {
     Q_OBJECT
 public:
-    double xVelocity=1;
-    double yVelocity=0;
+    double xVelocity=3;
 
-    double restitution;
+    double restitution=1;
 
     QBrush brush;
-    //QColor color;
-    //Qt::BrushStyle style;
-
 
     Striker();
     Striker(qreal x, qreal y, qreal width, qreal height, Qt::BrushStyle style, Qt::GlobalColor color);
