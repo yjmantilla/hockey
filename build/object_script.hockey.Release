@@ -6,6 +6,7 @@ INPUT(
 ./release\wall.o
 ./release\goal.o
 ./release\field.o
+./release\accelerator.o
 ./release\moc_game.o
 ./release\moc_puck.o
 ./release\moc_striker.o

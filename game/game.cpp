@@ -1,5 +1,6 @@
 #include "game.h"
 #include <QDebug>
+#include <QPointF>
 
 Game::Game(QWidget *parent, qreal width, qreal height)
     : QWidget(parent)
@@ -31,6 +32,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::white);
     this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::white);
     this->field = new Field(0);
+
 
 
 
@@ -168,6 +170,11 @@ void Game::movePuck()
     this->updatePuckVelocity();
     this->updatePuckPosition();
     this->updatePuckAcceleration();
+    QPointF p = this->puck->mapFromScene(this->puck->scenePos().x(),this->puck->scenePos().y());
+    qDebug()<<"x:"<<this->puck->scenePos().x()<<" - "<<this->puck->scenePos().x();
+    qDebug()<<"y:"<<this->puck->scenePos().y()<<" - "<<p.y();
+
+
 }
 
 void Game::updatePuckPosition()
@@ -191,14 +198,18 @@ void Game::scoreAtGoalCollision()
 
 bool Game::isPuckOutside()
 {
-    /*Notice x,y are given in "item coordinates relative to the position they were initialized
+    /*Notice thi->puck->x/y are given in "item coordinates relative to the position they were initialized
      * (the middle of the scene)" So these coomparisons are relative to the middle of the scene
-    */
+     *
+     * Solved. Just use this->puck->scenePos()->rx/y to get scene coordinates
 
-    if(this->puck->y()<0-this->height/2 - this->boundary){return true;}
-    if(this->puck->y()>this->height/2 + this->boundary){return true;}
-    if(this->puck->x()<0-this->width - this->boundary){return true;}
-    if(this->puck->x()>this->width + this->boundary){return true;}
+
+    if(this->puck->scenePos().ry()<0 - this->boundary){return true;}
+    if(this->puck->scenePos().ry()>this->height + this->boundary){return true;}
+    if(this->puck->scenePos().rx()<0 - this->boundary){return true;}
+    if(this->puck->scenePos().rx()>this->width + this->boundary){return true;}
+    return false;
+    */
     return false;
 }
 

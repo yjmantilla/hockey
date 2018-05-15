@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QRandomGenerator>
 #include <time.h>
+#include <vector>
 
 #include "puck.h"
 #include "striker.h"
