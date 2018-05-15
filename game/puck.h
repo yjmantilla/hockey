@@ -16,14 +16,16 @@ public:
     //QColor color;
     //Qt::BrushStyle style;
 
-    double xVelocity;
-    double yVelocity;
-    double xAcceleration;
-    double yAcceleration;
+    double xVelocity=0;
+    double yVelocity=0;
+    double xAcceleration=0;
+    double yAcceleration=0;
 
 
     Puck();
     Puck(double radius, Qt::BrushStyle brush, Qt::GlobalColor color, double x, double y);
+    void setXVelocity(qreal xv);
+    void setYVelocity(qreal yv);
 
 public slots:
     //void move();

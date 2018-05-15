@@ -14,3 +14,15 @@ Puck::Puck(double radius, Qt::BrushStyle style, Qt::GlobalColor color, double x,
     this->setBrush(this->brush);
 
 }
+
+void Puck::setXVelocity(qreal xv)
+{
+    this->xVelocity = xv;
+    return;
+}
+
+void Puck::setYVelocity(qreal yv)
+{
+    this->yVelocity = yv;
+    return;
+}
