@@ -29,11 +29,13 @@ SOURCES += \
     striker.cpp \
     game.cpp \
     wall.cpp \
-    goal.cpp
+    goal.cpp \
+    field.cpp
 
 HEADERS += \
     game.h \
     puck.h \
     striker.h \
     wall.h \
-    goal.h
+    goal.h \
+    field.h

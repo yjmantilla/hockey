@@ -10,7 +10,7 @@ class Puck: public QObject,public QGraphicsEllipseItem
     Q_OBJECT
 public:
     double radius;
-    double mass;
+    double mass=0.05;
 
     QBrush brush;
 

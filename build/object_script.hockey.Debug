@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\puck.o
+./debug\striker.o
+./debug\game.o
+./debug\wall.o
+./debug\goal.o
+./debug\field.o
+./debug\moc_game.o
+./debug\moc_puck.o
+./debug\moc_striker.o
+);

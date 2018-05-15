@@ -13,6 +13,8 @@
 #include "striker.h"
 #include "wall.h"
 #include "goal.h"
+#include "field.h"
+
 class Game : public QWidget
 {
     Q_OBJECT
@@ -38,6 +40,8 @@ public:
     Wall * wallVL;
     Wall * wallVR;
 
+    Field * field;
+
     bool moveL1;
     bool moveL2;
     bool moveR1;
@@ -61,6 +65,11 @@ public:
     void updatePuckVelocity();
     void scoreAtGoalCollision();
     bool isPuckOutside();
+    void updatePuckAcceleration();
+    void centerPuck();
+    void markGoalAndRestart();
+    bool didThePuckStop();
+    void velocifyPuck();
 
     ~Game();
 

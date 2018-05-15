@@ -1,0 +1,12 @@
+INPUT(
+./release\main.o
+./release\puck.o
+./release\striker.o
+./release\game.o
+./release\wall.o
+./release\goal.o
+./release\field.o
+./release\moc_game.o
+./release\moc_puck.o
+./release\moc_striker.o
+);

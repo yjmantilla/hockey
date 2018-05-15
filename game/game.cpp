@@ -30,6 +30,9 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->wallVR = new Wall(this->width,0,this->width,this->height);
     this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::white);
     this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::white);
+    this->field = new Field(0);
+
+
 
     /*Add Objects To Scene*/
     this->scene->addItem(this->puck);
@@ -42,12 +45,9 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->scene->addItem(this->goal1);
     this->scene->addItem(this->goal2);
 
-
-
-    /*Give Puck Random Initial Velocity*/
-    QRandomGenerator rand(time(NULL));
-    this->puck->setYVelocity(rand.bounded(1,5));
-    this->puck->setXVelocity(rand.bounded(-5,5));
+    /*Center Puck*/
+    this->centerPuck();
+    this->velocifyPuck();
 
     /*Set Striker Position for each player*/
     this->striker1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height());
@@ -167,6 +167,7 @@ void Game::movePuck()
 {
     this->updatePuckVelocity();
     this->updatePuckPosition();
+    this->updatePuckAcceleration();
 }
 
 void Game::updatePuckPosition()
@@ -190,12 +191,85 @@ void Game::scoreAtGoalCollision()
 
 bool Game::isPuckOutside()
 {
-    if(this->puck->y()<0-this->boundary){return true;}
-    if(this->puck->y()>this->height+this->boundary){return true;}
-    if(this->puck->x()<0-this->boundary){return true;}
-    if(this->puck->x()>this->width+this->boundary){return true;}
+    /*Notice x,y are given in "item coordinates relative to the position they were initialized
+     * (the middle of the scene)" So these coomparisons are relative to the middle of the scene
+    */
 
+    if(this->puck->y()<0-this->height/2 - this->boundary){return true;}
+    if(this->puck->y()>this->height/2 + this->boundary){return true;}
+    if(this->puck->x()<0-this->width - this->boundary){return true;}
+    if(this->puck->x()>this->width + this->boundary){return true;}
     return false;
+}
+
+void Game::updatePuckAcceleration()
+{
+    /*For simplicity the formula is simplified as just a drag proportional to the velocity*/
+    this->puck->xAcceleration = -1*this->puck->xVelocity*this->field->viscosity;
+    this->puck->yAcceleration = -1*this->puck->yVelocity*this->field->viscosity;
+
+}
+
+void Game::centerPuck()
+{
+    /*Center Puck , Notice items coordinates*/
+
+    this->puck->setX(0);
+    this->puck->setY(0);
+
+    return;
+
+}
+
+void Game::markGoalAndRestart()
+{
+    if(this->isPuckOutside())
+    {
+        qDebug()<<"outside";
+        this->centerPuck();
+        this->velocifyPuck();
+        /*Put here score register*/
+        this->goalAt1=false;
+        this->goalAt2=false;
+    }
+
+}
+
+bool Game::didThePuckStop()
+{
+    if(this->puck->xVelocity == 0 && this->puck->yVelocity == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void Game::velocifyPuck()
+{
+    /*Give Puck Random Initial Velocity*/
+    QRandomGenerator rand(time(NULL));
+    this->puck->setYVelocity(rand.bounded(-7,7));
+    this->puck->setXVelocity(rand.bounded(-7,7));
+
+    /*Ensure y velocity is enough*/
+
+    if(this->puck->yVelocity > -1 && this->puck->yVelocity < 1)
+    {
+        if(this->puck->x()>0)
+        {
+            this->puck->yVelocity=rand.bounded(1,7);
+        }
+        else
+        {
+            this->puck->yVelocity=rand.bounded(-7,1);
+        }
+
+        this->puck->xVelocity=rand.bounded(-7,7);
+    }
+    return;
 }
 
 Game::~Game()
@@ -206,9 +280,9 @@ Game::~Game()
 void Game::animate()
 {
     this->scoreAtGoalCollision();
+    this->markGoalAndRestart();
     this->bouncePuck();
     this->movePuck();
-    if(this->isPuckOutside()){qDebug()<<"outside";}
     this->stopStrikersAtWallCollision();
     this->moveStrikers();
 
