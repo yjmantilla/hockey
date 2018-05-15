@@ -8,13 +8,14 @@
 #include <QTimer>
 #include <QRandomGenerator>
 #include <time.h>
-#include <vector>
-
+#include <QVector>
 #include "puck.h"
 #include "striker.h"
 #include "wall.h"
 #include "goal.h"
 #include "field.h"
+#include "accelerator.h"
+#include <math.h>
 
 class Game : public QWidget
 {
@@ -35,6 +36,8 @@ public:
     Striker * striker2;
     Goal * goal1;
     Goal * goal2;
+
+    QVector<Accelerator *> Accelerators;
 
     Wall * wallHU;
     Wall * wallHD;
@@ -71,6 +74,8 @@ public:
     void markGoalAndRestart();
     bool didThePuckStop();
     void velocifyPuck();
+    double squaredDistanceToPuck(qreal x, qreal y);
+    double angleToPuck(qreal x, qreal y);
 
     ~Game();
 

@@ -19,9 +19,11 @@ public:
 
 
     Puck();
-    Puck(double radius, Qt::BrushStyle brush, Qt::GlobalColor color, double x, double y);
+    Puck(double radius, Qt::BrushStyle style, Qt::GlobalColor color, double x, double y);
     void setXVelocity(qreal xv);
     void setYVelocity(qreal yv);
+    void setXAcceleration(qreal xa);
+    void setYAcceleration(qreal ya);
 
 };
 

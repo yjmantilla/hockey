@@ -26,3 +26,15 @@ void Puck::setYVelocity(qreal yv)
     this->yVelocity = yv;
     return;
 }
+
+void Puck::setXAcceleration(qreal xa)
+{
+    this->xAcceleration = xa;
+    return;
+}
+
+void Puck::setYAcceleration(qreal ya)
+{
+    this->yAcceleration = ya;
+    return;
+}

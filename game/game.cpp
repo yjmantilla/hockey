@@ -176,7 +176,6 @@ void Game::movePuck()
     qDebug()<<"x:"<<this->puck->scenePos().x()<<" - "<<this->puck->scenePos().x();
     qDebug()<<"y:"<<this->puck->scenePos().y()<<" - "<<p.y();
 
-
 }
 
 void Game::updatePuckPosition()
@@ -200,7 +199,8 @@ void Game::scoreAtGoalCollision()
 
 bool Game::isPuckOutside()
 {
-    /*Notice thi->puck->x/y are given in "item coordinates relative to the position they were initialized
+    /*
+     * Notice this->puck->x/y are given in "item coordinates relative to the position they were initialized
      * (the origin of the scene)" So these coomparisons are relative to the origin of the scene
     */
 
@@ -213,9 +213,27 @@ bool Game::isPuckOutside()
 
 void Game::updatePuckAcceleration()
 {
+    /*Clear Previous acceleration to recalculate it*/
+    this->puck->setXAcceleration(0);
+    this->puck->setYAcceleration(0);
+
     /*For simplicity the formula is simplified as just a drag proportional to the velocity*/
     this->puck->xAcceleration = -1*this->puck->xVelocity*this->field->viscosity;
     this->puck->yAcceleration = -1*this->puck->yVelocity*this->field->viscosity;
+
+    double dummyAcceleration;
+    double dummyAngle;
+
+    for(int i=0; i<this->Accelerators.size();i++)
+    {
+        dummyAcceleration = this->Accelerators.at(i)->mass / squaredDistanceToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
+        dummyAngle = this->angleToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
+
+        this->puck->setXAcceleration(this->puck->xAcceleration + dummyAcceleration*cos(dummyAngle));
+        this->puck->setYAcceleration(this->puck->yAcceleration + dummyAcceleration*sin(dummyAngle));
+    }
+
+    return;
 
 }
 
@@ -281,6 +299,17 @@ void Game::velocifyPuck()
     return;
 }
 
+double Game::squaredDistanceToPuck(qreal x, qreal y)
+{
+    /*Notice that both items need to have the same item origin*/
+    return (((this->puck->x()-x)*(this->puck->x()-x))+((this->puck->y()-y)*(this->puck->y()-y)));
+}
+
+double Game::angleToPuck(qreal x, qreal y)
+{
+    return atan2(y - this->puck->y(),x-this->puck->x());
+}
+
 Game::~Game()
 {
 
@@ -294,6 +323,5 @@ void Game::animate()
     this->movePuck();
     this->stopStrikersAtWallCollision();
     this->moveStrikers();
-
 
 }
