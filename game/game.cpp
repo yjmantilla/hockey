@@ -22,7 +22,8 @@ Game::Game(QWidget *parent, qreal width, qreal height)
 
     /*Create Game Objects*/
 
-    this->puck = new Puck(10,Qt::SolidPattern,Qt::yellow,this->scene->width()/2,this->scene->height()/2);
+    /*We want the puck with the same item coordinate origin as the scene to be able to track its position*/
+    this->puck = new Puck(10,Qt::SolidPattern,Qt::yellow,0,0);
     this->striker1 = new Striker(0,0,this->width/8,this->height/60,Qt::SolidPattern,Qt::red);
     this->striker2 = new Striker(0,0,this->width/8,this->height/60,Qt::SolidPattern,Qt::blue);
     this->wallHU = new Wall(0,0,this->width,0);
@@ -46,6 +47,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->scene->addItem(this->wallVR);
     this->scene->addItem(this->goal1);
     this->scene->addItem(this->goal2);
+
 
     /*Center Puck*/
     this->centerPuck();
@@ -199,17 +201,13 @@ void Game::scoreAtGoalCollision()
 bool Game::isPuckOutside()
 {
     /*Notice thi->puck->x/y are given in "item coordinates relative to the position they were initialized
-     * (the middle of the scene)" So these coomparisons are relative to the middle of the scene
-     *
-     * Solved. Just use this->puck->scenePos()->rx/y to get scene coordinates
-
+     * (the origin of the scene)" So these coomparisons are relative to the origin of the scene
+    */
 
     if(this->puck->scenePos().ry()<0 - this->boundary){return true;}
     if(this->puck->scenePos().ry()>this->height + this->boundary){return true;}
     if(this->puck->scenePos().rx()<0 - this->boundary){return true;}
     if(this->puck->scenePos().rx()>this->width + this->boundary){return true;}
-    return false;
-    */
     return false;
 }
 
@@ -223,10 +221,10 @@ void Game::updatePuckAcceleration()
 
 void Game::centerPuck()
 {
-    /*Center Puck , Notice items coordinates*/
+    /*Center Puck , Notice items coordinates, Puck was initialized at the origin of the scene*/
 
-    this->puck->setX(0);
-    this->puck->setY(0);
+    this->puck->setX(this->scene->width()/2);
+    this->puck->setY(this->scene->height()/2);
 
     return;
 
