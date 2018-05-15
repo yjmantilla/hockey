@@ -13,8 +13,6 @@ public:
     double mass;
 
     QBrush brush;
-    //QColor color;
-    //Qt::BrushStyle style;
 
     double xVelocity=0;
     double yVelocity=0;
