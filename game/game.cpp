@@ -51,7 +51,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
 
     /*Center Puck*/
     this->centerPuck();
-    this->velocifyPuck();
+    this->velocifyPuck(1,3,1,7);
 
     /*Set Striker Position for each player*/
     this->striker1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height());
@@ -172,7 +172,7 @@ void Game::movePuck()
     this->updatePuckVelocity();
     this->updatePuckPosition();
     this->updatePuckAcceleration();
-    if(this->didThePuckStop()){this->velocifyPuck();}
+    if(this->didThePuckStop()){this->velocifyPuck(1,3,1,7);}
 
 }
 
@@ -252,7 +252,7 @@ void Game::markGoalAndRestart()
     {
         qDebug()<<"outside";
         this->centerPuck();
-        this->velocifyPuck();
+        this->velocifyPuck(1,3,1,7);
         /*Put here score register*/
         this->goalAt1=false;
         this->goalAt2=false;
@@ -272,25 +272,18 @@ bool Game::didThePuckStop()
     }
 }
 
-void Game::velocifyPuck()
+void Game::velocifyPuck(qreal minX, qreal maxX, qreal minY, qreal maxY)
 {
-    /*Give Puck Random Initial Velocity*/
+    /*Give Puck Random Velocity*/
+
     /*Ensure x,y velocity is enough*/
 
     QRandomGenerator rand(time(NULL));
 
-    while(1)
-    {
-        this->puck->setYVelocity(rand.bounded(-7,7));
-        if(this->puck->yVelocity != 0){break;}
-    }
+    this->puck->setYVelocity(rand.bounded(minY,maxY)*this->signRandomizer());
 
-    while(1)
-    {
-        //set low x velocity for it to be more frontal
-        this->puck->setXVelocity(rand.bounded(-3,3));
-        if(this->puck->xVelocity != 0){break;}
-    }
+    //set low x velocity for it to be more frontal
+    this->puck->setXVelocity(rand.bounded(minX,maxX)*this->signRandomizer());
 
     return;
 }
@@ -304,6 +297,23 @@ double Game::squaredDistanceToPuck(qreal x, qreal y)
 double Game::angleToPuck(qreal x, qreal y)
 {
     return atan2(y - this->puck->y(),x-this->puck->x());
+}
+
+int Game::signRandomizer()
+{
+    QRandomGenerator rand(time(NULL));
+
+    int dummy;
+
+    while(1)
+    {
+        dummy = rand.bounded(-1,1);
+
+        if(dummy != 0){break;}
+    }
+
+    return dummy;
+
 }
 
 Game::~Game()

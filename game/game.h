@@ -76,6 +76,7 @@ public:
     void velocifyPuck();
     double squaredDistanceToPuck(qreal x, qreal y);
     double angleToPuck(qreal x, qreal y);
+    int signRandomizer();
 
     ~Game();
 
