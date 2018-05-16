@@ -14,7 +14,7 @@ class Striker:public QObject,public QGraphicsRectItem
 public:
     double xVelocity=3;
 
-    double restitution=1.2;
+    double restitution=1;
 
     QBrush brush;
 

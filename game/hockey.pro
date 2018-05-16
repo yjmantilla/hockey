@@ -31,7 +31,8 @@ SOURCES += \
     wall.cpp \
     goal.cpp \
     field.cpp \
-    accelerator.cpp
+    accelerator.cpp \
+    box.cpp
 
 HEADERS += \
     game.h \
@@ -40,4 +41,5 @@ HEADERS += \
     wall.h \
     goal.h \
     field.h \
-    accelerator.h
+    accelerator.h \
+    box.h

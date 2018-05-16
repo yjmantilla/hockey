@@ -7,7 +7,7 @@ class Wall:public QGraphicsLineItem
 {
 public:
 
-    double restitution=1.1;
+    double restitution=1;
 
     Wall();
     Wall(qreal x1, qreal y1, qreal x2, qreal y2);

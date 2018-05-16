@@ -33,7 +33,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::white);
     this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::white);
     this->field = new Field(0.001);
-    this->Accelerators.append(new Accelerator(10,1000,Qt::SolidPattern,Qt::green,0,0));
+    this->Accelerators.append(new Accelerator(10,3000,Qt::SolidPattern,Qt::green,0,0));
     this->Accelerators.at(0)->setX(this->width/4);
     this->Accelerators.at(0)->setY(this->height/4);
 
