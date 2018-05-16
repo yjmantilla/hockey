@@ -33,6 +33,9 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::white);
     this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::white);
     this->field = new Field(0.001);
+    this->Accelerators.append(new Accelerator(10,1000,Qt::SolidPattern,Qt::green,0,0));
+    this->Accelerators.at(0)->setX(this->width/4);
+    this->Accelerators.at(0)->setY(this->height/4);
 
 
 
@@ -47,6 +50,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->scene->addItem(this->wallVR);
     this->scene->addItem(this->goal1);
     this->scene->addItem(this->goal2);
+    this->scene->addItem(this->Accelerators.at(0));
 
 
     /*Center Puck*/
@@ -230,10 +234,14 @@ void Game::updatePuckAcceleration()
         dummyAcceleration = this->Accelerators.at(i)->mass / squaredDistanceToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
         dummyAngle = this->angleToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
 
+        qDebug()<<"magnitude:"<<dummyAcceleration;
+        qDebug()<<"angle:"<<dummyAngle;
         this->puck->setXAcceleration(this->puck->xAcceleration + dummyAcceleration*cos(dummyAngle));
         this->puck->setYAcceleration(this->puck->yAcceleration + dummyAcceleration*sin(dummyAngle));
     }
 
+    qDebug()<<"xA:"<<this->puck->xAcceleration;
+    qDebug()<<"yA:"<<this->puck->yAcceleration;
     return;
 
 }
@@ -299,7 +307,7 @@ double Game::squaredDistanceToPuck(qreal x, qreal y)
 
 double Game::angleToPuck(qreal x, qreal y)
 {
-    return atan2(y - this->puck->y(),x-this->puck->x());
+    return qAtan2(y - this->puck->y(),x-this->puck->x());
 }
 
 int Game::signRandomizer()

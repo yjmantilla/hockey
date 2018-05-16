@@ -15,7 +15,7 @@ public:
     double xAcceleration=0;
     double yAcceleration=0;
 
-    double mass;
+    double mass; //mass gotta be around the order of 1000 to have an observable effect
     double radius;
 
 
