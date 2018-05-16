@@ -16,6 +16,7 @@
 #include "field.h"
 #include "accelerator.h"
 #include <math.h>
+#include <QtMath>
 
 class Game : public QWidget
 {
@@ -72,8 +73,8 @@ public:
     void updatePuckAcceleration();
     void centerPuck();
     void markGoalAndRestart();
-    bool didThePuckStop();
-    void velocifyPuck();
+    bool didThePuckStop(qreal minX, qreal minY);
+    void velocifyPuck(int minX, int maxX, int minY, int maxY);
     double squaredDistanceToPuck(qreal x, qreal y);
     double angleToPuck(qreal x, qreal y);
     int signRandomizer();

@@ -32,7 +32,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->wallVR = new Wall(this->width,0,this->width,this->height);
     this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::white);
     this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::white);
-    this->field = new Field(0);
+    this->field = new Field(0.001);
 
 
 
@@ -51,7 +51,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
 
     /*Center Puck*/
     this->centerPuck();
-    this->velocifyPuck(1,3,1,7);
+    this->velocifyPuck(1,3,3,11);
 
     /*Set Striker Position for each player*/
     this->striker1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height());
@@ -172,7 +172,10 @@ void Game::movePuck()
     this->updatePuckVelocity();
     this->updatePuckPosition();
     this->updatePuckAcceleration();
-    if(this->didThePuckStop()){this->velocifyPuck(1,3,1,7);}
+    qDebug() << "x:"<<this->puck->xVelocity;
+    qDebug() << "y:"<<this->puck->yVelocity;
+    if(this->didThePuckStop(0.5,0.5)){this->velocifyPuck(3,5,5,11);}
+    //watchout , the ball gets suddenly impulsed
 
 }
 
@@ -252,7 +255,7 @@ void Game::markGoalAndRestart()
     {
         qDebug()<<"outside";
         this->centerPuck();
-        this->velocifyPuck(1,3,1,7);
+        this->velocifyPuck(1,3,3,11);
         /*Put here score register*/
         this->goalAt1=false;
         this->goalAt2=false;
@@ -260,9 +263,9 @@ void Game::markGoalAndRestart()
 
 }
 
-bool Game::didThePuckStop()
+bool Game::didThePuckStop(qreal minX, qreal minY)
 {
-    if(this->puck->xVelocity == 0 && this->puck->yVelocity == 0)
+    if(qFabs(this->puck->xVelocity) < minX && qFabs(this->puck->yVelocity) < minY)
     {
         return true;
     }
@@ -272,7 +275,7 @@ bool Game::didThePuckStop()
     }
 }
 
-void Game::velocifyPuck(qreal minX, qreal maxX, qreal minY, qreal maxY)
+void Game::velocifyPuck(int minX, int maxX, int minY, int maxY)
 {
     /*Give Puck Random Velocity*/
 
