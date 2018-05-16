@@ -172,9 +172,7 @@ void Game::movePuck()
     this->updatePuckVelocity();
     this->updatePuckPosition();
     this->updatePuckAcceleration();
-    QPointF p = this->puck->mapFromScene(this->puck->scenePos().x(),this->puck->scenePos().y());
-    qDebug()<<"x:"<<this->puck->scenePos().x()<<" - "<<this->puck->scenePos().x();
-    qDebug()<<"y:"<<this->puck->scenePos().y()<<" - "<<p.y();
+    if(this->didThePuckStop()){this->velocifyPuck();}
 
 }
 
@@ -277,25 +275,23 @@ bool Game::didThePuckStop()
 void Game::velocifyPuck()
 {
     /*Give Puck Random Initial Velocity*/
+    /*Ensure x,y velocity is enough*/
+
     QRandomGenerator rand(time(NULL));
-    this->puck->setYVelocity(rand.bounded(-7,7));
-    this->puck->setXVelocity(rand.bounded(-7,7));
 
-    /*Ensure y velocity is enough*/
-
-    if(this->puck->yVelocity > -1 && this->puck->yVelocity < 1)
+    while(1)
     {
-        if(this->puck->x()>0)
-        {
-            this->puck->yVelocity=rand.bounded(1,7);
-        }
-        else
-        {
-            this->puck->yVelocity=rand.bounded(-7,1);
-        }
-
-        this->puck->xVelocity=rand.bounded(-7,7);
+        this->puck->setYVelocity(rand.bounded(-7,7));
+        if(this->puck->yVelocity != 0){break;}
     }
+
+    while(1)
+    {
+        //set low x velocity for it to be more frontal
+        this->puck->setXVelocity(rand.bounded(-3,3));
+        if(this->puck->xVelocity != 0){break;}
+    }
+
     return;
 }
 
