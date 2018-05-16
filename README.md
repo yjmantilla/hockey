@@ -52,6 +52,8 @@ El cuanto a los controles del juego se propone usar joysticks implementados en a
   
 Para el GUI (la interfaz grafica del usuario) y las visuales del juego se utilizaran las librerias implementadas por Qt, tales como QtGraphicsItem, QtObject, QtWidget, etc.
 
+Se implementara a su vez un texto que indique lo que sucede en el juego, sobre los eventos que suceden , etc.
+
 #### Control de acceso.
 Se plantea usar usuario y contraseña para ambos jugadores. A su vez se ofrece la posibilidad de ingresar si se olvido la contraseña mediante una pregunta y respuesta secreta. Se ofrece tambien la posibilidad de creación y eliminación de usuarios, así como un score board de partidos ganados y perdidos y un historial de los partidos jugados entre usuarios.
 
@@ -60,7 +62,7 @@ El juego en sí esta planteado para ser multijugador. **NO SE PLANTEA LA CREACIO
 
 #### Varios niveles de dificultad.
 Esto se ve implementado directamente por el cambio de las propiedades del campo y del disco. Sin embargo si es necesario establecerlo explicitamente se puede correlacionar con el tamaño de las puertas y del disco. Tambien se tiene la idea de disponer de distintos campos (como por ejemplo puede ser campos con una propiedad especial como viscocidad muy baja, algun atractor o repulsor permanente en él, etc). En resumen una propiedad permanente del disco o del campo durante la partida.
-Otra idea que se tiene es que a medida que pase el tiempo el tamaño de las puertas aumente.
+Otra idea que se tiene es que a medida que pase el tiempo el tamaño de las puertas aumente. O tambien que aumente cada vez que se marque un gol, para el que marco , el que fue marcado , ambos o de manera aleatoria.
 
 #### Manejar Puntaje/Vidas.
 Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cuando alguno de los dos llegué a un puntaje determinado (que a su vez puede ser definido por el usuario).

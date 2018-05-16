@@ -3,14 +3,12 @@
 
 #include <QGraphicsEllipseItem>
 #include <QBrush>
-#include <QObject>
 
 class Puck: public QObject,public QGraphicsEllipseItem
 {
-    Q_OBJECT
+
 public:
     double radius;
-    double mass;
 
     QBrush brush;
 
@@ -21,13 +19,11 @@ public:
 
 
     Puck();
-    Puck(double radius, Qt::BrushStyle brush, Qt::GlobalColor color, double x, double y);
+    Puck(double radius, Qt::BrushStyle style, Qt::GlobalColor color, double x, double y);
     void setXVelocity(qreal xv);
     void setYVelocity(qreal yv);
-
-public slots:
-    //void move();
-
+    void setXAcceleration(qreal xa);
+    void setYAcceleration(qreal ya);
 
 };
 
