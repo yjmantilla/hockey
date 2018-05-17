@@ -5,8 +5,9 @@ Accelerator::Accelerator()
 
 }
 
-Accelerator::Accelerator(double radius, double mass,Qt::BrushStyle style, Qt::GlobalColor color, double x, double y)
+Accelerator::Accelerator(qreal radius, qreal mass, Qt::BrushStyle style, Qt::GlobalColor color, qreal x, qreal y,qreal vx, qreal vy)
 {
+    this->velocity = new VectorXY(vx,vy);
     this->radius=radius;
     this->mass = mass;
     this->brush.setColor(color);

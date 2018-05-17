@@ -7,7 +7,9 @@ INPUT(
 ./debug\goal.o
 ./debug\field.o
 ./debug\accelerator.o
+./debug\box.o
+./debug\vectorxy.o
+./debug\qrc_images.o
 ./debug\moc_game.o
-./debug\moc_puck.o
 ./debug\moc_striker.o
 );

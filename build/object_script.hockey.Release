@@ -7,7 +7,9 @@ INPUT(
 ./release\goal.o
 ./release\field.o
 ./release\accelerator.o
+./release\box.o
+./release\vectorxy.o
+./release\qrc_images.o
 ./release\moc_game.o
-./release\moc_puck.o
 ./release\moc_striker.o
 );

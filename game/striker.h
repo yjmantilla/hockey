@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QObject>
 #include <QBrush>
+#include "vectorxy.h"
 
 
 
@@ -12,9 +13,8 @@ class Striker:public QObject,public QGraphicsRectItem
 {
     Q_OBJECT
 public:
-    double xVelocity=3;
-
-    double restitution=1;
+    VectorXY * velocity;
+    qreal restitution=1;
 
     QBrush brush;
 

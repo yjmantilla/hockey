@@ -10,7 +10,7 @@ public:
     QPen pen;
 
     Goal();
-    Goal(qreal x1, qreal y1, double width,Qt::GlobalColor color);
+    Goal(qreal x1, qreal y1, qreal width,Qt::GlobalColor color);
 };
 
 #endif // GOAL_H

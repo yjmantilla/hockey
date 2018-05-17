@@ -3,6 +3,7 @@
 
 #include <QGraphicsEllipseItem>
 #include <QBrush>
+#include "vectorxy.h"
 
 class Puck: public QObject,public QGraphicsEllipseItem
 {
@@ -12,14 +13,11 @@ public:
 
     QBrush brush;
 
-    double xVelocity=0;
-    double yVelocity=0;
-    double xAcceleration=0;
-    double yAcceleration=0;
-
+    VectorXY * velocity;
+    VectorXY * acceleration;
 
     Puck();
-    Puck(double radius, Qt::BrushStyle style, Qt::GlobalColor color, double x, double y);
+    Puck(qreal radius, Qt::BrushStyle style, Qt::GlobalColor color, qreal x, qreal y);
     void setXVelocity(qreal xv);
     void setYVelocity(qreal yv);
     void setXAcceleration(qreal xa);
