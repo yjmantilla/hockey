@@ -33,9 +33,6 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::white);
     this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::white);
     this->field = new Field(0.001);
-    this->Accelerators.append(new Accelerator(10,3000,Qt::SolidPattern,Qt::green,0,0));
-    this->Accelerators.at(0)->setX(this->width/4);
-    this->Accelerators.at(0)->setY(this->height/4);
 
 
 
@@ -50,7 +47,6 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->scene->addItem(this->wallVR);
     this->scene->addItem(this->goal1);
     this->scene->addItem(this->goal2);
-    this->scene->addItem(this->Accelerators.at(0));
 
 
     /*Center Puck*/
@@ -98,6 +94,8 @@ void Game::keyPressEvent(QKeyEvent *event)
     {
         this->moveR1=true;
     }
+
+    return;
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
@@ -118,6 +116,25 @@ void Game::keyReleaseEvent(QKeyEvent *event)
     {
         this->moveR1=false;
     }
+
+    return;
+}
+
+void Game::mousePressEvent(QMouseEvent *event)
+{
+    //Boxes Test
+    /*
+    this->Boxes.append(new Box());
+    this->scene->addItem(this->Boxes.last());
+    this->Boxes.last()->setPos(event->x(),event->y());
+    */
+
+    //Accelerators Test
+    this->Accelerators.append(new Accelerator(10,-3000,Qt::SolidPattern,Qt::green,0,0,0,0));
+    this->scene->addItem(this->Accelerators.last());
+    this->Accelerators.last()->setPos(event->x(),event->y());
+
+    return;
 }
 
 void Game::stopStrikersAtWallCollision()
@@ -128,47 +145,50 @@ void Game::stopStrikersAtWallCollision()
     if(this->striker2->collidesWithItem(this->wallVL)){this->moveL2=false;}
     if(this->striker2->collidesWithItem(this->wallVR)){this->moveR2=false;}
 
+    return;
 }
 
 void Game::moveStrikers()
 {
     if(this->moveL1)
     {
-        this->striker1->setPos(this->striker1->x()-this->striker1->xVelocity,this->striker1->y());
+        this->striker1->setPos(this->striker1->x()-this->striker1->velocity->getX(),this->striker1->y());
     }
 
     if(this->moveL2)
     {
-        this->striker2->setPos(this->striker2->x()-this->striker2->xVelocity,this->striker2->y());
+        this->striker2->setPos(this->striker2->x()-this->striker2->velocity->getX(),this->striker2->y());
     }
 
     if(this->moveR1)
     {
-        this->striker1->setPos(this->striker1->x()+this->striker1->xVelocity,this->striker1->y());
+        this->striker1->setPos(this->striker1->x()+this->striker1->velocity->getX(),this->striker1->y());
     }
 
     if(this->moveR2)
     {
-        this->striker2->setPos(this->striker2->x()+this->striker2->xVelocity,this->striker2->y());
+        this->striker2->setPos(this->striker2->x()+this->striker2->velocity->getX(),this->striker2->y());
     }
+
+    return;
 }
 
 void Game::bouncePuck()
 {
     this->bouncePuckFromStrikers();
 
-    if(this->puck->collidesWithItem(this->wallHD)&&!this->goalAt1){this->puck->setYVelocity(-1*this->puck->yVelocity*this->wallHD->restitution);}
-    if(this->puck->collidesWithItem(this->wallHU)&&!this->goalAt2){this->puck->setYVelocity(-1*this->puck->yVelocity*this->wallHU->restitution);}
-    if(this->puck->collidesWithItem(this->wallVL)){this->puck->setXVelocity(-1*this->puck->xVelocity*this->wallVL->restitution);}
-    if(this->puck->collidesWithItem(this->wallVR)){this->puck->setXVelocity(-1*this->puck->xVelocity*this->wallVR->restitution);}
-
+    if(this->puck->collidesWithItem(this->wallHD)&&!this->goalAt1){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->wallHD->restitution);}
+    if(this->puck->collidesWithItem(this->wallHU)&&!this->goalAt2){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->wallHU->restitution);}
+    if(this->puck->collidesWithItem(this->wallVL)){this->puck->velocity->setX(-1*this->puck->velocity->getX()*this->wallVL->restitution);}
+    if(this->puck->collidesWithItem(this->wallVR)){this->puck->velocity->setX(-1*this->puck->velocity->getX()*this->wallVR->restitution);}
+    return;
 }
 
 void Game::bouncePuckFromStrikers()
 {
-    if(this->puck->collidesWithItem(this->striker1)){this->puck->setYVelocity(-1*this->puck->yVelocity*this->striker1->restitution);}
-    if(this->puck->collidesWithItem(this->striker2)){this->puck->setYVelocity(-1*this->puck->yVelocity*this->striker2->restitution);}
-
+    if(this->puck->collidesWithItem(this->striker1)){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->striker1->restitution);}
+    if(this->puck->collidesWithItem(this->striker2)){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->striker2->restitution);}
+    return;
 }
 
 void Game::movePuck()
@@ -176,24 +196,27 @@ void Game::movePuck()
     this->updatePuckVelocity();
     this->updatePuckPosition();
     this->updatePuckAcceleration();
-    qDebug() << "x:"<<this->puck->xVelocity;
-    qDebug() << "y:"<<this->puck->yVelocity;
+    qDebug() << "x:"<<this->puck->velocity->getX();
+    qDebug() << "y:"<<this->puck->velocity->getY();
     if(this->didThePuckStop(0.5,0.5)){this->velocifyPuck(3,5,5,11);}
     //watchout , the ball gets suddenly impulsed
+
+    return;
 
 }
 
 void Game::updatePuckPosition()
 {
-    this->puck->setX(this->puck->x()+this->puck->xVelocity*this->timeStep+0.5*this->puck->xAcceleration*this->timeStep*this->timeStep);
-    this->puck->setY(this->puck->y()+this->puck->yVelocity*this->timeStep+0.5*this->puck->yAcceleration*this->timeStep*this->timeStep);
-
+    this->puck->setX(this->puck->x()+this->puck->velocity->getX()*this->timeStep+0.5*this->puck->acceleration->getX()*this->timeStep*this->timeStep);
+    this->puck->setY(this->puck->y()+this->puck->velocity->getY()*this->timeStep+0.5*this->puck->acceleration->getY()*this->timeStep*this->timeStep);
+    return;
 }
 
 void Game::updatePuckVelocity()
 {
-    this->puck->setXVelocity(this->puck->xVelocity+this->puck->xAcceleration*this->timeStep);
-    this->puck->setYVelocity(this->puck->yVelocity+this->puck->yAcceleration*this->timeStep);
+    this->puck->velocity->setX(this->puck->velocity->getX()+this->puck->acceleration->getX()*this->timeStep);
+    this->puck->velocity->setY(this->puck->velocity->getY()+this->puck->acceleration->getY()*this->timeStep);
+    return;
 }
 
 void Game::scoreAtGoalCollision()
@@ -209,22 +232,22 @@ bool Game::isPuckOutside()
      * (the origin of the scene)" So these coomparisons are relative to the origin of the scene
     */
 
-    if(this->puck->scenePos().ry()<0 - this->boundary){return true;}
-    if(this->puck->scenePos().ry()>this->height + this->boundary){return true;}
-    if(this->puck->scenePos().rx()<0 - this->boundary){return true;}
-    if(this->puck->scenePos().rx()>this->width + this->boundary){return true;}
+    if(this->puck->y()<0 - this->boundary){return true;}
+    if(this->puck->y()>this->height + this->boundary){return true;}
+    if(this->puck->x()<0 - this->boundary){return true;}
+    if(this->puck->x()>this->width + this->boundary){return true;}
     return false;
 }
 
 void Game::updatePuckAcceleration()
 {
     /*Clear Previous acceleration to recalculate it*/
-    this->puck->setXAcceleration(0);
-    this->puck->setYAcceleration(0);
+    this->puck->acceleration->setX(0);
+    this->puck->acceleration->setY(0);
 
     /*For simplicity the formula is simplified as just a drag proportional to the velocity*/
-    this->puck->xAcceleration = -1*this->puck->xVelocity*this->field->viscosity;
-    this->puck->yAcceleration = -1*this->puck->yVelocity*this->field->viscosity;
+    this->puck->acceleration->setX(-1*this->puck->velocity->getX()*this->field->viscosity);
+    this->puck->acceleration->setY(-1*this->puck->velocity->getY()*this->field->viscosity);
 
     double dummyAcceleration;
     double dummyAngle;
@@ -234,14 +257,14 @@ void Game::updatePuckAcceleration()
         dummyAcceleration = this->Accelerators.at(i)->mass / squaredDistanceToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
         dummyAngle = this->angleToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
 
-        qDebug()<<"magnitude:"<<dummyAcceleration;
-        qDebug()<<"angle:"<<dummyAngle;
-        this->puck->setXAcceleration(this->puck->xAcceleration + dummyAcceleration*cos(dummyAngle));
-        this->puck->setYAcceleration(this->puck->yAcceleration + dummyAcceleration*sin(dummyAngle));
+        //qDebug()<<"magnitude:"<<dummyAcceleration;
+        //qDebug()<<"angle:"<<dummyAngle;
+        this->puck->acceleration->setX(this->puck->acceleration->getX() + dummyAcceleration*cos(dummyAngle));
+        this->puck->acceleration->setY(this->puck->acceleration->getY() + dummyAcceleration*sin(dummyAngle));
     }
 
-    qDebug()<<"xA:"<<this->puck->xAcceleration;
-    qDebug()<<"yA:"<<this->puck->yAcceleration;
+    //qDebug()<<"xA:"<<this->puck->acceleration->getX();
+    //qDebug()<<"yA:"<<this->puck->acceleration->getY();
     return;
 
 }
@@ -273,7 +296,7 @@ void Game::markGoalAndRestart()
 
 bool Game::didThePuckStop(qreal minX, qreal minY)
 {
-    if(qFabs(this->puck->xVelocity) < minX && qFabs(this->puck->yVelocity) < minY)
+    if(qFabs(this->puck->velocity->getX()) < minX && qFabs(this->puck->velocity->getY()) < minY)
     {
         return true;
     }
@@ -291,10 +314,10 @@ void Game::velocifyPuck(int minX, int maxX, int minY, int maxY)
 
     QRandomGenerator rand(time(NULL));
 
-    this->puck->setYVelocity(rand.bounded(minY,maxY)*this->signRandomizer());
+    this->puck->velocity->setY(rand.bounded(minY,maxY)*this->signRandomizer());
 
     //set low x velocity for it to be more frontal
-    this->puck->setXVelocity(rand.bounded(minX,maxX)*this->signRandomizer());
+    this->puck->velocity->setX(rand.bounded(minX,maxX)*this->signRandomizer());
 
     return;
 }

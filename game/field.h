@@ -1,15 +1,16 @@
 #ifndef FIELD_H
 #define FIELD_H
 
+#include <QtGlobal>
 
 class Field
 {
 public:
 
-    double viscosity;
+    qreal viscosity;
 
     Field();
-    Field(double viscosity =0);
+    Field(qreal viscosity);
 };
 
 #endif // FIELD_H

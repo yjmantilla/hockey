@@ -5,7 +5,7 @@ Field::Field()
 
 }
 
-Field::Field(double viscosity)
+Field::Field(qreal viscosity)
 {
     this->viscosity=viscosity;
 }

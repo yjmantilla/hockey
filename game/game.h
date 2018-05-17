@@ -1,22 +1,25 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <QtGlobal>
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QTimer>
 #include <QRandomGenerator>
-#include <time.h>
 #include <QVector>
+#include <QtMath>
+#include <time.h>
+
 #include "puck.h"
 #include "striker.h"
 #include "wall.h"
 #include "goal.h"
 #include "field.h"
 #include "accelerator.h"
-#include <math.h>
-#include <QtMath>
+#include "box.h"
+
 
 class Game : public QWidget
 {
@@ -27,10 +30,10 @@ public:
     QGraphicsScene * scene;
     QGraphicsView * view;
 
-    double width;
-    double height;
-    float timeStep=1;
-    double boundary=100;
+    qreal width;
+    qreal height;
+    qreal timeStep=1;
+    qreal boundary=100;
 
     Puck * puck;
     Striker * striker1;
@@ -39,7 +42,7 @@ public:
     Goal * goal2;
 
     QVector<Accelerator *> Accelerators;
-
+    QVector<Box *> Boxes;
     Wall * wallHU;
     Wall * wallHD;
     Wall * wallVL;
@@ -60,6 +63,7 @@ public:
     Game(QWidget *parent = 0, qreal width=800, qreal height=600);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
+    void mousePressEvent(QMouseEvent *event);
     void stopStrikersAtWallCollision();
     void moveStrikers();
     void bouncePuck();
