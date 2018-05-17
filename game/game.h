@@ -66,14 +66,11 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void stopStrikersAtWallCollision();
     void moveStrikers();
-    void bouncePuck();
-    void bouncePuckFromStrikers();
-    void bouncePuckFromWalls();
     void movePuck();
     void updatePuckPosition();
     void updatePuckVelocity();
     void scoreAtGoalCollision();
-    bool isPuckOutside();
+    bool isItemOutside(QGraphicsItem * item);
     void updatePuckAcceleration();
     void centerPuck();
     void markGoalAndRestart();
@@ -82,6 +79,12 @@ public:
     double squaredDistanceToPuck(qreal x, qreal y);
     double angleToPuck(qreal x, qreal y);
     int signRandomizer();
+    void velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY);
+    void moveEverything();
+    void bounceEverything();
+    void bounceFromWalls(QGraphicsItem * item, VectorXY *velocity);
+    void bounceFromStrikers(QGraphicsItem * item, VectorXY *velocity);
+    void moveItem(QGraphicsItem * item, VectorXY *velocity);
 
     ~Game();
 

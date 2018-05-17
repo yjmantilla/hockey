@@ -51,7 +51,8 @@ Game::Game(QWidget *parent, qreal width, qreal height)
 
     /*Center Puck*/
     this->centerPuck();
-    this->velocifyPuck(1,3,3,11);
+    this->velocify(this->puck->velocity,1,3,3,11);
+    //this->velocifyPuck(1,3,3,11);
 
     /*Set Striker Position for each player*/
     this->striker1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height());
@@ -123,16 +124,20 @@ void Game::keyReleaseEvent(QKeyEvent *event)
 void Game::mousePressEvent(QMouseEvent *event)
 {
     //Boxes Test
+
     /*
     this->Boxes.append(new Box());
     this->scene->addItem(this->Boxes.last());
     this->Boxes.last()->setPos(event->x(),event->y());
+    this->velocify(this->Boxes.last()->velocity,1,2,2,3);
     */
 
     //Accelerators Test
-    this->Accelerators.append(new Accelerator(10,-3000,Qt::SolidPattern,Qt::green,0,0,0,0));
+
+    this->Accelerators.append(new Accelerator(10,this->signRandomizer()*1500,Qt::SolidPattern,Qt::green,0,0,0,0));
     this->scene->addItem(this->Accelerators.last());
     this->Accelerators.last()->setPos(event->x(),event->y());
+    this->velocify(this->Accelerators.last()->velocity,1,2,2,3);
 
     return;
 }
@@ -173,32 +178,15 @@ void Game::moveStrikers()
     return;
 }
 
-void Game::bouncePuck()
-{
-    this->bouncePuckFromStrikers();
-
-    if(this->puck->collidesWithItem(this->wallHD)&&!this->goalAt1){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->wallHD->restitution);}
-    if(this->puck->collidesWithItem(this->wallHU)&&!this->goalAt2){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->wallHU->restitution);}
-    if(this->puck->collidesWithItem(this->wallVL)){this->puck->velocity->setX(-1*this->puck->velocity->getX()*this->wallVL->restitution);}
-    if(this->puck->collidesWithItem(this->wallVR)){this->puck->velocity->setX(-1*this->puck->velocity->getX()*this->wallVR->restitution);}
-    return;
-}
-
-void Game::bouncePuckFromStrikers()
-{
-    if(this->puck->collidesWithItem(this->striker1)){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->striker1->restitution);}
-    if(this->puck->collidesWithItem(this->striker2)){this->puck->velocity->setY(-1*this->puck->velocity->getY()*this->striker2->restitution);}
-    return;
-}
 
 void Game::movePuck()
 {
     this->updatePuckVelocity();
     this->updatePuckPosition();
     this->updatePuckAcceleration();
-    qDebug() << "x:"<<this->puck->velocity->getX();
-    qDebug() << "y:"<<this->puck->velocity->getY();
-    if(this->didThePuckStop(0.5,0.5)){this->velocifyPuck(3,5,5,11);}
+    //qDebug() << "x:"<<this->puck->velocity->getX();
+    //qDebug() << "y:"<<this->puck->velocity->getY();
+    if(this->didThePuckStop(0.5,0.5)){this->velocify(this->puck->velocity,3,5,5,11);}
     //watchout , the ball gets suddenly impulsed
 
     return;
@@ -225,17 +213,17 @@ void Game::scoreAtGoalCollision()
     if(this->puck->collidesWithItem(this->goal2)){qDebug()<<"goal2";this->goalAt2=true;}
 }
 
-bool Game::isPuckOutside()
+bool Game::isItemOutside(QGraphicsItem * item)
 {
     /*
      * Notice this->puck->x/y are given in "item coordinates relative to the position they were initialized
      * (the origin of the scene)" So these coomparisons are relative to the origin of the scene
     */
 
-    if(this->puck->y()<0 - this->boundary){return true;}
-    if(this->puck->y()>this->height + this->boundary){return true;}
-    if(this->puck->x()<0 - this->boundary){return true;}
-    if(this->puck->x()>this->width + this->boundary){return true;}
+    if(item->y()<0 - this->boundary){return true;}
+    if(item->y()>this->height + this->boundary){return true;}
+    if(item->x()<0 - this->boundary){return true;}
+    if(item->x()>this->width + this->boundary){return true;}
     return false;
 }
 
@@ -282,16 +270,17 @@ void Game::centerPuck()
 
 void Game::markGoalAndRestart()
 {
-    if(this->isPuckOutside())
+    if(this->isItemOutside(this->puck))
     {
         qDebug()<<"outside";
         this->centerPuck();
-        this->velocifyPuck(1,3,3,11);
+        this->velocify(this->puck->velocity,1,3,3,11);
         /*Put here score register*/
         this->goalAt1=false;
         this->goalAt2=false;
     }
 
+    return;
 }
 
 bool Game::didThePuckStop(qreal minX, qreal minY)
@@ -341,13 +330,90 @@ int Game::signRandomizer()
 
     while(1)
     {
-        dummy = rand.bounded(-1,1);
+        //remember the upper bound is exclusive
+        dummy = rand.bounded(-1,2);
 
         if(dummy != 0){break;}
     }
 
     return dummy;
 
+}
+
+void Game::velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY)
+{
+    QRandomGenerator rand(time(NULL));
+
+    velocity->setY(rand.bounded(minY,maxY)*this->signRandomizer());
+
+    //set low x velocity for it to be more frontal
+    velocity->setX(rand.bounded(minX,maxX)*this->signRandomizer());
+
+    return;
+}
+
+void Game::moveEverything()
+{
+    this->movePuck();
+    /* Everything else has constant velocity so we only need to update the position*/
+    for(int i = 0; i < this->Accelerators.size(); i++)
+    {
+        this->moveItem(this->Accelerators.at(i),this->Accelerators.at(i)->velocity);
+    }
+
+    for(int i = 0; i < this->Boxes.size(); i++)
+    {
+        this->moveItem(this->Boxes.at(i),this->Boxes.at(i)->velocity);
+    }
+
+    return;
+
+}
+
+void Game::bounceEverything()
+{
+    this->bounceFromStrikers(this->puck,this->puck->velocity);
+    this->bounceFromWalls(this->puck,this->puck->velocity);
+
+    for(int i = 0; i < this->Accelerators.size(); i++)
+    {
+        this->bounceFromWalls(this->Accelerators.at(i),this->Accelerators.at(i)->velocity);
+        this->bounceFromStrikers(this->Accelerators.at(i),this->Accelerators.at(i)->velocity);
+    }
+
+    for(int i = 0; i < this->Boxes.size(); i++)
+    {
+        this->bounceFromWalls(this->Boxes.at(i),this->Boxes.at(i)->velocity);
+        this->bounceFromStrikers(this->Boxes.at(i),this->Boxes.at(i)->velocity);
+    }
+
+    return;
+
+}
+
+void Game::bounceFromWalls(QGraphicsItem *item, VectorXY * velocity)
+{
+    if(item->collidesWithItem(this->wallHD)&&!item->collidesWithItem(this->goal1)){velocity->setY(-1*velocity->getY()*this->wallHD->restitution);}
+    if(item->collidesWithItem(this->wallHU)&&!item->collidesWithItem(this->goal2)){velocity->setY(-1*velocity->getY()*this->wallHU->restitution);}
+    if(item->collidesWithItem(this->wallVL)){velocity->setX(-1*velocity->getX()*this->wallVL->restitution);}
+    if(item->collidesWithItem(this->wallVR)){velocity->setX(-1*velocity->getX()*this->wallVR->restitution);}
+    return;
+}
+
+void Game::bounceFromStrikers(QGraphicsItem *item, VectorXY *velocity)
+{
+    if(item->collidesWithItem(this->striker1)){velocity->setY(-1*velocity->getY()*this->striker1->restitution);}
+    if(item->collidesWithItem(this->striker2)){velocity->setY(-1*velocity->getY()*this->striker2->restitution);}
+    return;
+
+}
+
+void Game::moveItem(QGraphicsItem *item, VectorXY *velocity)
+{
+    /*This assumes constant velocity*/
+
+    item->setPos(item->x()+velocity->getX(),item->y()+velocity->getY());
+    return;
 }
 
 Game::~Game()
@@ -359,8 +425,8 @@ void Game::animate()
 {
     this->scoreAtGoalCollision();
     this->markGoalAndRestart();
-    this->bouncePuck();
-    this->movePuck();
+    this->bounceEverything();
+    this->moveEverything();
     this->stopStrikersAtWallCollision();
     this->moveStrikers();
 

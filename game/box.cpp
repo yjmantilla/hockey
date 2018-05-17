@@ -2,7 +2,7 @@
 
 Box::Box()
 {
-
+    this->velocity = new VectorXY(0,0);
 }
 
 QRectF Box::boundingRect() const
