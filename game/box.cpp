@@ -7,7 +7,7 @@ Box::Box()
 
 QRectF Box::boundingRect() const
 {
-    return QRectF(-40,-40,40,40);
+    return QRectF(0,0,40,40);
 }
 
 void Box::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -15,4 +15,9 @@ void Box::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     QPixmap pixmap;
     pixmap.load(":/box.png");
     painter->drawPixmap(this->boundingRect(),pixmap,pixmap.rect());
+}
+
+Box::~Box()
+{
+    delete this->velocity;
 }

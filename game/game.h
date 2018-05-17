@@ -60,7 +60,7 @@ public:
 
     QTimer * motionTimer;
 
-    Game(QWidget *parent = 0, qreal width=800, qreal height=600);
+    Game(QWidget *parent = 0, qreal width=900, qreal height=600);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);

@@ -18,20 +18,20 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->view->setScene(this->scene);
     this->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
+    this->view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
 
     /*Create Game Objects*/
 
     /*We want the puck with the same item coordinate origin as the scene to be able to track its position*/
-    this->puck = new Puck(10,Qt::SolidPattern,Qt::yellow,0,0);
-    this->striker1 = new Striker(0,0,this->width/8,this->height/60,Qt::SolidPattern,Qt::red);
-    this->striker2 = new Striker(0,0,this->width/8,this->height/60,Qt::SolidPattern,Qt::blue);
-    this->wallHU = new Wall(0,0,this->width,0);
-    this->wallHD = new Wall(0,this->height,this->width,this->height);
-    this->wallVL = new Wall(0,0,0,this->height);
-    this->wallVR = new Wall(this->width,0,this->width,this->height);
-    this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::white);
-    this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::white);
+    this->puck = new Puck(10,Qt::SolidPattern,Qt::green,0,0);
+    this->striker1 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,Qt::cyan);
+    this->striker2 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,Qt::magenta);
+    this->wallHU = new Wall(0,0,this->width,0,Qt::yellow);
+    this->wallHD = new Wall(0,this->height,this->width,this->height,Qt::yellow);
+    this->wallVL = new Wall(0,0,0,this->height,Qt::yellow);
+    this->wallVR = new Wall(this->width,0,this->width,this->height,Qt::yellow);
+    this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::black);
+    this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::black);
     this->field = new Field(0.001);
 
 
@@ -125,19 +125,21 @@ void Game::mousePressEvent(QMouseEvent *event)
 {
     //Boxes Test
 
-    /*
+
     this->Boxes.append(new Box());
     this->scene->addItem(this->Boxes.last());
+    qDebug()<<this->Boxes.last()->scene();
     this->Boxes.last()->setPos(event->x(),event->y());
     this->velocify(this->Boxes.last()->velocity,1,2,2,3);
-    */
+
 
     //Accelerators Test
 
-    this->Accelerators.append(new Accelerator(10,this->signRandomizer()*1500,Qt::SolidPattern,Qt::green,0,0,0,0));
+    this->Accelerators.append(new Accelerator(15,this->signRandomizer()*1500,Qt::SolidPattern,Qt::green,0,0,0,0));
     this->scene->addItem(this->Accelerators.last());
     this->Accelerators.last()->setPos(event->x(),event->y());
     this->velocify(this->Accelerators.last()->velocity,1,2,2,3);
+    this->Accelerators.last()->paintAccelerator();
 
     return;
 }
@@ -359,11 +361,29 @@ void Game::moveEverything()
     for(int i = 0; i < this->Accelerators.size(); i++)
     {
         this->moveItem(this->Accelerators.at(i),this->Accelerators.at(i)->velocity);
+
+        /*Delete Item if it is outside*/
+        if(this->isItemOutside(this->Accelerators.at(i)))
+        {
+            this->scene->removeItem(this->Accelerators.at(i));
+            delete this->Accelerators.at(i);
+            this->Accelerators.removeAt(i);
+            qDebug()<<"Accelerator Deleted";
+        }
     }
 
     for(int i = 0; i < this->Boxes.size(); i++)
     {
         this->moveItem(this->Boxes.at(i),this->Boxes.at(i)->velocity);
+
+        /*Delete Item if it is outside*/
+        if(this->isItemOutside(this->Boxes.at(i)))
+        {
+            this->scene->removeItem(this->Boxes.at(i));
+            delete this->Boxes.at(i);
+            this->Boxes.removeAt(i);
+            qDebug()<<"Box Deleted";
+        }
     }
 
     return;
@@ -413,8 +433,10 @@ void Game::moveItem(QGraphicsItem *item, VectorXY *velocity)
     /*This assumes constant velocity*/
 
     item->setPos(item->x()+velocity->getX(),item->y()+velocity->getY());
+
     return;
 }
+
 
 Game::~Game()
 {

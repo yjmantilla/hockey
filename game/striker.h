@@ -20,6 +20,7 @@ public:
 
     Striker();
     Striker(qreal x, qreal y, qreal width, qreal height, Qt::BrushStyle style, Qt::GlobalColor color);
+    ~Striker();
 };
 
 #endif // STRIKER_H

@@ -25,6 +25,9 @@ public:
 
     Accelerator();
     Accelerator(qreal radius, qreal mass, Qt::BrushStyle brush, Qt::GlobalColor color, qreal x, qreal y, qreal vx, qreal vy);
+    void paintAccelerator();
+
+    ~Accelerator();
 };
 
 #endif // ACCELERATOR_H

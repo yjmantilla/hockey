@@ -2,6 +2,7 @@
 #define WALL_H
 
 #include <QGraphicsLineItem>
+#include <QPen>
 
 class Wall:public QGraphicsLineItem
 {
@@ -10,7 +11,7 @@ public:
     qreal restitution = 1;
 
     Wall();
-    Wall(qreal x1, qreal y1, qreal x2, qreal y2);
+    Wall(qreal x1, qreal y1, qreal x2, qreal y2, Qt::GlobalColor color);
 };
 
 #endif // WALL_H

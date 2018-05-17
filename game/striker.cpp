@@ -8,3 +8,8 @@ Striker::Striker(qreal x, qreal y, qreal width, qreal height, Qt::BrushStyle sty
     this->brush.setStyle(style);
     this->setBrush(this->brush);
 }
+
+Striker::~Striker()
+{
+    delete this->velocity;
+}
