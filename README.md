@@ -42,9 +42,10 @@ Se propone un juego de hockey de mesa en 2D que tenga caracteristicas variables,
 * Alterar el tamaño de las puertas de cada uno de los jugadores.
 * Alteración aleatoria repentina en las componentes de velocidad del disco.
 * Alteración de la restitución de las paredes del campo y/o de los mazos (que manejan los jugadores para darle al disco).
+* Alteracion de la velocidad del los mazos o intercambio de las teclas.
 * Alteración del tamaño y masa del disco.
 
-Dichos eventos podrían ser provocados de distintas maneras, sin embargo por los momentos no inclinamos a que en el campo de juego aparezcan unas "cajas sorpresa", al estilo de Mario Kart, de tal manera que cuando la pelota toque dicha caja aletoriamente ocurra alguno de ellos. La posicion de la caja esta aún por definir pero se propone que sea aletoria en una rango del campo. La duración de los cambios realizados está bajo discución tambien: si son permanentes en el campo o no. En principio se prefiere que sean por un tiempo determinado y no permanentes.
+Dichos eventos podrían ser provocados de distintas maneras, sin embargo por los momentos nos inclinamos a que en el campo de juego aparezcan unas "cajas sorpresa", al estilo de Mario Kart, de tal manera que cuando la pelota toque dicha caja aletoriamente ocurra alguno de ellos. La posicion de la caja esta aún por definir pero se propone que sea aletoria en una rango del campo. La duración de los cambios realizados está bajo discución tambien: si son permanentes en el campo o no. En principio se prefiere que sean por un tiempo determinado y no permanentes.
 
 Todas estas características y eventos serán implementados mediante el modelamiento mediante clases, atributos y métodos.
 
@@ -63,6 +64,8 @@ El juego en sí esta planteado para ser multijugador. **NO SE PLANTEA LA CREACIO
 #### Varios niveles de dificultad.
 Esto se ve implementado directamente por el cambio de las propiedades del campo y del disco. Sin embargo si es necesario establecerlo explicitamente se puede correlacionar con el tamaño de las puertas y del disco. Tambien se tiene la idea de disponer de distintos campos (como por ejemplo puede ser campos con una propiedad especial como viscocidad muy baja, algun atractor o repulsor permanente en él, etc). En resumen una propiedad permanente del disco o del campo durante la partida.
 Otra idea que se tiene es que a medida que pase el tiempo el tamaño de las puertas aumente. O tambien que aumente cada vez que se marque un gol, para el que marco , el que fue marcado , ambos o de manera aleatoria.
+
+Lo mejor sería aumentar la puerta del que metio el gol. Ademas las cajas sorpresa pueden aumentar o reducir la puerta de un jugador.
 
 #### Manejar Puntaje/Vidas.
 Esto se verá reflejado en el score de cada jugador. En sí el juego acabará cuando alguno de los dos llegué a un puntaje determinado (que a su vez puede ser definido por el usuario).

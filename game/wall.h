@@ -12,6 +12,8 @@ public:
 
     Wall();
     Wall(qreal x1, qreal y1, qreal x2, qreal y2, Qt::GlobalColor color);
+    void setRestitution(qreal r);
+    qreal getRestitution();
 };
 
 #endif // WALL_H

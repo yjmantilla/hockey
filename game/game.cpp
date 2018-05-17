@@ -1,6 +1,5 @@
 #include "game.h"
 #include <QDebug>
-#include <QPointF>
 
 Game::Game(QWidget *parent, qreal width, qreal height)
     : QWidget(parent)
@@ -51,8 +50,11 @@ Game::Game(QWidget *parent, qreal width, qreal height)
 
     /*Center Puck*/
     this->centerPuck();
+
+    /*Give Puck Random Velocity*/
+    /*Ensure x,y velocity is enough*/
+    //set low x velocity for it to be more frontal
     this->velocify(this->puck->velocity,1,3,3,11);
-    //this->velocifyPuck(1,3,3,11);
 
     /*Set Striker Position for each player*/
     this->striker1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height());
@@ -68,12 +70,17 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->motionTimer = new QTimer();
     connect(this->motionTimer,SIGNAL(timeout()),this,SLOT(animate()));
 
+    /*Add Boxes*/
+    this->boxTimer = new QTimer();
+    connect(this->boxTimer,SIGNAL(timeout()),this,SLOT(addBox()));
     /*Show Game*/
 
     this->view->show();
 
-    /*Start Timer*/
-    motionTimer->start(10);
+    /*Start Timers*/
+    this->motionTimer->start(10);
+    this->boxTimer->start(1000 * 15);
+
 
 }
 
@@ -146,11 +153,30 @@ void Game::mousePressEvent(QMouseEvent *event)
 
 void Game::stopStrikersAtWallCollision()
 {
+    if(this->striker1->velocity->getX()>0)
+    {
+        if(this->striker1->collidesWithItem(this->wallVL)){this->moveL1=false;}
+        if(this->striker1->collidesWithItem(this->wallVR)){this->moveR1=false;}
+    }
 
-    if(this->striker1->collidesWithItem(this->wallVL)){this->moveL1=false;}
-    if(this->striker1->collidesWithItem(this->wallVR)){this->moveR1=false;}
-    if(this->striker2->collidesWithItem(this->wallVL)){this->moveL2=false;}
-    if(this->striker2->collidesWithItem(this->wallVR)){this->moveR2=false;}
+    else
+    {
+        if(this->striker1->collidesWithItem(this->wallVL)){this->moveR1=false;}
+        if(this->striker1->collidesWithItem(this->wallVR)){this->moveL1=false;}
+    }
+
+    if(this->striker2->velocity->getX()>0)
+    {
+        if(this->striker2->collidesWithItem(this->wallVL)){this->moveL2=false;}
+        if(this->striker2->collidesWithItem(this->wallVR)){this->moveR2=false;}
+    }
+
+    else
+    {
+        if(this->striker2->collidesWithItem(this->wallVL)){this->moveR2=false;}
+        if(this->striker2->collidesWithItem(this->wallVR)){this->moveL2=false;}
+    }
+
 
     return;
 }
@@ -297,22 +323,6 @@ bool Game::didThePuckStop(qreal minX, qreal minY)
     }
 }
 
-void Game::velocifyPuck(int minX, int maxX, int minY, int maxY)
-{
-    /*Give Puck Random Velocity*/
-
-    /*Ensure x,y velocity is enough*/
-
-    QRandomGenerator rand(time(NULL));
-
-    this->puck->velocity->setY(rand.bounded(minY,maxY)*this->signRandomizer());
-
-    //set low x velocity for it to be more frontal
-    this->puck->velocity->setX(rand.bounded(minX,maxX)*this->signRandomizer());
-
-    return;
-}
-
 double Game::squaredDistanceToPuck(qreal x, qreal y)
 {
     /*Notice that both items need to have the same item origin*/
@@ -351,6 +361,14 @@ void Game::velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY)
     //set low x velocity for it to be more frontal
     velocity->setX(rand.bounded(minX,maxX)*this->signRandomizer());
 
+    return;
+}
+
+void Game::posify(QGraphicsItem *item, int minX, int maxX, int minY, int maxY)
+{
+    QRandomGenerator rand(time(NULL));
+
+    item->setPos(rand.bounded(minX,maxX)*this->signRandomizer(),rand.bounded(minY,maxY)*this->signRandomizer());
     return;
 }
 
@@ -413,17 +431,17 @@ void Game::bounceEverything()
 
 void Game::bounceFromWalls(QGraphicsItem *item, VectorXY * velocity)
 {
-    if(item->collidesWithItem(this->wallHD)&&!item->collidesWithItem(this->goal1)){velocity->setY(-1*velocity->getY()*this->wallHD->restitution);}
-    if(item->collidesWithItem(this->wallHU)&&!item->collidesWithItem(this->goal2)){velocity->setY(-1*velocity->getY()*this->wallHU->restitution);}
-    if(item->collidesWithItem(this->wallVL)){velocity->setX(-1*velocity->getX()*this->wallVL->restitution);}
-    if(item->collidesWithItem(this->wallVR)){velocity->setX(-1*velocity->getX()*this->wallVR->restitution);}
+    if(item->collidesWithItem(this->wallHD)&&!item->collidesWithItem(this->goal1)){velocity->setY(-1*velocity->getY()*this->wallHD->getRestitution());}
+    if(item->collidesWithItem(this->wallHU)&&!item->collidesWithItem(this->goal2)){velocity->setY(-1*velocity->getY()*this->wallHU->getRestitution());}
+    if(item->collidesWithItem(this->wallVL)){velocity->setX(-1*velocity->getX()*this->wallVL->getRestitution());}
+    if(item->collidesWithItem(this->wallVR)){velocity->setX(-1*velocity->getX()*this->wallVR->getRestitution());}
     return;
 }
 
 void Game::bounceFromStrikers(QGraphicsItem *item, VectorXY *velocity)
 {
-    if(item->collidesWithItem(this->striker1)){velocity->setY(-1*velocity->getY()*this->striker1->restitution);}
-    if(item->collidesWithItem(this->striker2)){velocity->setY(-1*velocity->getY()*this->striker2->restitution);}
+    if(item->collidesWithItem(this->striker1)){velocity->setY(-1*velocity->getY()*this->striker1->getRestitution());}
+    if(item->collidesWithItem(this->striker2)){velocity->setY(-1*velocity->getY()*this->striker2->getRestitution());}
     return;
 
 }
@@ -451,5 +469,16 @@ void Game::animate()
     this->moveEverything();
     this->stopStrikersAtWallCollision();
     this->moveStrikers();
+
+}
+
+void Game::addBox()
+{
+
+    this->Boxes.append(new Box());
+    this->scene->addItem(this->Boxes.last());
+    this->posify(this->Boxes.last(),0,this->width,0,this->height);
+    this->velocify(this->Boxes.last()->velocity,1,2,2,3);
+    return;
 
 }

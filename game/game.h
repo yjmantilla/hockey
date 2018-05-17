@@ -59,6 +59,7 @@ public:
     bool goalAt2=false;
 
     QTimer * motionTimer;
+    QTimer * boxTimer;
 
     Game(QWidget *parent = 0, qreal width=900, qreal height=600);
     void keyPressEvent(QKeyEvent *event);
@@ -75,11 +76,11 @@ public:
     void centerPuck();
     void markGoalAndRestart();
     bool didThePuckStop(qreal minX, qreal minY);
-    void velocifyPuck(int minX, int maxX, int minY, int maxY);
     double squaredDistanceToPuck(qreal x, qreal y);
     double angleToPuck(qreal x, qreal y);
     int signRandomizer();
     void velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY);
+    void posify(QGraphicsItem * item, int minX, int maxX, int minY, int maxY);
     void moveEverything();
     void bounceEverything();
     void bounceFromWalls(QGraphicsItem * item, VectorXY *velocity);
@@ -90,6 +91,7 @@ public:
 
 public slots:
     void animate();
+    void addBox();
 };
 
 #endif // GAME_H

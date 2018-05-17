@@ -11,6 +11,7 @@ public:
 
     Field();
     Field(qreal viscosity);
+    void setViscosity(qreal v);
 };
 
 #endif // FIELD_H

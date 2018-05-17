@@ -20,6 +20,8 @@ public:
 
     Striker();
     Striker(qreal x, qreal y, qreal width, qreal height, Qt::BrushStyle style, Qt::GlobalColor color);
+    void setRestitution(qreal r);
+    qreal getRestitution();
     ~Striker();
 };
 
