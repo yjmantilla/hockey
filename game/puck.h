@@ -22,6 +22,7 @@ public:
     void setYVelocity(qreal yv);
     void setXAcceleration(qreal xa);
     void setYAcceleration(qreal ya);
+    void setColor(Qt::GlobalColor color);
     ~Puck();
 
 };

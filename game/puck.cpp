@@ -17,6 +17,13 @@ Puck::Puck(qreal radius, Qt::BrushStyle style, Qt::GlobalColor color, qreal x, q
 
 }
 
+void Puck::setColor(Qt::GlobalColor color)
+{
+    this->brush.setColor(color);
+    this->setBrush(this->brush);
+    return;
+}
+
 Puck::~Puck()
 {
     delete this->velocity;

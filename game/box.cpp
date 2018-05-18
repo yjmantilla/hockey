@@ -7,7 +7,7 @@ Box::Box()
 
 QRectF Box::boundingRect() const
 {
-    return QRectF(0,0,40,40);
+    return QRectF(0,0,60,60);
 }
 
 void Box::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

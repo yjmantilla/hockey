@@ -1,6 +1,11 @@
 #include "game.h"
 #include <QDebug>
 
+#define FIELD_VISCOSITY 0.001
+#define FIELD_COLOR Qt::black
+#define PUCK_COLOR Qt::green
+
+
 Game::Game(QWidget *parent, qreal width, qreal height)
     : QWidget(parent)
 {
@@ -17,12 +22,12 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->view->setScene(this->scene);
     this->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    this->view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    this->view->setBackgroundBrush(QBrush(FIELD_COLOR, Qt::SolidPattern));
 
     /*Create Game Objects*/
 
     /*We want the puck with the same item coordinate origin as the scene to be able to track its position*/
-    this->puck = new Puck(10,Qt::SolidPattern,Qt::green,0,0);
+    this->puck = new Puck(10,Qt::SolidPattern,PUCK_COLOR,0,0);
     this->striker1 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,Qt::cyan);
     this->striker2 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,Qt::magenta);
     this->wallHU = new Wall(0,0,this->width,0,Qt::yellow);
@@ -31,7 +36,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->wallVR = new Wall(this->width,0,this->width,this->height,Qt::yellow);
     this->goal1 = new Goal(this->width/2,this->height,this->width/5,Qt::black);
     this->goal2 = new Goal(this->width/2,0,this->width/5,Qt::black);
-    this->field = new Field(0.001);
+    this->field = new Field(FIELD_VISCOSITY);
 
 
 
@@ -79,7 +84,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
 
     /*Start Timers*/
     this->motionTimer->start(10);
-    this->boxTimer->start(1000 * 15);
+    this->boxTimer->start(1000 * 3);
 
 
 }
@@ -132,22 +137,27 @@ void Game::mousePressEvent(QMouseEvent *event)
 {
     //Boxes Test
 
-
-    this->Boxes.append(new Box());
-    this->scene->addItem(this->Boxes.last());
-    qDebug()<<this->Boxes.last()->scene();
-    this->Boxes.last()->setPos(event->x(),event->y());
-    this->velocify(this->Boxes.last()->velocity,1,2,2,3);
-
+    /*
+    this->boxes.append(new Box());
+    this->scene->addItem(this->boxes.last());
+    qDebug()<<this->boxes.last()->scene();
+    this->boxes.last()->setPos(event->x(),event->y());
+    this->velocify(this->boxes.last()->velocity,1,2,2,3);
+    */
 
     //Accelerators Test
 
-    this->Accelerators.append(new Accelerator(15,this->signRandomizer()*1500,Qt::SolidPattern,Qt::green,0,0,0,0));
-    this->scene->addItem(this->Accelerators.last());
-    this->Accelerators.last()->setPos(event->x(),event->y());
-    this->velocify(this->Accelerators.last()->velocity,1,2,2,3);
-    this->Accelerators.last()->paintAccelerator();
+    /*
+    this->addAccelerator(event->x(),event->y());
+    */
 
+    /*Random Effect Test*/
+    //this->chooseRandomEffect();
+
+    /*Striker size Test*/
+    //this->multiplyStrikerWidthOfRandomPlayer(this->randomDoubleOrHalfIt());qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();
+    //this->multiplyStrikerWidthOfRandomPlayer(0.5);qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();
+    //this->multiplyStrikerWidthOfRandomPlayer(2);qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();
     return;
 }
 
@@ -203,6 +213,8 @@ void Game::moveStrikers()
         this->striker2->setPos(this->striker2->x()+this->striker2->velocity->getX(),this->striker2->y());
     }
 
+    qDebug()<<"1: "<<this->striker1->pos().x()<<","<<this->striker1->pos().y();
+    qDebug()<<"2: "<<this->striker2->pos().x()<<","<<this->striker2->pos().y();
     return;
 }
 
@@ -237,8 +249,8 @@ void Game::updatePuckVelocity()
 
 void Game::scoreAtGoalCollision()
 {
-    if(this->puck->collidesWithItem(this->goal1)){qDebug()<<"goal1";this->goalAt1=true;}
-    if(this->puck->collidesWithItem(this->goal2)){qDebug()<<"goal2";this->goalAt2=true;}
+    if(this->puck->collidesWithItem(this->goal1)){/*qDebug()<<"goal1"*/;this->goalAt1=true;}
+    if(this->puck->collidesWithItem(this->goal2)){/*qDebug()<<"goal2"*/;this->goalAt2=true;}
 }
 
 bool Game::isItemOutside(QGraphicsItem * item)
@@ -268,10 +280,10 @@ void Game::updatePuckAcceleration()
     double dummyAcceleration;
     double dummyAngle;
 
-    for(int i=0; i<this->Accelerators.size();i++)
+    for(int i=0; i<this->accelerators.size();i++)
     {
-        dummyAcceleration = this->Accelerators.at(i)->mass / squaredDistanceToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
-        dummyAngle = this->angleToPuck(this->Accelerators.at(i)->x(),this->Accelerators.at(i)->y());
+        dummyAcceleration = this->accelerators.at(i)->mass / squaredDistanceToPuck(this->accelerators.at(i)->x(),this->accelerators.at(i)->y());
+        dummyAngle = this->angleToPuck(this->accelerators.at(i)->x(),this->accelerators.at(i)->y());
 
         //qDebug()<<"magnitude:"<<dummyAcceleration;
         //qDebug()<<"angle:"<<dummyAngle;
@@ -300,7 +312,7 @@ void Game::markGoalAndRestart()
 {
     if(this->isItemOutside(this->puck))
     {
-        qDebug()<<"outside";
+        //qDebug()<<"outside";
         this->centerPuck();
         this->velocify(this->puck->velocity,1,3,3,11);
         /*Put here score register*/
@@ -335,40 +347,41 @@ double Game::angleToPuck(qreal x, qreal y)
 }
 
 int Game::signRandomizer()
-{
-    QRandomGenerator rand(time(NULL));
-
+{    
     int dummy;
 
     while(1)
     {
         //remember the upper bound is exclusive
-        dummy = rand.bounded(-1,2);
+        dummy = QRandomGenerator::global()->bounded(-1,2);
 
         if(dummy != 0){break;}
     }
 
+    //qDebug()<<dummy;
     return dummy;
 
 }
 
+qreal Game::boundedRandomizer(int min, int max)
+{
+    return QRandomGenerator::global()->bounded(min,max + 1);
+}
+
 void Game::velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY)
 {
-    QRandomGenerator rand(time(NULL));
 
-    velocity->setY(rand.bounded(minY,maxY)*this->signRandomizer());
+    velocity->setY(this->boundedRandomizer(minY,maxY)*this->signRandomizer());
 
     //set low x velocity for it to be more frontal
-    velocity->setX(rand.bounded(minX,maxX)*this->signRandomizer());
+    velocity->setX(this->boundedRandomizer(minX,maxX)*this->signRandomizer());
 
     return;
 }
 
 void Game::posify(QGraphicsItem *item, int minX, int maxX, int minY, int maxY)
-{
-    QRandomGenerator rand(time(NULL));
-
-    item->setPos(rand.bounded(minX,maxX)*this->signRandomizer(),rand.bounded(minY,maxY)*this->signRandomizer());
+{    
+    item->setPos(this->boundedRandomizer(minX,maxX)*this->signRandomizer(),this->boundedRandomizer(minY,maxY)*this->signRandomizer());
     return;
 }
 
@@ -376,30 +389,32 @@ void Game::moveEverything()
 {
     this->movePuck();
     /* Everything else has constant velocity so we only need to update the position*/
-    for(int i = 0; i < this->Accelerators.size(); i++)
+    for(int i = 0; i < this->accelerators.size(); i++)
     {
-        this->moveItem(this->Accelerators.at(i),this->Accelerators.at(i)->velocity);
+        this->moveItem(this->accelerators.at(i),this->accelerators.at(i)->velocity);
 
         /*Delete Item if it is outside*/
-        if(this->isItemOutside(this->Accelerators.at(i)))
+        if(this->isItemOutside(this->accelerators.at(i)))
         {
-            this->scene->removeItem(this->Accelerators.at(i));
-            delete this->Accelerators.at(i);
-            this->Accelerators.removeAt(i);
+            //this->scene->removeItem(this->accelerators.at(i));
+            //delete this->accelerators.at(i);
+            this->deleteAccelerator(this->accelerators.at(i));
+            this->accelerators.removeAt(i);
             qDebug()<<"Accelerator Deleted";
         }
     }
 
-    for(int i = 0; i < this->Boxes.size(); i++)
+    for(int i = 0; i < this->boxes.size(); i++)
     {
-        this->moveItem(this->Boxes.at(i),this->Boxes.at(i)->velocity);
+        this->moveItem(this->boxes.at(i),this->boxes.at(i)->velocity);
 
         /*Delete Item if it is outside*/
-        if(this->isItemOutside(this->Boxes.at(i)))
+        if(this->isItemOutside(this->boxes.at(i)))
         {
-            this->scene->removeItem(this->Boxes.at(i));
-            delete this->Boxes.at(i);
-            this->Boxes.removeAt(i);
+            //this->scene->removeItem(this->Boxes.at(i));
+            //delete this->Boxes.at(i);
+            this->deleteBox(this->boxes.at(i));
+            this->boxes.removeAt(i);
             qDebug()<<"Box Deleted";
         }
     }
@@ -413,16 +428,16 @@ void Game::bounceEverything()
     this->bounceFromStrikers(this->puck,this->puck->velocity);
     this->bounceFromWalls(this->puck,this->puck->velocity);
 
-    for(int i = 0; i < this->Accelerators.size(); i++)
+    for(int i = 0; i < this->accelerators.size(); i++)
     {
-        this->bounceFromWalls(this->Accelerators.at(i),this->Accelerators.at(i)->velocity);
-        this->bounceFromStrikers(this->Accelerators.at(i),this->Accelerators.at(i)->velocity);
+        this->bounceFromWalls(this->accelerators.at(i),this->accelerators.at(i)->velocity);
+        this->bounceFromStrikers(this->accelerators.at(i),this->accelerators.at(i)->velocity);
     }
 
-    for(int i = 0; i < this->Boxes.size(); i++)
+    for(int i = 0; i < this->boxes.size(); i++)
     {
-        this->bounceFromWalls(this->Boxes.at(i),this->Boxes.at(i)->velocity);
-        this->bounceFromStrikers(this->Boxes.at(i),this->Boxes.at(i)->velocity);
+        this->bounceFromWalls(this->boxes.at(i),this->boxes.at(i)->velocity);
+        this->bounceFromStrikers(this->boxes.at(i),this->boxes.at(i)->velocity);
     }
 
     return;
@@ -455,6 +470,115 @@ void Game::moveItem(QGraphicsItem *item, VectorXY *velocity)
     return;
 }
 
+void Game::deleteBox(Box * box)
+{
+    this->scene->removeItem(box);
+    delete box;
+    return;
+}
+
+void Game::deleteAccelerator(Accelerator *accel)
+{
+    this->scene->removeItem(accel);
+    delete accel;
+    return;
+}
+
+void Game::BoxesCollidingWithPuck()
+{
+    for (int i = 0, n = this->puck->collidingItems().size();i < n;i++)
+    {
+        if(typeid (*(this->puck->collidingItems().at(i)))==typeid(Box))
+        {
+            this->boxes.removeOne((Box *)(this->puck->collidingItems().at(i)));
+            this->deleteBox((Box *)(this->puck->collidingItems().at(i)));
+            qDebug()<<"Box Deleted by Touch";
+            this->chooseRandomEffect();
+            return;
+        }
+    }
+}
+
+void Game::chooseRandomEffect()
+{
+    int effect = this->boundedRandomizer(1,5);
+    qDebug()<<"Effect: "<<effect;
+    switch (effect)
+    {
+    case 1: {this->addAccelerator(this->boundedRandomizer(0,this->width),this->boundedRandomizer(0,this->height)); qDebug()<<"Accelerator Added";break;}
+    case 2: {this->velocify(this->puck->velocity,1,4,3,11);qDebug()<<"Puck Velocified";break;}
+    case 3: {this->field->setViscosity(this->boundedRandomizer(1,100)*0.001);qDebug()<<"Field Viscosity Changed to: "<<this->field->viscosity;QTimer::singleShot(10000,this,SLOT(restoreFieldViscosity()));break;}
+    case 4: {this->setPuckColor(FIELD_COLOR);qDebug()<<"Puck Invisible";QTimer::singleShot(3000,this,SLOT(setPuckVisible()));break;}
+    case 5: {this->multiplyStrikerWidthOfRandomPlayer(this->randomDoubleOrHalfIt());qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();break;}
+    case 6: {break;}
+    default:
+        break;
+    }
+}
+
+void Game::addAccelerator(qreal x, qreal y)
+{
+    this->accelerators.append(new Accelerator(15,this->signRandomizer()*1500,Qt::SolidPattern,Qt::white,0,0,0,0));
+    this->scene->addItem(this->accelerators.last());
+    this->accelerators.last()->setPos(x,y);
+    this->velocify(this->accelerators.last()->velocity,1,2,2,3);
+    this->accelerators.last()->paintAccelerator();
+    return;
+}
+
+void Game::setPuckColor(Qt::GlobalColor color)
+{
+        this->puck->setColor(color);
+        qDebug()<<"Puck colored";
+        return;
+}
+
+void Game::multiplyStrikerWidthOfRandomPlayer(qreal gain)
+{
+    int player = this->boundedRandomizer(1,2);
+    qDebug()<<"player: "<<player<<" gain: "<<gain<<" 1: "<<this->striker1->rect().width()<<" 2: "<<this->striker2->rect().width();
+    if(player == 1){this->changeStrikerWidth(this->striker1,gain);}
+    else if(player == 2){this->changeStrikerWidth(this->striker2,gain);}
+    return;
+}
+
+qreal Game::randomDoubleOrHalfIt()
+{
+    int dummy = this->boundedRandomizer(1,2);
+    if(dummy == 1){qDebug()<<"gain: "<<0.5;return 0.5;}
+    if(dummy == 2){qDebug()<<"gain: "<<2;return 2;}
+    return 1;
+}
+
+void Game::changeStrikerWidth(Striker *striker, qreal gain)
+{
+    if(gain > 1)
+    {
+        if (striker->rect().width() < this->width/2) //max is width/2
+        {
+            striker->setWidth(striker->rect().width()*gain);
+            return;
+        }
+        else
+        {
+            return;
+        }
+    }
+    else if (gain < 1)
+    {
+        if (striker->rect().width() > this->width/32) //min is width/32
+        {
+            striker->setWidth(striker->rect().width()*gain);
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    return;
+}
+
 
 Game::~Game()
 {
@@ -463,6 +587,7 @@ Game::~Game()
 
 void Game::animate()
 {
+    this->BoxesCollidingWithPuck();
     this->scoreAtGoalCollision();
     this->markGoalAndRestart();
     this->bounceEverything();
@@ -475,10 +600,24 @@ void Game::animate()
 void Game::addBox()
 {
 
-    this->Boxes.append(new Box());
-    this->scene->addItem(this->Boxes.last());
-    this->posify(this->Boxes.last(),0,this->width,0,this->height);
-    this->velocify(this->Boxes.last()->velocity,1,2,2,3);
+    this->boxes.append(new Box());
+    this->scene->addItem(this->boxes.last());
+    this->posify(this->boxes.last(),0+this->boxes.last()->boundingRect().width(),this->width-this->boxes.last()->boundingRect().width(),0+this->boxes.last()->boundingRect().height(),this->height-this->boxes.last()->boundingRect().height());
+    this->velocify(this->boxes.last()->velocity,1,2,2,3);
     return;
 
+}
+
+void Game::setPuckVisible()
+{
+    this->puck->setColor(PUCK_COLOR);
+    qDebug()<<"Puck Visible";
+    return;
+}
+
+void Game::restoreFieldViscosity()
+{
+    this->field->setViscosity(FIELD_VISCOSITY);
+    qDebug()<<"Field Viscosity Restored";
+    return;
 }

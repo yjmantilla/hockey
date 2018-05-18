@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QRandomGenerator>
 #include <QVector>
+#include <QList>
 #include <QtMath>
 #include <time.h>
 
@@ -41,8 +42,8 @@ public:
     Goal * goal1;
     Goal * goal2;
 
-    QVector<Accelerator *> Accelerators;
-    QVector<Box *> Boxes;
+    QVector<Accelerator *> accelerators;
+    QVector<Box *> boxes;
     Wall * wallHU;
     Wall * wallHD;
     Wall * wallVL;
@@ -79,6 +80,7 @@ public:
     double squaredDistanceToPuck(qreal x, qreal y);
     double angleToPuck(qreal x, qreal y);
     int signRandomizer();
+    qreal boundedRandomizer(int min, int max);
     void velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY);
     void posify(QGraphicsItem * item, int minX, int maxX, int minY, int maxY);
     void moveEverything();
@@ -86,12 +88,22 @@ public:
     void bounceFromWalls(QGraphicsItem * item, VectorXY *velocity);
     void bounceFromStrikers(QGraphicsItem * item, VectorXY *velocity);
     void moveItem(QGraphicsItem * item, VectorXY *velocity);
-
+    void deleteBox(Box *box);
+    void deleteAccelerator(Accelerator * accel);
+    void BoxesCollidingWithPuck();
+    void chooseRandomEffect();
+    void addAccelerator(qreal x, qreal y);
+    void setPuckColor(Qt::GlobalColor color);
+    void multiplyStrikerWidthOfRandomPlayer(qreal gain);
+    qreal randomDoubleOrHalfIt();
+    void changeStrikerWidth(Striker * striker, qreal gain);
     ~Game();
 
 public slots:
     void animate();
     void addBox();
+    void setPuckVisible();
+    void restoreFieldViscosity();
 };
 
 #endif // GAME_H

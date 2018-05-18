@@ -2,7 +2,7 @@
 
 Striker::Striker(qreal x, qreal y, qreal width, qreal height, Qt::BrushStyle style, Qt::GlobalColor color)
 {
-    this->velocity = new VectorXY(-3,0);
+    this->velocity = new VectorXY(4,0);
     this->setRect(x,y,width,height);
     this->brush.setColor(color);
     this->brush.setStyle(style);
@@ -18,6 +18,12 @@ void Striker::setRestitution(qreal r)
 qreal Striker::getRestitution()
 {
     return this->restitution;
+}
+
+void Striker::setWidth(qreal width)
+{
+    this->setRect(0,0,width,this->rect().height());
+    return;
 }
 
 Striker::~Striker()
