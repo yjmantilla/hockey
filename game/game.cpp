@@ -431,6 +431,7 @@ void Game::velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY)
 
 void Game::posify(QGraphicsItem *item, int minX, int maxX, int minY, int maxY)
 {    
+    /*This function may be improved by taking into account the bounding rect of the item so that it does not collide with the limits*/
     //item->setPos(this->boundedRandomizer(minX,maxX)*this->signRandomizer(),this->boundedRandomizer(minY,maxY)*this->signRandomizer());
     item->setPos(this->boundedRandomizer(minX,maxX),this->boundedRandomizer(minY,maxY));
     return;
