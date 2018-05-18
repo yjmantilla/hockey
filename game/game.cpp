@@ -15,7 +15,7 @@
 #define PUCK_STOP_XV 0.5
 #define PUCK_STOP_YV 0.5
 #define BOX_SPAWN_TIME 5 //IN SECONDS
-#define ACCELERATOR_SPAWN_TIME 7 //IN SECONDS
+#define ACCELERATOR_SPAWN_TIME 3 //IN SECONDS
 #define REFRESH_TIME 10 //IN MILLISECONDS
 #define ACCELERATOR_RADIUS 15
 #define ACCELERATOR_MASS 3000
@@ -307,10 +307,10 @@ bool Game::isItemOutside(QGraphicsItem * item)
      * (the origin of the scene)" So these coomparisons are relative to the origin of the scene
     */
 
-    if(item->y()<0 - this->boundary){return true;}
-    if(item->y()>this->height + this->boundary){return true;}
-    if(item->x()<0 - this->boundary){return true;}
-    if(item->x()>this->width + this->boundary){return true;}
+    if(item->y()<0 - 2*this->boundary){return true;}
+    if(item->y()>this->height + 2*this->boundary){return true;}
+    if(item->x()<0 - 2*this->boundary){return true;}
+    if(item->x()>this->width + 2*this->boundary){return true;}
     return false;
 }
 
@@ -641,7 +641,8 @@ void Game::chooseRandomEffect()
 
 void Game::addAccelerator(qreal x, qreal y)
 {
-    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,this->signRandomizer()*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
+    /*this is called by the boxes, ill let them only produce attractors*/
+    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,/*this->signRandomizer()**/ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
     this->scene->addItem(this->accelerators.last());
     this->accelerators.last()->setPos(x,y);
     this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
@@ -785,8 +786,11 @@ qreal Game::randomRestitutionForAllPlayers()
 
 void Game::botsify(Striker * striker)
 {
+    if(puck->brush.color()!=FIELD_COLOR) //bots wont see when it is invisible as humans
+    {
     if(striker->pos().x()+striker->rect().width()/2 > this->puck->pos().x() && !striker->collidesWithItem(this->wallVL)){striker->setX(striker->x()-qFabs(striker->velocity->getX()));}
     if(striker->pos().x()+striker->rect().width()/2 < this->puck->pos().x() && !striker->collidesWithItem(this->wallVR)){striker->setX(striker->x()+qFabs(striker->velocity->getX()));}
+    }
     return;
 }
 
@@ -856,7 +860,8 @@ void Game::restoreStrikersRestitution()
 
 void Game::addAccelerator()
 {
-    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,this->signRandomizer()*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
+    //repulsors seem better for gameplay so i will keep spawn of repulsors constant add let boxes do the attractors
+    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,/*this->signRandomizer()**/-1*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
     this->scene->addItem(this->accelerators.last());
     this->posify(this->accelerators.last(),0,this->width,0,this->height);
     this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
