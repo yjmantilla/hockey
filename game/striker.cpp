@@ -26,6 +26,12 @@ void Striker::setWidth(qreal width)
     return;
 }
 
+void Striker::negateVelocity()
+{
+    this->velocity->setX(this->velocity->getX()*-1);
+    return;
+}
+
 Striker::~Striker()
 {
     delete this->velocity;

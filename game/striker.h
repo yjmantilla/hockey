@@ -23,6 +23,7 @@ public:
     void setRestitution(qreal r);
     qreal getRestitution();
     void setWidth(qreal width);
+    void negateVelocity();
     ~Striker();
 };
 

@@ -95,8 +95,15 @@ public:
     void addAccelerator(qreal x, qreal y);
     void setPuckColor(Qt::GlobalColor color);
     void multiplyStrikerWidthOfRandomPlayer(qreal gain);
-    qreal randomDoubleOrHalfIt();
-    void changeStrikerWidth(Striker * striker, qreal gain);
+    qreal random10PercentMoreOrLess();
+    void changeStrikerWidth(Striker * striker, Goal *goal, qreal gain);
+    void multiplyGoalWidthOfRandomPlayer(qreal gain);
+    void changeGoalWidth(Goal * goal, Striker *striker, qreal gain);
+    int generateRandomPlayer();
+    void randomStrikerVelocityForRandomPlayer();
+    void negateRandomPlayerStrikerVelocity();
+    qreal randomRestitutionForAllWalls();
+    qreal randomRestitutionForAllPlayers();
     ~Game();
 
 public slots:
@@ -104,6 +111,8 @@ public slots:
     void addBox();
     void setPuckVisible();
     void restoreFieldViscosity();
+    void restoreWallRestitution();
+    void restoreStrikersRestitution();
 };
 
 #endif // GAME_H
