@@ -11,7 +11,6 @@
 #include <QVector>
 #include <QList>
 #include <QtMath>
-#include <time.h>
 
 #include "puck.h"
 #include "striker.h"
@@ -20,7 +19,8 @@
 #include "field.h"
 #include "accelerator.h"
 #include "box.h"
-
+#include "score.h"
+#include "narrator.h"
 
 class Game : public QWidget
 {
@@ -41,6 +41,9 @@ public:
     Striker * striker2;
     Goal * goal1;
     Goal * goal2;
+    Score * score1;
+    Score * score2;
+    Narrator * narrator;
 
     QVector<Accelerator *> accelerators;
     QVector<Box *> boxes;

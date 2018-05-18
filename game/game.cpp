@@ -7,25 +7,30 @@
 #define MIN_XV_PUCK 3
 #define MAX_XV_PUCK 5
 #define MIN_YV_PUCK 5
-#define MAX_YV_PUCK 11
+#define MAX_YV_PUCK 9
 #define MIN_XV_AandB 1
 #define MAX_XV_AandB 2
 #define MIN_YV_AandB 2
 #define MAX_YV_AandB 3
 #define PUCK_STOP_XV 0.5
 #define PUCK_STOP_YV 0.5
-#define BOX_SPAWN_TIME 3
-#define REFRESH_TIME 10
+#define BOX_SPAWN_TIME 5 //IN SECONDS
+#define REFRESH_TIME 10 //IN MILLISECONDS
 #define ACCELERATOR_RADIUS 15
-#define ACCELERATOR_MASS 1500
+#define ACCELERATOR_MASS 3000
 #define MIN_GOAL_TO_STRIKER_RATIO 3
 #define MIN_STRIKER_VELOCITY 1
 #define MAX_STRIKER_VELOCITY 7
-#define INVISIBLE_PUCK_TIME 3
+#define INVISIBLE_PUCK_TIME 3 //IN SECONDS
 #define VISCOSITY_TIME 10
-#define WALL_RESTITUTION_TIME 7
-#define STRIKER_RESTITUTION_TIME 7
+#define WALL_RESTITUTION_TIME 5 //IN SECONDS
+#define STRIKER_RESTITUTION_TIME 5 //IN SECONDS
 #define PUCK_RADIUS 10
+#define WALL_COLOR Qt::yellow
+#define STRIKER1_COLOR Qt::cyan
+#define STRIKER2_COLOR Qt::magenta
+#define NARRATOR_COLOR Qt::yellow
+
 Game::Game(QWidget *parent, qreal width, qreal height)
     : QWidget(parent)
 {
@@ -48,15 +53,18 @@ Game::Game(QWidget *parent, qreal width, qreal height)
 
     /*We want the puck with the same item coordinate origin as the scene to be able to track its position*/
     this->puck = new Puck(PUCK_RADIUS,Qt::SolidPattern,PUCK_COLOR,0,0);
-    this->striker1 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,Qt::cyan);
-    this->striker2 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,Qt::magenta);
-    this->wallHU = new Wall(0,0,this->width,0,Qt::yellow);
-    this->wallHD = new Wall(0,this->height,this->width,this->height,Qt::yellow);
-    this->wallVL = new Wall(0,0,0,this->height,Qt::yellow);
-    this->wallVR = new Wall(this->width,0,this->width,this->height,Qt::yellow);
-    this->goal1 = new Goal(this->width/2,this->height,2*this->width/5,Qt::black);
-    this->goal2 = new Goal(this->width/2,0,2*this->width/5,Qt::black);
+    this->striker1 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,STRIKER1_COLOR);
+    this->striker2 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,STRIKER2_COLOR);
+    this->wallHU = new Wall(0,0,this->width,0,WALL_COLOR);
+    this->wallHD = new Wall(0,this->height,this->width,this->height,WALL_COLOR);
+    this->wallVL = new Wall(0,0,0,this->height,WALL_COLOR);
+    this->wallVR = new Wall(this->width,0,this->width,this->height,WALL_COLOR);
+    this->goal1 = new Goal(this->width/2,this->height,2*this->width/5,FIELD_COLOR);
+    this->goal2 = new Goal(this->width/2,0,2*this->width/5,FIELD_COLOR);
     this->field = new Field(FIELD_VISCOSITY);
+    this->score1 = new Score(0,this->striker1);
+    this->score2 = new Score(0,this->striker2);
+    this->narrator = new Narrator(NARRATOR_COLOR);
 
 
 
@@ -71,6 +79,9 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->scene->addItem(this->wallVR);
     this->scene->addItem(this->goal1);
     this->scene->addItem(this->goal2);
+    this->scene->addItem(this->score1);
+    this->scene->addItem(this->score2);
+    this->scene->addItem(this->narrator);
 
 
     /*Center Puck*/
@@ -81,9 +92,13 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     //set low x velocity for it to be more frontal
     this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
 
-    /*Set Striker Position for each player*/
+    /*Set Striker,Scores Positions for each player*/
     this->striker1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height());
     this->striker2->setPos(this->scene->width()/2,0);
+    this->score1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height()+25);
+    this->score2->setPos(this->scene->width()/2,0-25);
+
+    this->narrator->setPos(this->width/2,this->height/2);
 
     /*Initialize move booleans of players*/
     this->moveR1=false;
@@ -167,12 +182,13 @@ void Game::mousePressEvent(QMouseEvent *event)
 
     //Accelerators Test
 
-    /*
+
     this->addAccelerator(event->x(),event->y());
-    */
+
 
     /*Random Effect Test*/
-    this->chooseRandomEffect();
+
+    //this->chooseRandomEffect();
 
     /*Striker and Goal size Test*/
     //this->multiplyStrikerWidthOfRandomPlayer(this->randomDoubleOrHalfIt());qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();
@@ -342,6 +358,9 @@ void Game::markGoalAndRestart()
         this->centerPuck();
         this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
         /*Put here score register*/
+        /*We increase the score of the other player*/
+        if(this->goalAt1){this->score2->increase();}
+        if(this->goalAt2){this->score1->increase();}
         this->goalAt1=false;
         this->goalAt2=false;
     }
@@ -407,7 +426,8 @@ void Game::velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY)
 
 void Game::posify(QGraphicsItem *item, int minX, int maxX, int minY, int maxY)
 {    
-    item->setPos(this->boundedRandomizer(minX,maxX)*this->signRandomizer(),this->boundedRandomizer(minY,maxY)*this->signRandomizer());
+    //item->setPos(this->boundedRandomizer(minX,maxX)*this->signRandomizer(),this->boundedRandomizer(minY,maxY)*this->signRandomizer());
+    item->setPos(this->boundedRandomizer(minX,maxX),this->boundedRandomizer(minY,maxY));
     return;
 }
 
@@ -529,21 +549,87 @@ void Game::chooseRandomEffect()
 {
     int effect = this->boundedRandomizer(1,10);
     qDebug()<<"Effect: "<<effect;
+    QString comment;
     switch (effect)
     {
-    case 1: {this->addAccelerator(this->boundedRandomizer(0,this->width),this->boundedRandomizer(0,this->height)); qDebug()<<"Accelerator Added";break;}
-    case 2: {this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);qDebug()<<"Puck Velocified";break;}
-    case 3: {this->field->setViscosity(this->boundedRandomizer(1,100)*0.001);qDebug()<<"Field Viscosity Changed to: "<<this->field->viscosity;QTimer::singleShot(VISCOSITY_TIME*1000,this,SLOT(restoreFieldViscosity()));break;}
-    case 4: {this->setPuckColor(FIELD_COLOR);qDebug()<<"Puck Invisible";QTimer::singleShot(INVISIBLE_PUCK_TIME *1000,this,SLOT(setPuckVisible()));break;}
-    case 5: {this->multiplyStrikerWidthOfRandomPlayer(this->random10PercentMoreOrLess());qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();break;}
-    case 6: {this->multiplyGoalWidthOfRandomPlayer(this->random10PercentMoreOrLess());qDebug()<<"Random Goal Width Changed";break;}
-    case 7: {this->randomStrikerVelocityForRandomPlayer();qDebug()<<"Random Striker Velocity For Random Player";break;}
-    case 8: {this->negateRandomPlayerStrikerVelocity();qDebug()<<"Negate Striker Velocity for Random Player";break;}
-    case 9: {qreal r = this->randomRestitutionForAllWalls();qDebug()<<"Walls with restitution of "<<r<<" for "<<WALL_RESTITUTION_TIME<<" seconds";QTimer::singleShot(WALL_RESTITUTION_TIME*1000,this,SLOT(restoreWallRestitution()));break;}
-    case 10: {qreal r = this->randomRestitutionForAllPlayers();qDebug()<<"Strikers with restitution of "<<r<<" for "<<STRIKER_RESTITUTION_TIME<<" seconds";QTimer::singleShot(STRIKER_RESTITUTION_TIME*1000,this,SLOT(restoreStrikersRestitution()));}
-
+    case 1:
+    {
+        this->addAccelerator(this->boundedRandomizer(0,this->width),this->boundedRandomizer(0,this->height));
+        comment = QString("Accelerator Added");
+        this->narrator->narrate(comment);
+        break;
+    }
+    case 2:
+    {
+        this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
+        comment = QString("Puck Velocified");
+        this->narrator->narrate(comment);
+        break;
+    }
+    case 3:
+    {
+        this->field->setViscosity(this->boundedRandomizer(1,100)*0.001);
+        comment = QString("Field Viscosity Changed to: ") + QString::number(this->field->viscosity);
+        this->narrator->narrate(comment);
+        QTimer::singleShot(VISCOSITY_TIME*1000,this,SLOT(restoreFieldViscosity()));
+        break;
+    }
+    case 4:
+    {
+        this->setPuckColor(FIELD_COLOR);//Qt::transparent? What if pucl is over somethinf else?
+        comment = QString("Puck Invisible");
+        this->narrator->narrate(comment);
+        QTimer::singleShot(INVISIBLE_PUCK_TIME *1000,this,SLOT(setPuckVisible()));
+        break;
+    }
+    case 5:
+    {
+        this->multiplyStrikerWidthOfRandomPlayer(this->random10PercentMoreOrLess());
+        //qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();
+        comment = QString("Random Striker Width Changed (if possible)");
+        this->narrator->narrate(comment);
+        break;
+    }
+    case 6:
+    {
+        this->multiplyGoalWidthOfRandomPlayer(this->random10PercentMoreOrLess());
+        comment = QString("Random Goal Width Changed");
+        this->narrator->narrate(comment);
+        break;
+    }
+    case 7:
+    {
+        this->randomStrikerVelocityForRandomPlayer();
+        comment = QString("Random Striker Velocity For Random Player");
+        this->narrator->narrate(comment);
+        break;
+    }
+    case 8:
+    {
+        this->negateRandomPlayerStrikerVelocity();
+        comment = QString("Negate Striker Velocity for Random Player");
+        this->narrator->narrate(comment);
+        break;
+    }
+    case 9:
+    {
+        qreal r = this->randomRestitutionForAllWalls();
+        comment = QString("Walls with restitution of ") + QString::number(r)+QString(" for ")+QString::number(WALL_RESTITUTION_TIME)+QString(" seconds");
+        this->narrator->narrate(comment);
+        QTimer::singleShot(WALL_RESTITUTION_TIME*1000,this,SLOT(restoreWallRestitution()));
+        break;
+    }
+    case 10:
+    {
+        qreal r = this->randomRestitutionForAllPlayers();
+        comment = QString("Strikers with restitution of ") + QString::number(r)+QString(" for ") + QString::number(STRIKER_RESTITUTION_TIME) + QString(" seconds");
+        this->narrator->narrate(comment);
+        QTimer::singleShot(STRIKER_RESTITUTION_TIME*1000,this,SLOT(restoreStrikersRestitution()));
+        break;
+    }
 
     default:
+        this->narrator->narrate("Why are you here?");
         break;
     }
 }
@@ -724,14 +810,14 @@ void Game::addBox()
 void Game::setPuckVisible()
 {
     this->puck->setColor(PUCK_COLOR);
-    qDebug()<<"Puck Visible";
+    this->narrator->narrate(QString("Puck Visible"));
     return;
 }
 
 void Game::restoreFieldViscosity()
 {
     this->field->setViscosity(FIELD_VISCOSITY);
-    qDebug()<<"Field Viscosity Restored";
+    this->narrator->narrate(QString("Field Viscosity Restored"));
     return;
 }
 
@@ -741,6 +827,7 @@ void Game::restoreWallRestitution()
     this->wallHU->setRestitution(1);
     this->wallVL->setRestitution(1);
     this->wallVR->setRestitution(1);
+    this->narrator->narrate(QString("Walls Restitution Restored"));
     return;
 }
 
@@ -748,5 +835,6 @@ void Game::restoreStrikersRestitution()
 {
     this->striker1->setRestitution(1);
     this->striker2->setRestitution(1);
+    this->narrator->narrate(QString("Strikers Restitution Restored"));
     return;
 }

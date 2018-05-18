@@ -9,6 +9,8 @@ INPUT(
 ./debug\accelerator.o
 ./debug\box.o
 ./debug\vectorxy.o
+./debug\score.o
+./debug\narrator.o
 ./debug\qrc_images.o
 ./debug\moc_game.o
 ./debug\moc_striker.o

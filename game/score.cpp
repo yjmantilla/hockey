@@ -1,0 +1,26 @@
+#include "score.h"
+#include <QFont>
+
+Score::Score(QGraphicsItem * parent, Striker * striker):QGraphicsTextItem(parent)
+{
+    //initialize score to 0
+    this->score =0;
+
+    //draw the text
+
+    this->setPlainText(/*QString("Score: ") + */QString::number(this->score));//Score: 0
+    this->setDefaultTextColor(striker->brush.color());
+    this->setFont(QFont("times",16));
+}
+
+void Score::increase()
+{
+    this->score++;
+    //update indicator
+    this->setPlainText(/*QString("Score: ") + */QString::number(this->score));
+}
+
+int Score::getScore()
+{
+    return this->score;
+}

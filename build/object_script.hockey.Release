@@ -9,6 +9,8 @@ INPUT(
 ./release\accelerator.o
 ./release\box.o
 ./release\vectorxy.o
+./release\score.o
+./release\narrator.o
 ./release\qrc_images.o
 ./release\moc_game.o
 ./release\moc_striker.o

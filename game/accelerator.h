@@ -11,7 +11,6 @@
  * Negative Mass would indicate a repulsor, positive an attractor.
  * Color could indicate wether it attracts or repulses
  */
-
 class Accelerator:public QGraphicsEllipseItem
 {
 public:

@@ -33,7 +33,9 @@ SOURCES += \
     field.cpp \
     accelerator.cpp \
     box.cpp \
-    vectorxy.cpp
+    vectorxy.cpp \
+    score.cpp \
+    narrator.cpp
 
 HEADERS += \
     game.h \
@@ -44,7 +46,9 @@ HEADERS += \
     field.h \
     accelerator.h \
     box.h \
-    vectorxy.h
+    vectorxy.h \
+    score.h \
+    narrator.h
 
 RESOURCES += \
     images.qrc
