@@ -64,6 +64,7 @@ public:
 
     QTimer * motionTimer;
     QTimer * boxTimer;
+    QTimer * acceleratorTimer;
 
     Game(QWidget *parent = 0, qreal width=900, qreal height=600);
     void keyPressEvent(QKeyEvent *event);
@@ -90,7 +91,7 @@ public:
     void bounceEverything();
     void bounceFromWalls(QGraphicsItem * item, VectorXY *velocity);
     void bounceFromStrikers(QGraphicsItem * item, VectorXY *velocity);
-    void moveItem(QGraphicsItem * item, VectorXY *velocity);
+    void moveItem(QGraphicsItem * item, VectorXY *velocity);    
     void deleteBox(Box *box);
     void deleteAccelerator(Accelerator * accel);
     void BoxesCollidingWithPuck();
@@ -107,6 +108,7 @@ public:
     void negateRandomPlayerStrikerVelocity();
     qreal randomRestitutionForAllWalls();
     qreal randomRestitutionForAllPlayers();
+    void botsify(Striker * striker);
     ~Game();
 
 public slots:
@@ -116,6 +118,8 @@ public slots:
     void restoreFieldViscosity();
     void restoreWallRestitution();
     void restoreStrikersRestitution();
+    void addAccelerator(); //overload
+
 };
 
 #endif // GAME_H

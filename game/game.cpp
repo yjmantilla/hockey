@@ -15,6 +15,7 @@
 #define PUCK_STOP_XV 0.5
 #define PUCK_STOP_YV 0.5
 #define BOX_SPAWN_TIME 5 //IN SECONDS
+#define ACCELERATOR_SPAWN_TIME 7 //IN SECONDS
 #define REFRESH_TIME 10 //IN MILLISECONDS
 #define ACCELERATOR_RADIUS 15
 #define ACCELERATOR_MASS 3000
@@ -110,9 +111,13 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     this->motionTimer = new QTimer();
     connect(this->motionTimer,SIGNAL(timeout()),this,SLOT(animate()));
 
-    /*Add Boxes*/
+    /*Add Boxes and Accelerator*/
     this->boxTimer = new QTimer();
     connect(this->boxTimer,SIGNAL(timeout()),this,SLOT(addBox()));
+
+    this->acceleratorTimer = new QTimer();
+    connect(this->acceleratorTimer,SIGNAL(timeout()),this,SLOT(addAccelerator()));
+
     /*Show Game*/
 
     this->view->show();
@@ -120,7 +125,7 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     /*Start Timers*/
     this->motionTimer->start(REFRESH_TIME);
     this->boxTimer->start(1000 * BOX_SPAWN_TIME);
-
+    this->acceleratorTimer->start(1000 * ACCELERATOR_SPAWN_TIME);
 
 }
 
@@ -359,8 +364,8 @@ void Game::markGoalAndRestart()
         this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
         /*Put here score register*/
         /*We increase the score of the other player*/
-        if(this->goalAt1){this->score2->increase();}
-        if(this->goalAt2){this->score1->increase();}
+        if(this->goalAt1){this->score2->increase();this->changeGoalWidth(this->goal2,this->striker2,1.1);this->changeGoalWidth(this->goal1,this->striker1,0.9);}
+        if(this->goalAt2){this->score1->increase();this->changeGoalWidth(this->goal1,this->striker1,1.1);this->changeGoalWidth(this->goal2,this->striker2,0.9);}
         this->goalAt1=false;
         this->goalAt2=false;
     }
@@ -778,6 +783,13 @@ qreal Game::randomRestitutionForAllPlayers()
     return 1+r;
 }
 
+void Game::botsify(Striker * striker)
+{
+    if(striker->pos().x()+striker->rect().width()/2 > this->puck->pos().x() && !striker->collidesWithItem(this->wallVL)){striker->setX(striker->x()-qFabs(striker->velocity->getX()));}
+    if(striker->pos().x()+striker->rect().width()/2 < this->puck->pos().x() && !striker->collidesWithItem(this->wallVR)){striker->setX(striker->x()+qFabs(striker->velocity->getX()));}
+    return;
+}
+
 
 Game::~Game()
 {
@@ -786,6 +798,8 @@ Game::~Game()
 
 void Game::animate()
 {
+    this->botsify(this->striker2);
+    this->botsify(this->striker1);
     this->BoxesCollidingWithPuck();
     this->scoreAtGoalCollision();
     this->markGoalAndRestart();
@@ -803,6 +817,7 @@ void Game::addBox()
     this->scene->addItem(this->boxes.last());
     this->posify(this->boxes.last(),0+this->boxes.last()->boundingRect().width(),this->width-this->boxes.last()->boundingRect().width(),0+this->boxes.last()->boundingRect().height(),this->height-this->boxes.last()->boundingRect().height());
     this->velocify(this->boxes.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
+
     return;
 
 }
@@ -836,5 +851,15 @@ void Game::restoreStrikersRestitution()
     this->striker1->setRestitution(1);
     this->striker2->setRestitution(1);
     this->narrator->narrate(QString("Strikers Restitution Restored"));
+    return;
+}
+
+void Game::addAccelerator()
+{
+    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,this->signRandomizer()*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
+    this->scene->addItem(this->accelerators.last());
+    this->posify(this->accelerators.last(),0,this->width,0,this->height);
+    this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
+    this->accelerators.last()->paintAccelerator();
     return;
 }
