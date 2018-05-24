@@ -9,7 +9,7 @@ class Puck: public QGraphicsEllipseItem
 {
 
 public:
-    double radius;
+    qreal radius;
 
     QBrush brush;
 
