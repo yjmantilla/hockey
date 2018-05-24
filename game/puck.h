@@ -5,7 +5,7 @@
 #include <QBrush>
 #include "vectorxy.h"
 
-class Puck: public QObject,public QGraphicsEllipseItem
+class Puck: public QGraphicsEllipseItem
 {
 
 public:
