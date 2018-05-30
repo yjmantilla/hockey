@@ -837,7 +837,9 @@ bool Game::whereIsTheDamnPuckAskedTheBot(Striker *striker)
     if(striker->pos().x()+striker->rect().width()/2 < this->puck->pos().x()){return true;}//right
     }
 
-    return false; //this shouldnt be reached never though
+    return false; //this shouldnt be reached ever though
+
+    //also bots could only move within the goal width, but that just complicates the matter
 }
 
 void Game::saveGame(QString filename)
