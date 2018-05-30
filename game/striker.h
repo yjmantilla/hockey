@@ -19,7 +19,7 @@ public:
     QBrush brush;
 
     Striker();
-    Striker(qreal x, qreal y, qreal width, qreal height, Qt::BrushStyle style, Qt::GlobalColor color);
+    Striker(qreal x, qreal y, qreal width, qreal height, qreal vel,Qt::BrushStyle style, Qt::GlobalColor color);
     void setRestitution(qreal r);
     qreal getRestitution();
     void setWidth(qreal width);

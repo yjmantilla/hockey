@@ -4,23 +4,26 @@
 #define FIELD_VISCOSITY 0.001
 #define FIELD_COLOR Qt::black
 #define PUCK_COLOR Qt::green
+#define MAX_D 30
+#define MAX_V 30
+#define MAX_A 50
 #define MIN_XV_PUCK 3
 #define MAX_XV_PUCK 5
-#define MIN_YV_PUCK 5
-#define MAX_YV_PUCK 9
-#define MIN_XV_AandB 1
-#define MAX_XV_AandB 2
-#define MIN_YV_AandB 2
-#define MAX_YV_AandB 3
+#define MIN_YV_PUCK 3
+#define MAX_YV_PUCK 11
+#define MIN_XV_AandB 3
+#define MAX_XV_AandB 7
+#define MIN_YV_AandB 3
+#define MAX_YV_AandB 7
 #define PUCK_STOP_XV 0.5
 #define PUCK_STOP_YV 0.5
 #define BOX_SPAWN_TIME 5 //IN SECONDS
 #define ACCELERATOR_SPAWN_TIME 3 //IN SECONDS
-#define REFRESH_TIME 1 //IN MILLISECONDS
+#define REFRESH_TIME 2 //IN MILLISECONDS
 #define ACCELERATOR_RADIUS 20
-#define ACCELERATOR_MASS 7000
+#define ACCELERATOR_MASS 10000
 #define MIN_GOAL_TO_STRIKER_RATIO 3
-#define MIN_STRIKER_VELOCITY 4
+#define MIN_STRIKER_VELOCITY 7
 #define MAX_STRIKER_VELOCITY 14
 #define INVISIBLE_PUCK_TIME 3 //IN SECONDS
 #define VISCOSITY_TIME 10
@@ -32,7 +35,8 @@
 #define STRIKER2_COLOR Qt::magenta
 #define NARRATOR_COLOR Qt::yellow
 #define HUMAN_REACTION_TIME 250
-Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load)
+#define BASE_RESTITUTION 1
+Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load, bool bot1, qreal bot1level,bool bot2,qreal bot2level, qint32 maxScore)
     : QWidget(parent)
 {
 
@@ -54,8 +58,8 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
 
     /*We want the puck with the same item coordinate origin as the scene to be able to track its position*/
     this->puck = new Puck(PUCK_RADIUS,Qt::SolidPattern,PUCK_COLOR,0,0);
-    this->striker1 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,STRIKER1_COLOR);
-    this->striker2 = new Striker(0,0,this->width/8,this->height/50,Qt::SolidPattern,STRIKER2_COLOR);
+    this->striker1 = new Striker(0,0,this->width/8,this->height/50,(MIN_STRIKER_VELOCITY + MAX_STRIKER_VELOCITY)/2,Qt::SolidPattern,STRIKER1_COLOR);
+    this->striker2 = new Striker(0,0,this->width/8,this->height/50,(MIN_STRIKER_VELOCITY + MAX_STRIKER_VELOCITY)/2,Qt::SolidPattern,STRIKER2_COLOR);
     this->wallHU = new Wall(0,0,this->width,0,WALL_COLOR);
     this->wallHD = new Wall(0,this->height,this->width,this->height,WALL_COLOR);
     this->wallVL = new Wall(0,0,0,this->height,WALL_COLOR);
@@ -66,6 +70,7 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->score1 = new Score(0,this->striker1);
     this->score2 = new Score(0,this->striker2);
     this->narrator = new Narrator(NARRATOR_COLOR);
+    this->maxScore = maxScore;
 
 
 
@@ -141,6 +146,14 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     {
         this->loadGame(filename);
     }
+
+    /*Set bots*/
+
+    this->bot1 = bot1;
+    this->bot1Level = bot1level;
+    this->bot2 = bot2;
+    this->bot2Level = bot2level;
+
 
 }
 
@@ -300,9 +313,11 @@ void Game::moveStrikers()
 
 void Game::movePuck()
 {
-    this->updatePuckVelocity();
     this->updatePuckPosition();
+
     this->updatePuckAcceleration();
+
+    this->updatePuckVelocity();
     //qDebug() << "x:"<<this->puck->velocity->getX();
     //qDebug() << "y:"<<this->puck->velocity->getY();
     if(this->didThePuckStop(PUCK_STOP_XV,PUCK_STOP_YV)){this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);}
@@ -313,9 +328,20 @@ void Game::movePuck()
 }
 
 void Game::updatePuckPosition()
-{
-    this->puck->setX(this->puck->x()+this->puck->velocity->getX()*this->timeStep+0.5*this->puck->acceleration->getX()*this->timeStep*this->timeStep);
-    this->puck->setY(this->puck->y()+this->puck->velocity->getY()*this->timeStep+0.5*this->puck->acceleration->getY()*this->timeStep*this->timeStep);
+{    
+    qreal dpx = this->puck->velocity->getX()*this->timeStep+0.5*this->puck->acceleration->getX()*this->timeStep*this->timeStep;
+    qreal dpy = this->puck->velocity->getY()*this->timeStep+0.5*this->puck->acceleration->getY()*this->timeStep*this->timeStep;
+
+    //if(qFabs(dpx) < MAX_D)
+    {
+        this->puck->setX(this->puck->x()+dpx);
+    }
+
+    //if(qFabs(dpy) < MAX_D)
+    {
+        this->puck->setY(this->puck->y()+dpy);
+    }
+
     return;
 }
 
@@ -370,6 +396,17 @@ void Game::updatePuckAcceleration()
         this->puck->acceleration->setY(this->puck->acceleration->getY() + dummyAcceleration*sin(dummyAngle));
     }
 
+    /*Note, if below is activated and also we deactivate the deletion of accelerators by touch then we can get planet-like accelerators that the puck will stick to, sadly the game is too easy with them*/
+//    if(qFabs(this->puck->acceleration->getX()) > MAX_A)
+//    {
+//        this->puck->acceleration->setX(getSign(this->puck->acceleration->getX())*MAX_A);
+//    }
+
+//    if(qFabs(this->puck->acceleration->getY()) > MAX_A)
+//    {
+//        this->puck->acceleration->setY(getSign(this->puck->acceleration->getY())*MAX_A);
+//    }
+
     //qDebug()<<"xA:"<<this->puck->acceleration->getX();
     //qDebug()<<"yA:"<<this->puck->acceleration->getY();
     return;
@@ -398,8 +435,25 @@ void Game::markGoalAndRestart()
         /*We increase the score of the other player*/
         if(this->goalAt1){this->score2->increase();this->changeGoalWidth(this->goal2,this->striker2,1.1);this->changeGoalWidth(this->goal1,this->striker1,0.9);}
         if(this->goalAt2){this->score1->increase();this->changeGoalWidth(this->goal1,this->striker1,1.1);this->changeGoalWidth(this->goal2,this->striker2,0.9);}
+
+
         this->goalAt1=false;
         this->goalAt2=false;
+
+        if(this->score1->getScore() >= this->maxScore)
+        {
+            this->narrator->narrate("PLAYER 1 WINS!");
+            this->pause = true;
+
+        }
+
+        if(this->score2->getScore() >= this->maxScore)
+        {
+            this->narrator->narrate("PLAYER 2 WINS!");
+            this->pause = true;
+        }
+
+
     }
 
     return;
@@ -428,7 +482,7 @@ double Game::angleToPuck(qreal x, qreal y)
     return qAtan2(y - this->puck->y(),x-this->puck->x());
 }
 
-int Game::signRandomizer()
+qint32 Game::signRandomizer()
 {
     int dummy;
 
@@ -443,6 +497,19 @@ int Game::signRandomizer()
     //qDebug()<<dummy;
     return dummy;
 
+}
+
+qint32 Game::getSign(qreal number)
+{
+    if(number >= 0)
+    {
+        return 1;
+    }
+
+    else
+    {
+        return -1;
+    }
 }
 
 qreal Game::boundedRandomizer(int min, int max)
@@ -532,17 +599,40 @@ void Game::bounceEverything()
 
 void Game::bounceFromWalls(QGraphicsItem *item, VectorXY * velocity)
 {
-    if(item->collidesWithItem(this->wallHD)&&!item->collidesWithItem(this->goal1)){velocity->setY(-1*velocity->getY()*this->wallHD->getRestitution());}
-    if(item->collidesWithItem(this->wallHU)&&!item->collidesWithItem(this->goal2)){velocity->setY(-1*velocity->getY()*this->wallHU->getRestitution());}
-    if(item->collidesWithItem(this->wallVL)){velocity->setX(-1*velocity->getX()*this->wallVL->getRestitution());}
-    if(item->collidesWithItem(this->wallVR)){velocity->setX(-1*velocity->getX()*this->wallVR->getRestitution());}
+    if( item->collidesWithItem(this->wallHD) && !item->collidesWithItem(this->goal1) && velocity->getY() > 0)
+    {
+        velocity->setY(-1*velocity->getY()*this->wallHD->getRestitution());
+    }
+
+    if( item->collidesWithItem(this->wallHU) && !item->collidesWithItem(this->goal2) && velocity->getY() < 0)
+    {
+        velocity->setY(-1*velocity->getY()*this->wallHU->getRestitution());
+    }
+
+    if( item->collidesWithItem(this->wallVL) && velocity->getX() < 0 )
+    {
+        velocity->setX(-1*velocity->getX()*this->wallVL->getRestitution());
+    }
+
+    if( item->collidesWithItem(this->wallVR) && velocity->getX() > 0 )
+    {
+        velocity->setX(-1*velocity->getX()*this->wallVR->getRestitution());
+    }
+
     return;
 }
 
 void Game::bounceFromStrikers(QGraphicsItem *item, VectorXY *velocity)
 {
-    if(item->collidesWithItem(this->striker1)){velocity->setY(-1*velocity->getY()*this->striker1->getRestitution());}
-    if(item->collidesWithItem(this->striker2)){velocity->setY(-1*velocity->getY()*this->striker2->getRestitution());}
+    if(item->collidesWithItem(this->striker1) && velocity->getY() > 0)
+    {
+        velocity->setY(-1*velocity->getY()*this->striker1->getRestitution());
+    }
+
+    if(item->collidesWithItem(this->striker2) && velocity->getY() < 0)
+    {
+        velocity->setY(-1*velocity->getY()*this->striker2->getRestitution());
+    }
     return;
 
 }
@@ -570,7 +660,7 @@ void Game::deleteAccelerator(Accelerator *accel)
     return;
 }
 
-void Game::BoxesCollidingWithPuck()
+void Game::boxesCollidingWithPuck()
 {
     for (int i = 0, n = this->puck->collidingItems().size();i < n;i++)
     {
@@ -580,6 +670,20 @@ void Game::BoxesCollidingWithPuck()
             this->deleteBox((Box *)(this->puck->collidingItems().at(i)));
             qDebug()<<"Box Deleted by Touch";
             this->chooseRandomEffect();
+            return;
+        }
+    }
+}
+
+void Game::attractorsCollidingWithPuck()
+{
+    for (int i = 0, n = this->puck->collidingItems().size();i < n;i++)
+    {
+        if(typeid (*(this->puck->collidingItems().at(i)))==typeid(Accelerator))
+        {
+            this->accelerators.removeOne((Accelerator *) (this->puck->collidingItems().at(i)));
+            this->deleteAccelerator((Accelerator *) (this->puck->collidingItems().at(i)));
+            qDebug()<<"Accelerator Deleted by Touch";
             return;
         }
     }
@@ -677,7 +781,7 @@ void Game::chooseRandomEffect()
 void Game::addAccelerator(qreal x, qreal y)
 {
     /*this is called by the boxes, ill let them only produce attractors*/
-    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,/*this->signRandomizer()**/ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
+    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,this->signRandomizer()*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
     this->scene->addItem(this->accelerators.last());
     this->accelerators.last()->setPos(x,y);
     this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
@@ -804,19 +908,19 @@ void Game::negateRandomPlayerStrikerVelocity()
 qreal Game::randomRestitutionForAllWalls()
 {
     qreal r = this->boundedRandomizer(1,10)*0.1;
-    this->wallHD->setRestitution(1+r);
-    this->wallHU->setRestitution(1+r);
-    this->wallVL->setRestitution(1+r);
-    this->wallVR->setRestitution(1+r);
-    return 1+r;
+    this->wallHD->setRestitution(BASE_RESTITUTION+r);
+    this->wallHU->setRestitution(BASE_RESTITUTION+r);
+    this->wallVL->setRestitution(BASE_RESTITUTION+r);
+    this->wallVR->setRestitution(BASE_RESTITUTION+r);
+    return BASE_RESTITUTION+r;
 }
 
 qreal Game::randomRestitutionForAllPlayers()
 {
     qreal r = this->boundedRandomizer(1,10)*0.1;
-    this->striker1->setRestitution(1+r);
-    this->striker2->setRestitution(1+r);
-    return 1+r;
+    this->striker1->setRestitution(BASE_RESTITUTION+r);
+    this->striker2->setRestitution(BASE_RESTITUTION+r);
+    return BASE_RESTITUTION+r;
 }
 
 void Game::botsify(Striker * striker, bool dir)
@@ -849,13 +953,12 @@ void Game::saveGame(QString filename)
 
     QFile file(filename);
 
-    qDebug()<<"what";
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {qDebug()<< "error saving";return;}
 
     qDebug() << "saving data:";
 
     QTextStream out(&file);
-    out << "GAME," << this->width << "," << this->height << "," << this->bot1 << "," << this->bot1Level << "," << this->bot2 << "," << this->bot2Level << "," << this->pause << "\n";
+    out << "GAME," << this->width << "," << this->height << "," << this->bot1 << "," << this->bot1Level << "," << this->bot2 << "," << this->bot2Level << "," << this->pause << ","<< this->maxScore<<"\n";
     out << "PUCK," << this->puck->x() << "," << this->puck->y() << "," << this->puck->velocity->getX() << "," << this->puck->velocity->getY() << "," << this->puck->acceleration->getX() << "," << this->puck->acceleration->getY() << "," << this->puck->radius << "\n";
     out << "STRIKER1," << this->striker1->x() << "," << this->striker1->y() << "," << this->striker1->velocity->getX() << "," << this->striker1->velocity->getY() << "," << this->striker1->rect().width() << "\n";
     out << "STRIKER2," << this->striker2->x() << "," << this->striker2->y() << "," << this->striker2->velocity->getX() << "," << this->striker2->velocity->getY() << "," << this->striker2->rect().width() << "\n";
@@ -936,6 +1039,7 @@ void Game::loadGame(QString filename)
                 bool bot2 = data.at(i).section(",",5,5).toInt();
                 qreal bot2level = data.at(i).section(",",6,6).toFloat();
                 bool pause = data.at(i).section(",",7,7).toInt();
+                qint32 maxScore = data.at(i).section(",",8,8).toInt();
 
                 this->width = width;
                 this->height = height;
@@ -944,6 +1048,7 @@ void Game::loadGame(QString filename)
                 this->bot2 = bot2;
                 this->bot2Level = bot2level;
                 this->pause = pause;
+                this->maxScore = maxScore;
             }
 
             else if(data.at(i).contains("PUCK"))
@@ -1094,7 +1199,8 @@ void Game::animate()
             this->botsify(this->striker2,this->bot2Dir);
         }
 
-        this->BoxesCollidingWithPuck();
+        this->boxesCollidingWithPuck();
+        this->attractorsCollidingWithPuck();
         this->scoreAtGoalCollision();
         this->markGoalAndRestart();
         this->bounceEverything();
@@ -1156,7 +1262,7 @@ void Game::addAccelerator()
     //repulsors seem better for gameplay so i will keep spawn of repulsors constant add let boxes do the attractors
     if(!this->pause)
     {
-        this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,/*this->signRandomizer()**/-1*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
+        this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,this->signRandomizer()*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
         this->scene->addItem(this->accelerators.last());
         this->posify(this->accelerators.last(),0,this->width,0,this->height);
         this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);

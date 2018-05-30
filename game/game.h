@@ -36,6 +36,7 @@ public:
     qreal height;
     qreal timeStep=0.1;
     qreal boundary=100;
+    qint32 maxScore;
 
     Puck * puck;
     Striker * striker1;
@@ -81,7 +82,7 @@ public:
 
     /*A lot of the methods that involve other classes could be implemented in those classes, this might done later*/
 
-    Game(QWidget *parent = 0, qreal width=900, qreal height=600, QString filename = "", bool load = false);
+    Game(QWidget *parent = 0, qreal width=900, qreal height=600, QString filename = "", bool load = false, bool bot1=false, qreal bot1level = 1, bool bot2 = true,qreal bot2level=1, qint32 maxScore=21);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -98,7 +99,8 @@ public:
     bool didThePuckStop(qreal minX, qreal minY);
     double squaredDistanceToPuck(qreal x, qreal y);
     double angleToPuck(qreal x, qreal y);
-    int signRandomizer();
+    qint32 signRandomizer();
+    qint32 getSign(qreal number);
     qreal boundedRandomizer(int min, int max);
     void velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY);
     void posify(QGraphicsItem * item, int minX, int maxX, int minY, int maxY);
@@ -109,7 +111,8 @@ public:
     void moveItem(QGraphicsItem * item, VectorXY *velocity);    
     void deleteBox(Box *box);
     void deleteAccelerator(Accelerator * accel);
-    void BoxesCollidingWithPuck();
+    void boxesCollidingWithPuck();
+    void attractorsCollidingWithPuck();
     void chooseRandomEffect();
     void addAccelerator(qreal x, qreal y);
     void setPuckColor(Qt::GlobalColor color);

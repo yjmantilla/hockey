@@ -1,8 +1,8 @@
 #include "striker.h"
 
-Striker::Striker(qreal x, qreal y, qreal width, qreal height, Qt::BrushStyle style, Qt::GlobalColor color)
+Striker::Striker(qreal x, qreal y, qreal width, qreal height, qreal vel,Qt::BrushStyle style, Qt::GlobalColor color)
 {
-    this->velocity = new VectorXY(7,0);
+    this->velocity = new VectorXY(vel,0);
     this->setRect(x,y,width,height);
     this->brush.setColor(color);
     this->brush.setStyle(style);
