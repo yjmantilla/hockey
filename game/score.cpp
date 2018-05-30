@@ -24,3 +24,15 @@ int Score::getScore()
 {
     return this->score;
 }
+
+void Score::setScore(qint32 score)
+{
+    this->score = score;
+    return;
+}
+
+void Score::updateScoreText()
+{
+    this->setPlainText(/*QString("Score: ") + */QString::number(this->score));
+    return;
+}

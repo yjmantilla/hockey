@@ -19,6 +19,13 @@ void VectorXY::setVector(qreal x, qreal y)
     return;
 }
 
+void VectorXY::setVectorByMagnitudeAngle(qreal magnitude, qreal angle)
+{
+    this->setX(magnitude * qCos(angle));
+    this->setY(magnitude * qSin(angle));
+    return;
+}
+
 void VectorXY::setX(qreal x)
 {
     this->x = x;
@@ -38,4 +45,19 @@ qreal VectorXY::getX()
 qreal VectorXY::getY()
 {
     return this->y;
+}
+
+qreal VectorXY::getMagnitude()
+{
+    return qSqrt(qPow(this->getX(),2) + qPow(this->getY(),2));
+}
+
+qreal VectorXY::getAngle()
+{
+    return qAtan2(this->getY(),this->getX());
+}
+
+qreal VectorXY::getMagnitudeSquared()
+{
+    return (qPow(this->getX(),2) + qPow(this->getY(),2));
 }

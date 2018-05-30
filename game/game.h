@@ -11,6 +11,7 @@
 #include <QVector>
 #include <QList>
 #include <QtMath>
+#include <QFile>
 
 #include "puck.h"
 #include "striker.h"
@@ -58,15 +59,29 @@ public:
     bool moveL2;
     bool moveR1;
     bool moveR2;
-    bool pause;
+    bool pause = true;
+
     bool goalAt1=false;
     bool goalAt2=false;
 
+    /*A bot class may be created later to implement this*/
+
+    bool bot1 = false;
+    bool bot2 = true;
+    qreal bot1Level = 1;/*Sets the difficulty of the bots given in multiples of the reaction time of humans, lower is harder*/
+    qreal bot2Level = 1;
+    bool bot1Dir = false; //false left, true right
+    bool bot2Dir = true;
     QTimer * motionTimer;
     QTimer * boxTimer;
     QTimer * acceleratorTimer;
+    QTimer * bot1Timer;
+    QTimer * bot2Timer;
 
-    Game(QWidget *parent = 0, qreal width=900, qreal height=600);
+
+    /*A lot of the methods that involve other classes could be implemented in those classes, this might done later*/
+
+    Game(QWidget *parent = 0, qreal width=900, qreal height=600, QString filename = "", bool load = false);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -108,7 +123,10 @@ public:
     void negateRandomPlayerStrikerVelocity();
     qreal randomRestitutionForAllWalls();
     qreal randomRestitutionForAllPlayers();
-    void botsify(Striker * striker);
+    void botsify(Striker * striker, bool dir);
+    bool whereIsTheDamnPuckAskedTheBot(Striker * striker);
+    void saveGame(QString filename);
+    void loadGame(QString filename);
     ~Game();
 
 public slots:
@@ -119,6 +137,8 @@ public slots:
     void restoreWallRestitution();
     void restoreStrikersRestitution();
     void addAccelerator(); //overload
+    void reactBot1();
+    void reactBot2();
 
 };
 

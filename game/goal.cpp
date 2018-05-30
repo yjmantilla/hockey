@@ -9,7 +9,7 @@ Goal::Goal()
 Goal::Goal(qreal x1, qreal y1, qreal width, Qt::GlobalColor color)
 {
     this->width = width;
-    this->setLine(x1-this->width/2,y1,x1+this->width/2,y1);
+    this->setLine(x1-this->width/2,y1,x1+this->width/2,y1);    
     this->setPen(QPen(color, 7, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin));
 }
 

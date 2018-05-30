@@ -2,6 +2,7 @@
 #define VECTORXY_H
 
 #include <QtGlobal>
+#include <QtMath>
 
 class VectorXY
 {
@@ -13,10 +14,14 @@ public:
     VectorXY();
     VectorXY(qreal x, qreal y);
     void setVector(qreal x ,qreal y);
+    void setVectorByMagnitudeAngle(qreal magnitude, qreal angle);
     void setX(qreal x);
     void setY(qreal y);
     qreal getX();
     qreal getY();
+    qreal getMagnitude();
+    qreal getAngle();
+    qreal getMagnitudeSquared();
 
 };
 

@@ -17,7 +17,7 @@
 #define BOX_SPAWN_TIME 5 //IN SECONDS
 #define ACCELERATOR_SPAWN_TIME 3 //IN SECONDS
 #define REFRESH_TIME 1 //IN MILLISECONDS
-#define ACCELERATOR_RADIUS 15
+#define ACCELERATOR_RADIUS 20
 #define ACCELERATOR_MASS 7000
 #define MIN_GOAL_TO_STRIKER_RATIO 3
 #define MIN_STRIKER_VELOCITY 4
@@ -26,13 +26,13 @@
 #define VISCOSITY_TIME 10
 #define WALL_RESTITUTION_TIME 5 //IN SECONDS
 #define STRIKER_RESTITUTION_TIME 5 //IN SECONDS
-#define PUCK_RADIUS 10
+#define PUCK_RADIUS 15
 #define WALL_COLOR Qt::yellow
 #define STRIKER1_COLOR Qt::cyan
 #define STRIKER2_COLOR Qt::magenta
 #define NARRATOR_COLOR Qt::yellow
-
-Game::Game(QWidget *parent, qreal width, qreal height)
+#define HUMAN_REACTION_TIME 250
+Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load)
     : QWidget(parent)
 {
 
@@ -116,16 +116,31 @@ Game::Game(QWidget *parent, qreal width, qreal height)
     connect(this->boxTimer,SIGNAL(timeout()),this,SLOT(addBox()));
 
     this->acceleratorTimer = new QTimer();
+    this->bot1Timer = new QTimer();
+    this->bot2Timer = new QTimer();
+
     connect(this->acceleratorTimer,SIGNAL(timeout()),this,SLOT(addAccelerator()));
+    connect(this->bot1Timer,SIGNAL(timeout()),this,SLOT(reactBot1()));
+    connect(this->bot2Timer,SIGNAL(timeout()),this,SLOT(reactBot2()));
 
     /*Show Game*/
 
     this->view->show();
+    this->pause = true;
 
     /*Start Timers*/
     this->motionTimer->start(REFRESH_TIME);
     this->boxTimer->start(1000 * BOX_SPAWN_TIME);
     this->acceleratorTimer->start(1000 * ACCELERATOR_SPAWN_TIME);
+    this->bot1Timer->start(HUMAN_REACTION_TIME * this->bot1Level);
+    this->bot2Timer->start(HUMAN_REACTION_TIME * this->bot2Level);
+
+    /*Load game if desired*/
+
+    if(load)
+    {
+        this->loadGame(filename);
+    }
 
 }
 
@@ -153,23 +168,37 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
-    if(event->key()==Qt::Key_J)
+    if(event->key() == Qt::Key_J)
     {
-        this->moveL1=false;
+        this->moveL1 = false;
     }
-    else if(event->key()==Qt::Key_A)
+    else if(event->key() == Qt::Key_A)
     {
-        this->moveL2=false;
+        this->moveL2 = false;
     }
-    else if(event->key()==Qt::Key_D)
+    else if(event->key() == Qt::Key_D)
     {
-        this->moveR2=false;
+        this->moveR2 = false;
     }
-    else if(event->key()==Qt::Key_L)
+    else if(event->key() == Qt::Key_L)
     {
-        this->moveR1=false;
+        this->moveR1 = false;
     }
 
+    else if(event->key() == Qt::Key_P)
+    {
+        this->pause = !this->pause;
+    }
+
+    else if(event->key() == Qt::Key_F5)
+    {
+        this->saveGame("game.sav");
+    }
+
+    else if (event->key() == Qt::Key_F6)
+    {
+        this->loadGame("game.sav");
+    }
     return;
 }
 
@@ -205,6 +234,9 @@ void Game::mousePressEvent(QMouseEvent *event)
 
     //this->multiplyGoalWidthOfRandomPlayer(0.9);
 
+    //savegame test
+    //this->saveGame("game.sav");
+    //this->loadGame("game.sav");
     return;
 }
 
@@ -397,7 +429,7 @@ double Game::angleToPuck(qreal x, qreal y)
 }
 
 int Game::signRandomizer()
-{    
+{
     int dummy;
 
     while(1)
@@ -430,7 +462,7 @@ void Game::velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY)
 }
 
 void Game::posify(QGraphicsItem *item, int minX, int maxX, int minY, int maxY)
-{    
+{
     /*This function may be improved by taking into account the bounding rect of the item so that it does not collide with the limits*/
     //item->setPos(this->boundedRandomizer(minX,maxX)*this->signRandomizer(),this->boundedRandomizer(minY,maxY)*this->signRandomizer());
     item->setPos(this->boundedRandomizer(minX,maxX),this->boundedRandomizer(minY,maxY));
@@ -785,16 +817,257 @@ qreal Game::randomRestitutionForAllPlayers()
     return 1+r;
 }
 
-void Game::botsify(Striker * striker)
+void Game::botsify(Striker * striker, bool dir)
 {
     if(puck->brush.color()!=FIELD_COLOR) //bots wont see when it is invisible as humans
     {
-    if(striker->pos().x()+striker->rect().width()/2 > this->puck->pos().x() && !striker->collidesWithItem(this->wallVL)){striker->setX(striker->x()-this->timeStep*qFabs(striker->velocity->getX()));}
-    if(striker->pos().x()+striker->rect().width()/2 < this->puck->pos().x() && !striker->collidesWithItem(this->wallVR)){striker->setX(striker->x()+this->timeStep*qFabs(striker->velocity->getX()));}
+    if(!dir && !striker->collidesWithItem(this->wallVL)){striker->setX(striker->x()-this->timeStep*qFabs(striker->velocity->getX()));}
+    if(dir && !striker->collidesWithItem(this->wallVR)){striker->setX(striker->x()+this->timeStep*qFabs(striker->velocity->getX()));}
     }
     return;
 
     /* A level of the bot can be done given the refresh rate of the bot every N samples, or de response time of the bot*/
+}
+
+bool Game::whereIsTheDamnPuckAskedTheBot(Striker *striker)
+{
+    if(puck->brush.color()!=FIELD_COLOR) //bots wont see when it is invisible as humans
+    {
+    if(striker->pos().x()+striker->rect().width()/2 > this->puck->pos().x()){return false;}//left
+    if(striker->pos().x()+striker->rect().width()/2 < this->puck->pos().x()){return true;}//right
+    }
+
+    return false; //this shouldnt be reached never though
+}
+
+void Game::saveGame(QString filename)
+{
+
+    QFile file(filename);
+
+    qDebug()<<"what";
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {qDebug()<< "error saving";return;}
+
+    qDebug() << "saving data:";
+
+    QTextStream out(&file);
+    out << "GAME," << this->width << "," << this->height << "," << this->bot1 << "," << this->bot1Level << "," << this->bot2 << "," << this->bot2Level << "," << this->pause << "\n";
+    out << "PUCK," << this->puck->x() << "," << this->puck->y() << "," << this->puck->velocity->getX() << "," << this->puck->velocity->getY() << "," << this->puck->acceleration->getX() << "," << this->puck->acceleration->getY() << "," << this->puck->radius << "\n";
+    out << "STRIKER1," << this->striker1->x() << "," << this->striker1->y() << "," << this->striker1->velocity->getX() << "," << this->striker1->velocity->getY() << "," << this->striker1->rect().width() << "\n";
+    out << "STRIKER2," << this->striker2->x() << "," << this->striker2->y() << "," << this->striker2->velocity->getX() << "," << this->striker2->velocity->getY() << "," << this->striker2->rect().width() << "\n";
+    out << "GOAL1," << this->goal1->line().x1() << "," << this->goal1->line().y1() << "," << this->goal1->line().x2() << "," << this->goal1->width << "\n";
+    out << "GOAL2," << this->goal2->line().x1() << "," << this->goal2->line().y1() << "," << this->goal2->line().x2() << "," << this->goal2->width << "\n";
+    out << "SCORE1," << this->score1->getScore() << "\n";
+    out << "SCORE2," << this->score2->getScore() << "\n";
+
+    for (qint32 i = 0; i < this->accelerators.size(); i++)
+    {
+        out << "ACCEL," << this->accelerators.at(i)->x() << "," << this->accelerators.at(i)->y() << "," << this->accelerators.at(i)->velocity->getX() << "," << this->accelerators.at(i)->velocity->getY() << "," << this->accelerators.at(i)->mass << "," << this->accelerators.at(i)->radius << "\n";
+    }
+
+    for(qint32 i = 0; i < this->boxes.size(); i++)
+    {
+        out << "BOX," << this->boxes.at(i)->x() << "," << this->boxes.at(i)->y() << "," << this->boxes.at(i)->velocity->getX() << "," << this->boxes.at(i)->velocity->getY() << "\n";
+    }
+
+    qDebug() << "data saved successfully";
+    this->narrator->narrate("GAME SAVED!");
+    file.close();
+
+    return;
+}
+
+void Game::loadGame(QString filename)
+{
+    QFile file(filename);
+        qDebug() << "file opened:"<<file.open(QIODevice::ReadOnly);
+
+        qDebug() << "loading data:";
+
+        QString buffer;
+        QList<QString> data;
+
+        while(!file.atEnd())
+        {
+            buffer = file.readLine();
+            if(buffer.length() > 3)
+            {
+                data.append(buffer);
+                if(data.last().endsWith("\r\n"))
+                {
+                    data.last().remove("\r\n");
+                }
+                qDebug() << data.last();
+            }
+
+        }
+
+        qDebug() << "data loaded successfully";
+
+        qDebug() <<"cleaning game";
+
+        while(!this->accelerators.isEmpty())
+        {
+            this->scene->removeItem(this->accelerators.last());
+            this->accelerators.removeLast();
+        }
+
+        while(!this->boxes.isEmpty())
+        {
+            this->scene->removeItem(this->boxes.last());
+            this->boxes.removeLast();
+        }
+
+        qDebug() << "loading data to game:";
+
+        for (qint32 i = 0; i < data.size(); i++)
+        {
+            if(data.at(i).contains("GAME"))
+            {
+                qDebug() << "GAME:" << data.at(i).section(",",1);
+                qreal width = data.at(i).section(",",1,1).toInt();
+                qreal height = data.at(i).section(",",2,2).toInt();
+                bool bot1 = data.at(i).section(",",3,3).toInt();
+                qreal bot1level = data.at(i).section(",",4,4).toFloat();
+                bool bot2 = data.at(i).section(",",5,5).toInt();
+                qreal bot2level = data.at(i).section(",",6,6).toFloat();
+                bool pause = data.at(i).section(",",7,7).toInt();
+
+                this->width = width;
+                this->height = height;
+                this->bot1 = bot1;
+                this->bot1Level = bot1level;
+                this->bot2 = bot2;
+                this->bot2Level = bot2level;
+                this->pause = pause;
+            }
+
+            else if(data.at(i).contains("PUCK"))
+            {
+                qDebug() << "PUCK:" << data.at(i).section(",",1);
+                qreal px = data.at(i).section(",",1,1).toFloat();
+                qreal py = data.at(i).section(",",2,2).toFloat();
+                qreal vx = data.at(i).section(",",3,3).toFloat();
+                qreal vy = data.at(i).section(",",4,4).toFloat();
+                qreal ax = data.at(i).section(",",5,5).toFloat();
+                qreal ay = data.at(i).section(",",6,6).toFloat();
+                qreal rad = data.at(i).section(",",7,7).toFloat();
+
+                this->puck->setPos(px,py);
+                this->puck->velocity->setX(vx);
+                this->puck->velocity->setY(vy);
+                this->puck->acceleration->setX(ax);
+                this->puck->acceleration->setY(ay);
+                this->puck->radius = rad;
+
+            }
+
+           else if(data.at(i).contains("STRIKER1"))
+           {
+                qDebug() << "STRIKER1:" << data.at(i).section(",",1);
+                qreal px = data.at(i).section(",",1,1).toFloat();
+                qreal py = data.at(i).section(",",2,2).toFloat();
+                qreal vx = data.at(i).section(",",3,3).toFloat();
+                qreal vy = data.at(i).section(",",4,4).toFloat();
+                qreal width = data.at(i).section(",",5,5).toFloat();
+
+                this->striker1->setPos(px,py);
+                this->striker1->velocity->setX(vx);
+                this->striker1->velocity->setY(vy);
+                this->striker1->rect().setWidth(width);
+           }
+
+           else if(data.at(i).contains("STRIKER2"))
+           {
+                qDebug() << "STRIKER2:" << data.at(i).section(",",1);
+                qreal px = data.at(i).section(",",1,1).toFloat();
+                qreal py = data.at(i).section(",",2,2).toFloat();
+                qreal vx = data.at(i).section(",",3,3).toFloat();
+                qreal vy = data.at(i).section(",",4,4).toFloat();
+                qreal width = data.at(i).section(",",5,5).toFloat();
+
+                this->striker2->setPos(px,py);
+                this->striker2->velocity->setX(vx);
+                this->striker2->velocity->setY(vy);
+                this->striker2->rect().setWidth(width);
+           }
+
+           else if(data.at(i).contains("GOAL1"))
+           {
+                qDebug() << "GOAL1:" << data.at(i).section(",",1);
+                qreal px1 = data.at(i).section(",",1,1).toFloat();
+                qreal py1 = data.at(i).section(",",2,2).toFloat();
+                qreal px2 = data.at(i).section(",",3,3).toFloat();
+                qreal width = data.at(i).section(",",4,4).toFloat();
+
+                this->goal1->setLine(px1 + this->goal1->getWidth()/2 - width/2,py1,px2 - this->goal1->getWidth()/2 + width/2,py1);
+                this->goal1->width = width;
+           }
+
+           else if(data.at(i).contains("GOAL2"))
+           {
+                qDebug() << "GOAL2:" << data.at(i).section(",",1);
+                qreal px1 = data.at(i).section(",",1,1).toFloat();
+                qreal py1 = data.at(i).section(",",2,2).toFloat();
+                qreal px2 = data.at(i).section(",",3,3).toFloat();
+                qreal width = data.at(i).section(",",4,4).toFloat();
+
+                this->goal2->setLine(px1 + this->goal2->getWidth()/2 - width/2,py1,px2 - this->goal2->getWidth()/2 + width/2,py1);
+                this->goal2->width = width;
+           }
+
+           else if(data.at(i).contains("SCORE1"))
+           {
+                qDebug() << "SCORE1:" << data.at(i).section(",",1);
+                qint32 score = data.at(i).section(",",1,1).toFloat();
+                this->score1->setScore(score);
+                this->score1->updateScoreText();
+           }
+
+           else if(data.at(i).contains("SCORE2"))
+           {
+                qDebug() << "SCORE2:" << data.at(i).section(",",1);
+                qint32 score = data.at(i).section(",",1,1).toFloat();
+                this->score2->setScore(score);
+                this->score2->updateScoreText();
+           }
+
+           else if(data.at(i).contains("ACCEL"))
+           {
+                qDebug() << "ACCEL:" << data.at(i).section(",",1);
+                qreal px = data.at(i).section(",",1,1).toFloat();
+                qreal py = data.at(i).section(",",2,2).toFloat();
+                qreal vx = data.at(i).section(",",3,3).toFloat();
+                qreal vy = data.at(i).section(",",4,4).toFloat();
+                qreal mass = data.at(i).section(",",5,5).toFloat();
+                qreal rad = data.at(i).section(",",6,6).toFloat();
+
+                this->accelerators.append(new Accelerator(rad,mass,Qt::SolidPattern,Qt::white,0,0,0,0));
+                this->scene->addItem(this->accelerators.last());
+                this->accelerators.last()->setPos(px,py);
+                this->accelerators.last()->velocity->setVector(vx,vy);
+                this->accelerators.last()->paintAccelerator();
+
+           }
+
+           else if(data.at(i).contains("BOX"))
+           {
+                 qDebug() << "BOX:" << data.at(i).section(",",1);
+                 qreal px = data.at(i).section(",",1,1).toFloat();
+                 qreal py = data.at(i).section(",",2,2).toFloat();
+                 qreal vx = data.at(i).section(",",3,3).toFloat();
+                 qreal vy = data.at(i).section(",",4,4).toFloat();
+
+                 this->boxes.append(new Box());
+                 this->scene->addItem(this->boxes.last());
+                 this->boxes.last()->setPos(px,py);
+                 this->boxes.last()->velocity->setVector(vx,vy);
+           }
+
+        }
+
+        this->narrator->narrate("GAME LOADED!");
+        qDebug() << "game loaded successfully";
 }
 
 
@@ -805,26 +1078,39 @@ Game::~Game()
 
 void Game::animate()
 {
-    this->botsify(this->striker2);
-    //this->botsify(this->striker1);
-    this->BoxesCollidingWithPuck();
-    this->scoreAtGoalCollision();
-    this->markGoalAndRestart();
-    this->bounceEverything();
-    this->moveEverything();
-    this->stopStrikersAtWallCollision();
-    this->moveStrikers();
+    if(!this->pause)
+    {
+        if(this->bot1)
+        {
+            this->botsify(this->striker1,this->bot1Dir);
+        }
+
+        if(this->bot2)
+        {
+            this->botsify(this->striker2,this->bot2Dir);
+        }
+
+        this->BoxesCollidingWithPuck();
+        this->scoreAtGoalCollision();
+        this->markGoalAndRestart();
+        this->bounceEverything();
+
+        this->moveEverything();
+        this->stopStrikersAtWallCollision();
+        this->moveStrikers();
+    }
 
 }
 
 void Game::addBox()
 {
-
+    if(!this->pause)
+    {
     this->boxes.append(new Box());
     this->scene->addItem(this->boxes.last());
     this->posify(this->boxes.last(),0+this->boxes.last()->boundingRect().width(),this->width-this->boxes.last()->boundingRect().width(),0+this->boxes.last()->boundingRect().height(),this->height-this->boxes.last()->boundingRect().height());
     this->velocify(this->boxes.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
-
+    }
     return;
 
 }
@@ -864,10 +1150,30 @@ void Game::restoreStrikersRestitution()
 void Game::addAccelerator()
 {
     //repulsors seem better for gameplay so i will keep spawn of repulsors constant add let boxes do the attractors
-    this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,/*this->signRandomizer()**/-1*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
-    this->scene->addItem(this->accelerators.last());
-    this->posify(this->accelerators.last(),0,this->width,0,this->height);
-    this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
-    this->accelerators.last()->paintAccelerator();
+    if(!this->pause)
+    {
+        this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,/*this->signRandomizer()**/-1*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));
+        this->scene->addItem(this->accelerators.last());
+        this->posify(this->accelerators.last(),0,this->width,0,this->height);
+        this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
+        this->accelerators.last()->paintAccelerator();
+
+    }
     return;
+}
+
+void Game::reactBot1()
+{
+    if(this->bot1)
+    {
+        this->bot1Dir = this->whereIsTheDamnPuckAskedTheBot(this->striker1);
+    }
+}
+
+void Game::reactBot2()
+{
+    if(this->bot2)
+    {
+        this->bot2Dir = this->whereIsTheDamnPuckAskedTheBot(this->striker2);
+    }
 }

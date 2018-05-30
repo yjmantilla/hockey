@@ -10,8 +10,10 @@ public:
     Score(QGraphicsItem * = 0, Striker * striker = NULL);
     void increase();
     int getScore();
+    void setScore(qint32 score);
+    void updateScoreText();
 private:
-    int score;
+    qint32 score;
 };
 
 
