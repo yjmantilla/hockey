@@ -507,6 +507,8 @@ void Game::moveEverything()
 
 }
 
+/*Bounce Methods could be reimplemented so items wont get stuck on strikers or walls (they get inside walls and loop the cycle of negating the velocity)*/
+
 void Game::bounceEverything()
 {
     this->bounceFromStrikers(this->puck,this->puck->velocity);
