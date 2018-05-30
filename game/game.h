@@ -33,7 +33,7 @@ public:
 
     qreal width;
     qreal height;
-    qreal timeStep=1;
+    qreal timeStep=0.1;
     qreal boundary=100;
 
     Puck * puck;
