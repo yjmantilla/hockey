@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Imagenes">
+        <file>air-hockey3.jpg</file>
+    </qresource>
+</RCC>
