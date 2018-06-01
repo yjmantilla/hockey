@@ -6,6 +6,8 @@
 #include"QtSql/QSqlQuery"
 #include <QWidget>
 
+#include"mainwindow.h"
+
 namespace Ui {
 class login;
 }

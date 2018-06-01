@@ -3,6 +3,7 @@
 #include "QMessageBox"
 #include <QDebug>
 
+
 login::login(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::login)
@@ -42,6 +43,10 @@ void login::on_commandLinkButton_clicked()
    if(password2==password)
    {
        QMessageBox::information(this,tr("Bienvenido"),tr("Bienvenido: %1").arg(nombre));
+       MainWindow * mainwindow = new MainWindow();
+       mainwindow->show();
+       close();
+
    }
    else
    {

@@ -28,12 +28,12 @@ void dialog::on_pushButton_clicked()
 {
     registro * Registro = new registro();
     Registro->show();
-   // close();
+    //close();
 }
 
 void dialog::on_pushButton_2_clicked()
 {
     login *Login = new login();
     Login->show();
-    close();
+    //close();
 }

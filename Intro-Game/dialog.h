@@ -8,6 +8,8 @@
 #include"QtSql/QSqlError"
 #include"QtSql/QSqlQuery"
 
+#include "mainwindow.h"
+
 namespace Ui {
 class dialog;
 }
@@ -28,6 +30,7 @@ private slots:
 private:
     Ui::dialog *ui;
     QSqlDatabase dbmain;
+
 };
 
 #endif // DIALOG_H
