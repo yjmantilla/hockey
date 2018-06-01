@@ -35,7 +35,11 @@ SOURCES += \
     box.cpp \
     vectorxy.cpp \
     score.cpp \
-    narrator.cpp
+    narrator.cpp \
+    dialog.cpp \
+    login.cpp \
+    mainwindow.cpp \
+    registro.cpp
 
 HEADERS += \
     game.h \
@@ -48,9 +52,19 @@ HEADERS += \
     box.h \
     vectorxy.h \
     score.h \
-    narrator.h
+    narrator.h \
+    dialog.h \
+    login.h \
+    mainwindow.h \
+    registro.h
 
 RESOURCES += \
     images.qrc
+
+FORMS += \
+    dialog.ui \
+    login.ui \
+    mainwindow.ui \
+    registro.ui
 
 
