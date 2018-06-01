@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,15 +26,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    ventana.cpp
+    ventana.cpp \
+    registro.cpp \
+    login.cpp \
+    dialog.cpp
 
 HEADERS += \
         mainwindow.h \
-    ventana.h
+    ventana.h \
+    registro.h \
+    login.h \
+    dialog.h
 
 FORMS += \
         mainwindow.ui \
-    ventana.ui
+    ventana.ui \
+    registro.ui \
+    login.ui \
+    dialog.ui
 
 RESOURCES += \
     portada.qrc

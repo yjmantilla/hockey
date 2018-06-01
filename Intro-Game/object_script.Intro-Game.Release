@@ -1,0 +1,14 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\ventana.o
+./release\registro.o
+./release\login.o
+./release\dialog.o
+./release\qrc_portada.o
+./release\moc_mainwindow.o
+./release\moc_ventana.o
+./release\moc_registro.o
+./release\moc_login.o
+./release\moc_dialog.o
+);
