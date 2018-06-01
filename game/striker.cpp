@@ -7,6 +7,7 @@ Striker::Striker(qreal x, qreal y, qreal width, qreal height, qreal vel,Qt::Brus
     this->brush.setColor(color);
     this->brush.setStyle(style);
     this->setBrush(this->brush);
+    this->setRestitution(1);
 }
 
 void Striker::setRestitution(qreal r)

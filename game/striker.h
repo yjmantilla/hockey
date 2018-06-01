@@ -14,7 +14,7 @@ class Striker:public QObject,public QGraphicsRectItem
     Q_OBJECT
 public:
     VectorXY * velocity;
-    qreal restitution=1;
+    qreal restitution;
 
     QBrush brush;
 

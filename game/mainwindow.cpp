@@ -6,7 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-   N = new Game();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -16,12 +17,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-   N->show();
-    close();
+     S = new Game_Window(0,"",false,false,1,true,1,21);
+     S->show();
+     close();
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-   N->show();
+   M = new Game_Window(0,"",false,false,1,false,1,21);
+   M->show();
     close();
 }
+
+//solo bots
+//cargar partida

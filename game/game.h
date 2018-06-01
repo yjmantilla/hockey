@@ -7,11 +7,13 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QTimer>
-#include <QRandomGenerator>
+//#include <QRandomGenerator>
 #include <QVector>
 #include <QList>
 #include <QtMath>
 #include <QFile>
+#include <QTime>
+#include <typeinfo>
 
 #include "puck.h"
 #include "striker.h"
@@ -34,8 +36,8 @@ public:
 
     qreal width;
     qreal height;
-    qreal timeStep=0.1;
-    qreal boundary=100;
+    qreal timeStep;
+    qreal boundary;
     qint32 maxScore;
 
     Puck * puck;
@@ -60,19 +62,19 @@ public:
     bool moveL2;
     bool moveR1;
     bool moveR2;
-    bool pause = true;
+    bool pause;
 
-    bool goalAt1=false;
-    bool goalAt2=false;
+    bool goalAt1;
+    bool goalAt2;
 
     /*A bot class may be created later to implement this*/
 
-    bool bot1 = false;
-    bool bot2 = true;
-    qreal bot1Level = 1;/*Sets the difficulty of the bots given in multiples of the reaction time of humans, lower is harder*/
-    qreal bot2Level = 1;
-    bool bot1Dir = false; //false left, true right
-    bool bot2Dir = true;
+    bool bot1;
+    bool bot2;
+    qreal bot1Level;/*Sets the difficulty of the bots given in multiples of the reaction time of humans, lower is harder*/
+    qreal bot2Level;
+    bool bot1Dir; //false left, true right
+    bool bot2Dir;
     QTimer * motionTimer;
     QTimer * boxTimer;
     QTimer * acceleratorTimer;
