@@ -40,6 +40,19 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     : QWidget(parent)
 {
 
+    this->timeStep = 0.1;
+    this->boundary = 100;
+    this->pause = true;
+    this->goalAt1 = false;
+    this->goalAt2 = false;
+    this->bot1 = false;
+    this->bot2 = true;
+    this->bot1Dir = false;
+    this->bot2Dir = true;
+    this->bot1Level = 1;
+    this->bot2Level = 1;
+
+
     /*Set the Geometry of the Game*/
 
     this->width = width;
@@ -47,7 +60,9 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->scene = new QGraphicsScene();
     this->view = new QGraphicsView();
     this->view->setParent(this);
-    this->view->setFixedSize(this->width+this->boundary,this->height+this->boundary);
+    this->view->setFixedSize(this->width/*+this->boundary*/,this->height/*+this->boundary*/);
+    this->width = this->width - this->boundary;
+    this->height = this->height - this->boundary;
     this->scene->setSceneRect(0,0,this->width,this->height);
     this->view->setScene(this->scene);
     this->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -486,16 +501,33 @@ qint32 Game::signRandomizer()
 {
     int dummy;
 
-    while(1)
-    {
-        //remember the upper bound is exclusive
-        dummy = QRandomGenerator::global()->bounded(-1,2);
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
 
-        if(dummy != 0){break;}
+//    while(1)
+//    {
+//        //remember the upper bound is exclusive
+//        dummy = QRandomGenerator::global()->bounded(-1,2);
+
+//        if(dummy != 0){break;}
+//    }
+
+
+    // Random number between low and high
+    dummy = qrand() % ((1 + 2) - 1) + 1;
+    //qDebug()<<dummy;
+
+    if(dummy == 2)
+    {
+        return 1;
     }
 
-    //qDebug()<<dummy;
-    return dummy;
+    else
+    {
+        return -1;
+    }
+
+        //return dummy;
 
 }
 
@@ -514,7 +546,12 @@ qint32 Game::getSign(qreal number)
 
 qreal Game::boundedRandomizer(int min, int max)
 {
-    return QRandomGenerator::global()->bounded(min,max + 1);
+    //return QRandomGenerator::global()->bounded(min,max + 1);
+
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
+
+    return qrand() % ((max + 1) - min) + min;
 }
 
 void Game::velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY)
@@ -1182,7 +1219,25 @@ void Game::loadGame(QString filename)
 
 Game::~Game()
 {
-
+    //delete a todos los apuntadores
+    delete this->puck;
+    delete this->striker1;
+    delete this->striker2;
+    delete this->goal1;
+    delete this->goal2;
+    delete this->score1;
+    delete this->score2;
+    delete this->narrator;
+    delete this->wallHD;
+    delete this->wallHU;
+    delete this->wallVL;
+    delete this->wallVR;
+    delete this->field;
+    delete this->motionTimer;
+    delete this->boxTimer;
+    delete this->acceleratorTimer;
+    delete this->bot1Timer;
+    delete this->bot2Timer;
 }
 
 void Game::animate()

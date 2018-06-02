@@ -8,7 +8,7 @@ class Wall:public QGraphicsLineItem
 {
 public:
 
-    qreal restitution = 1;
+    qreal restitution;
 
     Wall();
     Wall(qreal x1, qreal y1, qreal x2, qreal y2, Qt::GlobalColor color);

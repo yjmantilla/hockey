@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,7 +35,13 @@ SOURCES += \
     box.cpp \
     vectorxy.cpp \
     score.cpp \
-    narrator.cpp
+    narrator.cpp \
+    dialog.cpp \
+    login.cpp \
+    mainwindow.cpp \
+    registro.cpp \
+    game_window.cpp \
+    get_string.cpp
 
 HEADERS += \
     game.h \
@@ -48,9 +54,23 @@ HEADERS += \
     box.h \
     vectorxy.h \
     score.h \
-    narrator.h
+    narrator.h \
+    dialog.h \
+    login.h \
+    mainwindow.h \
+    registro.h \
+    game_window.h \
+    get_string.h
 
 RESOURCES += \
     images.qrc
+
+FORMS += \
+    dialog.ui \
+    login.ui \
+    mainwindow.ui \
+    registro.ui \
+    game_window.ui \
+    get_string.ui
 
 
