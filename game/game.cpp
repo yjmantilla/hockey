@@ -36,9 +36,18 @@
 #define NARRATOR_COLOR Qt::yellow
 #define HUMAN_REACTION_TIME 250
 #define BASE_RESTITUTION 1
+#define NEW_GAME_GAIN 2
+#define ACCELERATOR_PACK 10
 Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load, bool bot1, qreal bot1level,bool bot2,qreal bot2level, qint32 maxScore)
     : QWidget(parent)
 {
+
+    /*
+     * Set seed ONCE
+     * see https://stackoverflow.com/questions/2767383/use-of-qsrand-random-method-that-is-not-random
+    */
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
 
     this->timeStep = 0.1;
     this->boundary = 100;
@@ -86,6 +95,7 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->score2 = new Score(0,this->striker2);
     this->narrator = new Narrator(NARRATOR_COLOR);
     this->maxScore = maxScore;
+    this->maxScoreStep = maxScore;
 
 
 
@@ -455,10 +465,12 @@ void Game::markGoalAndRestart()
         this->goalAt1=false;
         this->goalAt2=false;
 
-        if(this->score1->getScore() >= this->maxScore)
+        if(this->score1->getScore() == this->maxScore) //if the comparison is >= it will keep saying the temporal winner everytime one score is higher
         {
             this->narrator->narrate("PLAYER 1 WINS!");
             this->pause = true;
+            //this->maxScore = this->maxScore * NEW_GAME_GAIN;//if they choose to continue playing
+            this->maxScore = this->maxScore + this->maxScoreStep;
 
         }
 
@@ -466,9 +478,14 @@ void Game::markGoalAndRestart()
         {
             this->narrator->narrate("PLAYER 2 WINS!");
             this->pause = true;
+            //this->maxScore = this->maxScore * NEW_GAME_GAIN;
+            this->maxScore = this->maxScore + this->maxScoreStep;
         }
 
-
+        /*NOTE: A WIN BOOLEAN COULD BE INCLUDE SO THAT IS NOT POSSIBLE TO UNPAUSE THE GAME ONCE A PLAYER WINS*/
+        /*RIGHT NOW THE PLAYERS CAN CONTINUE PLAYING IF THEY WISH*/
+        /*IF THEY WISH TO CONTINUE PLAYING THE MAX SCORE CAN BE MULTIPLIED SO THE GAME CONTINUES*/
+        /*OR JUST SUM IN maxScore STEPS*/
     }
 
     return;
@@ -500,9 +517,6 @@ double Game::angleToPuck(qreal x, qreal y)
 qint32 Game::signRandomizer()
 {
     int dummy;
-
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
 
 //    while(1)
 //    {
@@ -547,9 +561,6 @@ qint32 Game::getSign(qreal number)
 qreal Game::boundedRandomizer(int min, int max)
 {
     //return QRandomGenerator::global()->bounded(min,max + 1);
-
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
 
     return qrand() % ((max + 1) - min) + min;
 }
@@ -735,8 +746,12 @@ void Game::chooseRandomEffect()
     {
     case 1:
     {
-        this->addAccelerator(this->boundedRandomizer(0,this->width),this->boundedRandomizer(0,this->height));
-        comment = QString("Accelerator Added");
+        for(qint32 i = 0; i < ACCELERATOR_PACK; i++)
+        {
+            this->addAccelerator(this->boundedRandomizer(0,this->width),this->boundedRandomizer(0,this->height));
+        }
+
+        comment = QString::number(ACCELERATOR_PACK) + QString(" Accelerators Added");
         this->narrator->narrate(comment);
         break;
     }
@@ -995,7 +1010,7 @@ void Game::saveGame(QString filename)
     qDebug() << "saving data:";
 
     QTextStream out(&file);
-    out << "GAME," << this->width << "," << this->height << "," << this->bot1 << "," << this->bot1Level << "," << this->bot2 << "," << this->bot2Level << "," << this->pause << ","<< this->maxScore<<"\n";
+    out << "GAME," << this->width << "," << this->height << "," << this->bot1 << "," << this->bot1Level << "," << this->bot2 << "," << this->bot2Level << "," << this->pause << ","<< this->maxScore<<","<<this->maxScoreStep<<"\n";
     out << "PUCK," << this->puck->x() << "," << this->puck->y() << "," << this->puck->velocity->getX() << "," << this->puck->velocity->getY() << "," << this->puck->acceleration->getX() << "," << this->puck->acceleration->getY() << "," << this->puck->radius << "\n";
     out << "STRIKER1," << this->striker1->x() << "," << this->striker1->y() << "," << this->striker1->velocity->getX() << "," << this->striker1->velocity->getY() << "," << this->striker1->rect().width() << "\n";
     out << "STRIKER2," << this->striker2->x() << "," << this->striker2->y() << "," << this->striker2->velocity->getX() << "," << this->striker2->velocity->getY() << "," << this->striker2->rect().width() << "\n";
@@ -1077,6 +1092,7 @@ void Game::loadGame(QString filename)
                 qreal bot2level = data.at(i).section(",",6,6).toFloat();
                 bool pause = data.at(i).section(",",7,7).toInt();
                 qint32 maxScore = data.at(i).section(",",8,8).toInt();
+                qint32 maxScoreStep = data.at(i).section(",",9,9).toInt();
 
                 this->width = width;
                 this->height = height;
@@ -1086,6 +1102,7 @@ void Game::loadGame(QString filename)
                 this->bot2Level = bot2level;
                 this->pause = pause;
                 this->maxScore = maxScore;
+                this->maxScoreStep = maxScoreStep;
             }
 
             else if(data.at(i).contains("PUCK"))
@@ -1120,7 +1137,8 @@ void Game::loadGame(QString filename)
                 this->striker1->setPos(px,py);
                 this->striker1->velocity->setX(vx);
                 this->striker1->velocity->setY(vy);
-                this->striker1->rect().setWidth(width);
+                //this->striker1->rect().setWidth(width);
+                this->striker1->setWidth(width);
            }
 
            else if(data.at(i).contains("STRIKER2"))
@@ -1135,7 +1153,8 @@ void Game::loadGame(QString filename)
                 this->striker2->setPos(px,py);
                 this->striker2->velocity->setX(vx);
                 this->striker2->velocity->setY(vy);
-                this->striker2->rect().setWidth(width);
+                //this->striker2->rect().setWidth(width);
+                this->striker2->setWidth(width);
            }
 
            else if(data.at(i).contains("GOAL1"))
@@ -1148,6 +1167,9 @@ void Game::loadGame(QString filename)
 
                 this->goal1->setLine(px1 + this->goal1->getWidth()/2 - width/2,py1,px2 - this->goal1->getWidth()/2 + width/2,py1);
                 this->goal1->width = width;
+                this->goal1->setWidth(width);
+
+                /*NOT SURE IF WIDTH LOADING FOR GOALS AND STRIKERS ARE CORRECT*/
            }
 
            else if(data.at(i).contains("GOAL2"))
@@ -1160,6 +1182,7 @@ void Game::loadGame(QString filename)
 
                 this->goal2->setLine(px1 + this->goal2->getWidth()/2 - width/2,py1,px2 - this->goal2->getWidth()/2 + width/2,py1);
                 this->goal2->width = width;
+                this->goal2->setWidth(width);
            }
 
            else if(data.at(i).contains("SCORE1"))
@@ -1220,6 +1243,21 @@ void Game::loadGame(QString filename)
 Game::~Game()
 {
     //delete a todos los apuntadores
+
+    qDebug() <<"cleaning game";
+
+    while(!this->accelerators.isEmpty())
+    {
+        this->scene->removeItem(this->accelerators.last());
+        this->accelerators.removeLast();
+    }
+
+    while(!this->boxes.isEmpty())
+    {
+        this->scene->removeItem(this->boxes.last());
+        this->boxes.removeLast();
+    }
+
     delete this->puck;
     delete this->striker1;
     delete this->striker2;
@@ -1238,6 +1276,8 @@ Game::~Game()
     delete this->acceleratorTimer;
     delete this->bot1Timer;
     delete this->bot2Timer;
+
+
 }
 
 void Game::animate()
@@ -1314,7 +1354,7 @@ void Game::restoreStrikersRestitution()
 
 void Game::addAccelerator()
 {
-    //repulsors seem better for gameplay so i will keep spawn of repulsors constant add let boxes do the attractors
+    //repulsors seem better for gameplay so i will keep spawn of repulsors constant add let boxes do the attractors--->deprecated
     if(!this->pause)
     {
         this->accelerators.append(new Accelerator(ACCELERATOR_RADIUS,this->signRandomizer()*ACCELERATOR_MASS,Qt::SolidPattern,Qt::white,0,0,0,0));

@@ -39,6 +39,7 @@ public:
     qreal timeStep;
     qreal boundary;
     qint32 maxScore;
+    qint32 maxScoreStep;
 
     Puck * puck;
     Striker * striker1;

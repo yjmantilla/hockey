@@ -17,14 +17,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-     S = new Game_Window(0,"",false,false,1,true,1,21);
+     S = new Game_Window(0,"",false,false,1,true,1,7);
      S->show();
      close();
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-   M = new Game_Window(0,"",false,false,1,false,1,21);
+   M = new Game_Window(0,"",false,false,1,false,1,7);
    M->show();
     close();
 }
