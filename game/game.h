@@ -14,6 +14,7 @@
 #include <QFile>
 #include <QTime>
 #include <typeinfo>
+#include <QMessageBox>
 
 #include "puck.h"
 #include "striker.h"

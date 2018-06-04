@@ -31,15 +31,17 @@
      <x>0</x>
      <y>0</y>
      <width>1344</width>
-     <height>18</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menumenu">
     <property name="title">
-     <string>menu</string>
+     <string>Menu</string>
     </property>
     <addaction name="actionExit"/>
+    <addaction name="actionFilename"/>
     <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
    </widget>
    <addaction name="menumenu"/>
   </widget>
@@ -49,9 +51,19 @@
     <string>Exit</string>
    </property>
   </action>
+  <action name="actionFilename">
+   <property name="text">
+    <string>Insert Filename</string>
+   </property>
+  </action>
   <action name="actionLoad">
    <property name="text">
     <string>Load</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
    </property>
   </action>
  </widget>

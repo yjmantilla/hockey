@@ -9,6 +9,7 @@ Game_Window::Game_Window(QWidget *parent, QString filename, bool load, bool bot1
 
     this->juego = new Game(ui->widget,ui->widget->width(),ui->widget->height(),filename,load,bot1,bot1level,bot2,bot2level,maxScore);
     //this->juego = new Game(ui->widget,1280,720,"",false,false,1,true,1,21);
+    this->filename = new QString("");
 
 }
 
@@ -27,16 +28,20 @@ void Game_Window::on_actionExit_triggered()
 
 void Game_Window::on_actionLoad_triggered()
 {
-    get_string * getFile = new get_string(this);
+    this->juego->loadGame(*(this->filename));
+
+}
+
+void Game_Window::on_actionFilename_triggered()
+{
+    this->juego->pause = true;
+    get_string * getFile = new get_string(this, this->filename);
 
     getFile->show();
 
-//    if(getFile->ready)
-//    {
-//        this->juego->loadGame(getFile->filename);
-//        getFile->close();
-//    }
+}
 
-
-
+void Game_Window::on_actionSave_triggered()
+{
+    this->juego->saveGame(*(this->filename));
 }

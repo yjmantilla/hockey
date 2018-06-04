@@ -1002,10 +1002,16 @@ bool Game::whereIsTheDamnPuckAskedTheBot(Striker *striker)
 
 void Game::saveGame(QString filename)
 {
+    this->pause = true;
 
     QFile file(filename);
 
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {qDebug()<< "error saving";return;}
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug()<< "error saving!";
+        QMessageBox::critical(this,tr("ERROR"),tr("Error saving game!"));
+        return;
+    }
 
     qDebug() << "saving data:";
 
@@ -1038,8 +1044,16 @@ void Game::saveGame(QString filename)
 
 void Game::loadGame(QString filename)
 {
+    this->pause = true;
+
     QFile file(filename);
-        qDebug() << "file opened:"<<file.open(QIODevice::ReadOnly);
+        //qDebug() << "file opened:"<<file.open(QIODevice::ReadOnly);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            qDebug()<< "error loading!";
+            QMessageBox::critical(this,tr("ERROR"),tr("Error loading game!"));
+            return;
+        }
 
         qDebug() << "loading data:";
 
