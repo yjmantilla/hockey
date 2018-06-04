@@ -201,6 +201,8 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
 //     music->setMedia(QUrl("qrc:/sounds/bgsound.mp3"));
 //     music->play();
 
+    this->playlist = new QMediaPlaylist();
+
 
 }
 

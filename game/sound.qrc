@@ -3,5 +3,8 @@
         <file>striker_puck.wav</file>
         <file>wall_puck.wav</file>
     </qresource>
-    <qresource prefix="/music"/>
+    <qresource prefix="/music">
+        <file>GetLucky.mp3</file>
+        <file>TheNights.mp3</file>
+    </qresource>
 </RCC>

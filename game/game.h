@@ -26,6 +26,7 @@
 #include "score.h"
 #include "narrator.h"
 #include <QMediaPlayer>
+#include <QMediaPlaylist>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
@@ -90,6 +91,8 @@ public:
     QTimer * serialTimer;
     QString * port1Name;
     char * dataPort1;
+
+    QMediaPlaylist * playlist;
 
 
     /*A lot of the methods that involve other classes could be implemented in those classes, this might done later*/
