@@ -25,6 +25,9 @@
 #include "box.h"
 #include "score.h"
 #include "narrator.h"
+#include <QMediaPlayer>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 class Game : public QWidget
 {
@@ -83,6 +86,11 @@ public:
     QTimer * bot1Timer;
     QTimer * bot2Timer;
 
+    QSerialPort * joyStick1;
+    QTimer * serialTimer;
+    QString * port1Name;
+    char * dataPort1;
+
 
     /*A lot of the methods that involve other classes could be implemented in those classes, this might done later*/
 
@@ -134,6 +142,9 @@ public:
     bool whereIsTheDamnPuckAskedTheBot(Striker * striker);
     void saveGame(QString filename);
     void loadGame(QString filename);
+    void readPort(QSerialPort * port, char * data, qint32 player);
+    bool configurePort(QSerialPort * port, QString  portName);
+
     ~Game();
 
 public slots:
@@ -146,6 +157,8 @@ public slots:
     void addAccelerator(); //overload
     void reactBot1();
     void reactBot2();
+
+    void readPorts();
 
 };
 

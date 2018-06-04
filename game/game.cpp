@@ -38,6 +38,9 @@
 #define BASE_RESTITUTION 1
 #define NEW_GAME_GAIN 2
 #define ACCELERATOR_PACK 10
+#define PLAYER1_PORT "COM4"
+
+
 Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load, bool bot1, qreal bot1level,bool bot2,qreal bot2level, qint32 maxScore)
     : QWidget(parent)
 {
@@ -153,6 +156,7 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     connect(this->bot1Timer,SIGNAL(timeout()),this,SLOT(reactBot1()));
     connect(this->bot2Timer,SIGNAL(timeout()),this,SLOT(reactBot2()));
 
+
     /*Show Game*/
 
     this->view->show();
@@ -180,23 +184,41 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->bot2Level = bot2level;
 
 
+    /*Serial Ports*/
+
+    this->port1Name = new QString(PLAYER1_PORT);
+    this->joyStick1 = new QSerialPort();
+    this->configurePort(this->joyStick1, PLAYER1_PORT);
+    this->dataPort1 = new char[1];
+    this->serialTimer = new QTimer();
+    //connect(this->serialTimer,SIGNAL(timeout()),this,SLOT(readPorts()));
+    //this->serialTimer->start(10);
+    //connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
+    connect(this->joyStick1,SIGNAL(readyRead()),this,SLOT(readPorts()));
+
+    // play background music
+//     QMediaPlayer * music = new QMediaPlayer();
+//     music->setMedia(QUrl("qrc:/sounds/bgsound.mp3"));
+//     music->play();
+
+
 }
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key()==Qt::Key_J)
+    if(event->key()==Qt::Key_J && !this->bot1 )
     {
         this->moveL1=true;
     }
-    else if(event->key()==Qt::Key_A)
+    else if(event->key()==Qt::Key_A && !this->bot2)
     {
         this->moveL2=true;
     }
-    else if(event->key()==Qt::Key_D)
+    else if(event->key()==Qt::Key_D && !this->bot2 )
     {
         this->moveR2=true;
     }
-    else if(event->key()==Qt::Key_L)
+    else if(event->key()==Qt::Key_L && !this->bot1 )
     {
         this->moveR1=true;
     }
@@ -206,19 +228,19 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_J)
+    if(event->key() == Qt::Key_J && !this->bot1)
     {
         this->moveL1 = false;
     }
-    else if(event->key() == Qt::Key_A)
+    else if(event->key() == Qt::Key_A && !this->bot2)
     {
         this->moveL2 = false;
     }
-    else if(event->key() == Qt::Key_D)
+    else if(event->key() == Qt::Key_D && !this->bot2)
     {
         this->moveR2 = false;
     }
-    else if(event->key() == Qt::Key_L)
+    else if(event->key() == Qt::Key_L && !this->bot1 )
     {
         this->moveR1 = false;
     }
@@ -647,24 +669,35 @@ void Game::bounceEverything()
 
 void Game::bounceFromWalls(QGraphicsItem *item, VectorXY * velocity)
 {
+    bool dummy = false;
+
     if( item->collidesWithItem(this->wallHD) && !item->collidesWithItem(this->goal1) && velocity->getY() > 0)
     {
         velocity->setY(-1*velocity->getY()*this->wallHD->getRestitution());
+        dummy = true;
     }
 
     if( item->collidesWithItem(this->wallHU) && !item->collidesWithItem(this->goal2) && velocity->getY() < 0)
     {
         velocity->setY(-1*velocity->getY()*this->wallHU->getRestitution());
+        dummy = true;
     }
 
     if( item->collidesWithItem(this->wallVL) && velocity->getX() < 0 )
     {
         velocity->setX(-1*velocity->getX()*this->wallVL->getRestitution());
+        dummy = true;
     }
 
     if( item->collidesWithItem(this->wallVR) && velocity->getX() > 0 )
     {
         velocity->setX(-1*velocity->getX()*this->wallVR->getRestitution());
+        dummy = true;
+    }
+
+    if(dummy && item == this->puck)
+    {
+        this->puck->puckWallSound->play();
     }
 
     return;
@@ -675,12 +708,38 @@ void Game::bounceFromStrikers(QGraphicsItem *item, VectorXY *velocity)
     if(item->collidesWithItem(this->striker1) && velocity->getY() > 0)
     {
         velocity->setY(-1*velocity->getY()*this->striker1->getRestitution());
+
+        if(item == this->puck)
+        {
+            this->puck->puckStrikerSound->play();
+        }
+
     }
 
     if(item->collidesWithItem(this->striker2) && velocity->getY() < 0)
     {
         velocity->setY(-1*velocity->getY()*this->striker2->getRestitution());
+
+        if(item == this->puck)
+        {
+            this->puck->puckStrikerSound->play();
+        }
+
     }
+
+
+//    if(this->puck->puckStrikerSound->state() == QMediaPlayer::PlayingState)
+//    {
+//        this->puck->puckStrikerSound->setPosition(0);
+//    }
+//    else if (this->puck->puckStrikerSound->state() == QMediaPlayer::StoppedState)
+//    {
+//        this->puck->puckStrikerSound->play();
+//    }
+
+
+
+
     return;
 
 }
@@ -1253,11 +1312,116 @@ void Game::loadGame(QString filename)
         qDebug() << "game loaded successfully";
 }
 
+bool Game::configurePort(QSerialPort *port, QString portName)
+{
+    port->setPortName(portName);
+
+    if(port->open(QIODevice::ReadOnly))
+    {
+        if(!port->setBaudRate(QSerialPort::Baud9600))
+        {
+            qDebug()<<port->errorString();
+            QMessageBox::critical(this,tr("ERROR_PORT"),tr("Error setting baud rate"));
+            return false;
+        }
+
+        if(!port->setDataBits(QSerialPort::Data8))
+        {
+            qDebug()<<port->errorString();
+            QMessageBox::critical(this,tr("ERROR_PORT"),tr("Error setting data bits"));
+            return false;
+        }
+
+        if(!port->setParity(QSerialPort::NoParity))
+        {
+            qDebug()<<port->errorString();
+            QMessageBox::critical(this,tr("ERROR_PORT"),tr("Error setting parity"));
+            return false;
+        }
+
+        if(!port->setStopBits(QSerialPort::OneStop))
+        {
+            qDebug()<<port->errorString();
+            QMessageBox::critical(this,tr("ERROR_PORT"),tr("Error setting stop bits"));
+            return false;
+        }
+
+        if(!port->setFlowControl(QSerialPort::NoFlowControl))
+        {
+            qDebug()<<port->errorString();
+            QMessageBox::critical(this,tr("ERROR_PORT"),tr("Error setting flow control"));
+            return false;
+        }
+
+        return true;
+    }
+
+    else
+    {
+        QMessageBox::critical(this,tr("ERROR_PORT"),tr("Error opening port!"));
+        return false;
+    }
+}
+
+void Game::readPort(QSerialPort *port, char *data, qint32 player)
+{
+    //if(port->bytesAvailable() > 1)
+    {
+        //port->clear();
+        port->getChar(data);
+        //qDebug() << data;
+        QString data2(data);
+        qDebug() << data2;
+        //port->flush();
+        //QEvent * sev;
+        //port->event(sev);
+
+        if(player == 1)
+        {
+            if(data2.contains("r"))
+            {
+                this->moveR1 = true;
+                qDebug() << data2;
+            }
+
+            else if(data2.contains("l"))
+            {
+                this->moveL1 = true;
+                qDebug() << data2;
+            }
+
+            else if (data2.contains("0"))
+            {
+                this->moveR1 = false;
+                this->moveL1 = false;
+                qDebug() << data2;
+            }
+
+            port->clear();
+        }
+
+        //return true;
+    }
+
+    //return false;
+}
+
+void Game::readPorts()
+{
+    this->readPort(this->joyStick1,this->dataPort1,1);
+    return;
+}
+
 
 Game::~Game()
 {
     //delete a todos los apuntadores
 
+    this->joyStick1->close();
+
+    delete this->joyStick1;
+    delete this->serialTimer;
+    delete this->dataPort1;
     qDebug() <<"cleaning game";
 
     while(!this->accelerators.isEmpty())
@@ -1298,6 +1462,7 @@ void Game::animate()
 {
     if(!this->pause)
     {
+        //this->readPorts();
         if(this->bot1)
         {
             this->botsify(this->striker1,this->bot1Dir);

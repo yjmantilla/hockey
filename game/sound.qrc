@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/soundEffects">
+        <file>striker_puck.wav</file>
+        <file>wall_puck.wav</file>
+    </qresource>
+    <qresource prefix="/music"/>
+</RCC>
