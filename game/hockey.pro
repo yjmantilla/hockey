@@ -4,7 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql \
+            multimedia \
+            serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -63,7 +65,8 @@ HEADERS += \
     get_string.h
 
 RESOURCES += \
-    images.qrc
+    images.qrc \
+    sound.qrc
 
 FORMS += \
     dialog.ui \

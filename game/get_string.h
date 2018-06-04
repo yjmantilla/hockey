@@ -13,10 +13,9 @@ class get_string : public QWidget
     Q_OBJECT
 
 public:
-    explicit get_string(QWidget *parent = 0);
+    explicit get_string(QWidget *parent = 0, QString *filename = NULL);
     ~get_string();
-    QString * filename_p;
-    QString filename;
+    QString * filename;
     bool ready;
 
 private slots:

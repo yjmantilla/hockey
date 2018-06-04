@@ -4,6 +4,7 @@
 #include <QGraphicsEllipseItem>
 #include <QBrush>
 #include "vectorxy.h"
+#include <QMediaPlayer>
 
 class Puck: public QGraphicsEllipseItem
 {
@@ -15,6 +16,9 @@ public:
 
     VectorXY * velocity;
     VectorXY * acceleration;
+
+    QMediaPlayer * puckStrikerSound;
+    QMediaPlayer * puckWallSound;
 
     Puck();
     Puck(qreal radius, Qt::BrushStyle style, Qt::GlobalColor color, qreal x, qreal y);

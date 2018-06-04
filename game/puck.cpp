@@ -15,6 +15,12 @@ Puck::Puck(qreal radius, Qt::BrushStyle style, Qt::GlobalColor color, qreal x, q
     this->setRect(x,y,2*radius,2*radius);
     this->setBrush(this->brush);
 
+    this->puckStrikerSound = new QMediaPlayer();
+    this->puckStrikerSound->setMedia(QUrl("qrc:/soundEffects/striker_puck.wav"));
+
+    this->puckWallSound = new QMediaPlayer();
+    this->puckWallSound->setMedia(QUrl("qrc:/soundEffects/wall_puck.wav"));
+
 }
 
 void Puck::setColor(Qt::GlobalColor color)
