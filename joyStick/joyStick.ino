@@ -28,11 +28,11 @@ void setup() {
 
   if( x <= 256) 
   {
-    Serial.print("l\0");
+    Serial.print("r\0");
   }
   else if (x >= 768)
   {
-    Serial.print("r\0");
+    Serial.print("l\0");
   }
 
   else 

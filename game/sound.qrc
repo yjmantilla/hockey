@@ -2,6 +2,17 @@
     <qresource prefix="/soundEffects">
         <file>striker_puck.wav</file>
         <file>wall_puck.wav</file>
+        <file>addBox.wav</file>
+        <file>hitBox.wav</file>
+        <file>addAccel.wav</file>
+        <file>hitAccel.wav</file>
+        <file>goalAt2.wav</file>
+        <file>goalAt1.wav</file>
+        <file>hitWall.wav</file>
+        <file>wins.wav</file>
+        <file>addAccels.wav</file>
+        <file>hitStriker.wav</file>
+        <file>effectEnds.wav</file>
     </qresource>
     <qresource prefix="/music">
         <file>GetLucky.mp3</file>

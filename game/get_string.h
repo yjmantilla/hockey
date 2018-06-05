@@ -13,10 +13,9 @@ class get_string : public QWidget
     Q_OBJECT
 
 public:
-    explicit get_string(QWidget *parent = 0, QString *filename = NULL);
+    explicit get_string(QWidget *parent = 0, QString *gameString = NULL);
     ~get_string();
-    QString * filename;
-    bool ready;
+    QString * string;
 
 private slots:
     void on_pushButton_clicked();

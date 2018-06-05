@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>1344</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menumenu">
@@ -39,9 +39,18 @@
      <string>Menu</string>
     </property>
     <addaction name="actionExit"/>
-    <addaction name="actionFilename"/>
+    <addaction name="actionText"/>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
+    <addaction name="actionConfigure_Controller_1"/>
+    <addaction name="actionConfigure_Controller_2"/>
+    <addaction name="actionReset"/>
+    <addaction name="actionChange_Bot_1_Level"/>
+    <addaction name="actionChange_Bot_2_Level"/>
+    <addaction name="actionToggle_Bot_1"/>
+    <addaction name="actionToggle_Bot_2"/>
+    <addaction name="actionToggle_Pause"/>
+    <addaction name="actionToggle_Music"/>
    </widget>
    <addaction name="menumenu"/>
   </widget>
@@ -51,9 +60,9 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionFilename">
+  <action name="actionText">
    <property name="text">
-    <string>Insert Filename</string>
+    <string>Insert Text</string>
    </property>
   </action>
   <action name="actionLoad">
@@ -64,6 +73,51 @@
   <action name="actionSave">
    <property name="text">
     <string>Save</string>
+   </property>
+  </action>
+  <action name="actionConfigure_Controller_1">
+   <property name="text">
+    <string>Configure Controller 1</string>
+   </property>
+  </action>
+  <action name="actionConfigure_Controller_2">
+   <property name="text">
+    <string>Configure Controller 2</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+  </action>
+  <action name="actionChange_Bot_1_Level">
+   <property name="text">
+    <string>Change Bot 1 Level</string>
+   </property>
+  </action>
+  <action name="actionChange_Bot_2_Level">
+   <property name="text">
+    <string>Change Bot 2 Level</string>
+   </property>
+  </action>
+  <action name="actionToggle_Bot_1">
+   <property name="text">
+    <string>Toggle Bot 1</string>
+   </property>
+  </action>
+  <action name="actionToggle_Bot_2">
+   <property name="text">
+    <string>Toggle Bot 2</string>
+   </property>
+  </action>
+  <action name="actionToggle_Pause">
+   <property name="text">
+    <string>Toggle Pause</string>
+   </property>
+  </action>
+  <action name="actionToggle_Music">
+   <property name="text">
+    <string>Toggle Music</string>
    </property>
   </action>
  </widget>
