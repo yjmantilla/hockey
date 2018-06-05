@@ -47,7 +47,7 @@ private slots:
 
     void on_actionToggle_Music_triggered();
 
-    void on_actionHelp_triggered();
+
 
     void on_actioninstructions_triggered();
 
