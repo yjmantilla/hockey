@@ -22,6 +22,8 @@ void registro::CrearTabla(){
                         "name VARCHAR(25),"
                         "password VARCHAR(25),"
                         "nick VARCHAR(25) PRIMARY KEY"
+                        "Question VARCHAR(25)"
+                        "Answer VARCHAR(25)"
                         ");");
     QSqlQuery crear;
     crear.prepare(consulta);
@@ -39,12 +41,16 @@ void registro::on_pushButton_clicked()
     QString  user = ui->User->text();
     QString  password = ui->Password->text();
     QString  nick = ui->NickN->text();
+    QString  Question = ui->NickN->text();
+    QString  Answer = ui->NickN->text();
     qDebug()<<user;
     qDebug()<<password;
     qDebug()<<nick;
+    qDebug()<<Question;
+    qDebug()<<Answer;
     QString insertar;
-    insertar.append("INSERT INTO usuario(name,password,nick)"
-                    "values(:name,:password,:nick)");
+    insertar.append("INSERT INTO usuario(name,password,nick,Question,Answer)"
+                    "values(:name,:password,:nick,:Question,:Answer)");
 
     QSqlQuery insertar_db;
     insertar_db.prepare(insertar);
