@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Help</class>
+ <widget class="QWidget" name="Help">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1033</width>
+    <height>709</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTextBrowser" name="textBrowser">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>1021</width>
+     <height>691</height>
+    </rect>
+   </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; font-weight:600;&quot;&gt;INSTRUCTIONS&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a name=&quot;docs-internal-guid-05542ca2-d1ca-9ace-359c-a0957dee5593&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; font-weight:600; color:#000000; background-color:transparent;&quot;&gt;1&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; font-weight:600; color:#000000; background-color:transparent;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:16pt; color:#000000; background-color:transparent;&quot;&gt; Para cargar una partida primero se debe ingresar el nombre del archivo donde quieres guardar en la opción Insert Text, y para terminar de cargar la partida se debe seleccionar  la opción Load. Estas opciones las encontramos en el Menu.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:138%;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; font-weight:600; color:#000000; background-color:transparent;&quot;&gt;2.&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; color:#000000; background-color:transparent;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:16pt; color:#000000; background-color:transparent;&quot;&gt;Para guardar una partida primero se debe ingresar el nombre del archivo donde quieres guardar en la opción Insert Text, y para terminar de guardar la partida se debe seleccionar  la opción Save. Estas opciones las encontramos en el Menu.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:138%;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; font-weight:600; color:#000000; background-color:transparent;&quot;&gt;3&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; color:#000000; background-color:transparent;&quot;&gt;. &lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:16pt; color:#000000; background-color:transparent;&quot;&gt;Para configurar los controles (joysticks) primero se debe ingresar el nombre del puerto donde se encuentra conectado el arduino en la opción Insert Text, y para terminar de configurar los controles se debe seleccionar  una de las opciones de configuración de controles (Configure Controller 1 o Configure Controller 2), las cuales encontramos en el Menu.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:138%;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:16pt; font-weight:600; color:#000000; background-color:transparent;&quot;&gt;4.&lt;/span&gt;&lt;span style=&quot; font-family:'Arial'; font-size:16pt; color:#000000; background-color:transparent;&quot;&gt; Si no se desea tener los joysticks los controles del Player 1 son las letras J y L del teclado y las del Player 2 son A y D, respectivamente para mover a la izquierda y la derecha su puck.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

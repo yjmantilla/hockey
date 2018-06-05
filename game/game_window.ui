@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>1344</width>
-     <height>18</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menumenu">
@@ -52,7 +52,14 @@
     <addaction name="actionToggle_Pause"/>
     <addaction name="actionToggle_Music"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actioninstructions"/>
+   </widget>
    <addaction name="menumenu"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExit">
@@ -118,6 +125,11 @@
   <action name="actionToggle_Music">
    <property name="text">
     <string>Toggle Music</string>
+   </property>
+  </action>
+  <action name="actioninstructions">
+   <property name="text">
+    <string>Instructions</string>
    </property>
   </action>
  </widget>

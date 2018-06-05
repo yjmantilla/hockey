@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "game.h"
 #include "get_string.h"
+#include"help.h"
 
 namespace Ui {
 class Game_Window;
@@ -45,6 +46,10 @@ private slots:
     void on_actionToggle_Pause_triggered();
 
     void on_actionToggle_Music_triggered();
+
+    void on_actionHelp_triggered();
+
+    void on_actioninstructions_triggered();
 
 private:
     Ui::Game_Window *ui;
