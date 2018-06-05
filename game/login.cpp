@@ -50,7 +50,14 @@ void login::on_commandLinkButton_clicked()
    }
    else
    {
-       QMessageBox::critical(this,tr("ERROR"),tr("Contraseña Incorrecta").arg(nombre));
+       QMessageBox::critical(this,tr("ERROR"),tr("Contraseña Incorrecta o Nikname incorrecto").arg(nombre));
    }
+
+}
+
+void login::on_commandLinkButton_2_clicked()
+{
+    Secret_question * secretQ = new Secret_question();
+    secretQ->show();
 
 }

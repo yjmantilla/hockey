@@ -21,9 +21,9 @@ void registro::CrearTabla(){
     consulta.append("CREATE TABLE IF NOT EXISTS usuario("
                         "name VARCHAR(25),"
                         "password VARCHAR(25),"
-                        "nick VARCHAR(25) PRIMARY KEY"
-                        "Question VARCHAR(25)"
-                        "Answer VARCHAR(25)"
+                        "nick VARCHAR(25),"
+                        "Question VARCHAR(25),"
+                        "Answer VARCHAR(25) PRIMARY KEY"
                         ");");
     QSqlQuery crear;
     crear.prepare(consulta);
@@ -41,8 +41,8 @@ void registro::on_pushButton_clicked()
     QString  user = ui->User->text();
     QString  password = ui->Password->text();
     QString  nick = ui->NickN->text();
-    QString  Question = ui->NickN->text();
-    QString  Answer = ui->NickN->text();
+    QString  Question = ui->Question->text();
+    QString  Answer = ui->Answer->text();
     qDebug()<<user;
     qDebug()<<password;
     qDebug()<<nick;
@@ -57,6 +57,8 @@ void registro::on_pushButton_clicked()
     insertar_db.bindValue(":name",user);
     insertar_db.bindValue(":password",password);
     insertar_db.bindValue(":nick",nick);
+    insertar_db.bindValue(":Question",Question);
+    insertar_db.bindValue(":Answer",Answer);
     if(insertar_db.exec())
     {
         qDebug()<<"Datos ingresados a la tabala";

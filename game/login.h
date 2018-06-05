@@ -7,6 +7,7 @@
 #include <QWidget>
 
 #include"mainwindow.h"
+#include"secret_question.h"
 
 namespace Ui {
 class login;
@@ -22,6 +23,8 @@ public:
 
 private slots:
     void on_commandLinkButton_clicked();
+
+    void on_commandLinkButton_2_clicked();
 
 private:
     Ui::login *ui;
