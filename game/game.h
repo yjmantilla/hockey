@@ -15,6 +15,8 @@
 #include <QTime>
 #include <typeinfo>
 #include <QMessageBox>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
 
 #include "puck.h"
 #include "striker.h"
@@ -26,10 +28,8 @@
 #include "score.h"
 #include "narrator.h"
 #include "bot.h"
-#include <QMediaPlayer>
-#include <QMediaPlaylist>
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
+#include "controller.h"
+
 
 class Game : public QWidget
 {
@@ -78,21 +78,29 @@ public:
     Bot * bot2;
 
 
+    Controller * control1;
+    Controller * control2;
+
     QTimer * motionTimer;
     QTimer * boxTimer;
     QTimer * acceleratorTimer;
 
 
-    QSerialPort * joyStick1;
-    QTimer * serialTimer;
-    QString * port1Name;
-    char * dataPort1;
 
     QMediaPlaylist * playlist;
     QMediaPlayer * musicPlayer;
 
-    QMediaPlayer * boxSound;
-
+    QMediaPlayer * hitBox;
+    QMediaPlayer * addAccel;
+    QMediaPlayer * addAccels;
+    QMediaPlayer * addBoxSound;
+    QMediaPlayer * effectEnds;
+    QMediaPlayer * goalAt1Sound;
+    QMediaPlayer * goalAt2Sound;
+    QMediaPlayer * hitAccel;
+    QMediaPlayer * hitStriker;
+    QMediaPlayer * hitWall;
+    QMediaPlayer * winSound;
 
     /*A lot of the methods that involve other classes could be implemented in those classes, this might done later*/
 
@@ -160,6 +168,8 @@ public slots:
     void reactBot1();
     void reactBot2();
     void readPorts();
+    void readController1();
+    void readController2();
 
 };
 

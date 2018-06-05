@@ -1,0 +1,41 @@
+HOWTO: Wire the Keyes “SJoys” Joystick
+
+Continuing on in this series, here’s how to wire up this Joystick. The pins are, left to right:
+
+Ground - wired to the ground rail
++5V - wired to the power rail
+VRx - the “X” value of the joystick, wired to Analog In 0
+VRy - the “Y” value of the joystick, wired to Analog In 1
+SW - the switch (you can press down), wired to Digital In 8
+All in all this is really quite straight forward. X and Y are as per Arduino usual returning values between 0 and 1024.
+
+Here’s a little sketch to see what’s going on - just open up the Serial Monitor at 9600 baud.
+
+// analog
+int pin_x = 0;
+int pin_y = 1;
+
+// digital
+int pin_switch = 8;
+
+void setup() {
+  Serial.begin(9600);
+  
+  pinMode(pin_switch, INPUT);
+}
+
+ void loop() {
+  int x = analogRead(pin_x);   
+  int y = analogRead(pin_y);   
+  int b = digitalRead(pin_switch);   
+  
+  Serial.print("X:");
+  Serial.print(x);
+  Serial.print(",");
+  Serial.print("Y:");
+  Serial.print(y);
+  Serial.print(",");
+  Serial.print("B:");
+  Serial.print(b);
+  Serial.print("\n");
+ }

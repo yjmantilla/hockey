@@ -8,13 +8,14 @@ public:
 
     bool state;
     /*Sets the difficulty of the bots given in multiples of the reaction time of humans, lower is harder*/
-    qint32 level;
-
+    qreal level;
+    qreal baseReactionTime;
     bool dir; //false left, true right
     QTimer * timer;
 
     Bot();
-    Bot(bool state, qint32 level, quint32  baseReactionTime);
+    Bot(bool state, qreal level, qreal baseReactionTime);
+    void changeBotLevel(qreal level);
     ~Bot();
 };
 

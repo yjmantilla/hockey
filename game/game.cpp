@@ -143,8 +143,6 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     connect(this->boxTimer,SIGNAL(timeout()),this,SLOT(addBox()));
 
     this->acceleratorTimer = new QTimer();
-
-
     connect(this->acceleratorTimer,SIGNAL(timeout()),this,SLOT(addAccelerator()));
 
 
@@ -175,19 +173,12 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     connect(this->bot2->timer,SIGNAL(timeout()),this,SLOT(reactBot2()));
 
 
-    /*Serial Ports*/
+    /*Controller*/
 
-    this->port1Name = new QString(PLAYER1_PORT);
-    this->joyStick1 = new QSerialPort();
-    this->configurePort(this->joyStick1, PLAYER1_PORT);
-    this->dataPort1 = new char[1];
-    this->serialTimer = new QTimer();
-    //connect(this->serialTimer,SIGNAL(timeout()),this,SLOT(readPorts()));
-    //this->serialTimer->start(10);
-    //connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
-    connect(this->joyStick1,SIGNAL(readyRead()),this,SLOT(readPorts()));
+    this->control1 = new Controller();
+    this->control2 = new Controller();
 
-    /*Sound*/
+    /*Music*/
     this->playlist = new QMediaPlaylist();
     this->playlist->addMedia(QUrl("qrc:/music/GetLucky.mp3"));
     this->playlist->addMedia(QUrl("qrc:/music/TheNights.mp3"));
@@ -196,12 +187,44 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->musicPlayer = new QMediaPlayer();
     this->musicPlayer->setPlaylist(this->playlist);
 
-    this->boxSound = new QMediaPlayer();
-    this->boxSound->setMedia(QUrl("qrc:/soundEffects/mgsfound.wav"));
+    /*Sound Effects*/
+    this->hitBox = new QMediaPlayer();
+    this->hitBox->setMedia(QUrl("qrc:/soundEffects/hitBox.wav"));
 
+    this->addAccel = new QMediaPlayer();
+    this->addAccel->setMedia(QUrl("qrc:/soundEffects/addAccel.wav"));
+
+    this->addAccels = new QMediaPlayer();
+    this->addAccels->setMedia(QUrl("qrc:/soundEffects/addAccels.wav"));
+
+    this->addBoxSound = new QMediaPlayer();
+    this->addBoxSound->setMedia(QUrl("qrc:/soundEffects/addBox.wav"));
+
+    this->effectEnds = new QMediaPlayer();
+    this->effectEnds->setMedia(QUrl("qrc:/soundEffects/effectEnds.wav"));
+
+    this->goalAt1Sound = new QMediaPlayer();
+    this->goalAt1Sound->setMedia(QUrl("qrc:/soundEffects/goalAt1.wav"));
+
+    this->goalAt2Sound = new QMediaPlayer();
+    this->goalAt2Sound->setMedia(QUrl("qrc:/soundEffects/goalAt2.wav"));
+
+    this->hitAccel = new QMediaPlayer();
+    this->hitAccel->setMedia(QUrl("qrc:/soundEffects/hitAccel.wav"));
     this->musicPlayer->play();
 
+    this->hitWall = new QMediaPlayer();
+    this->hitWall->setMedia(QUrl("qrc:/soundEffects/hitWall.wav"));
 
+    this->hitStriker = new QMediaPlayer();
+    this->hitStriker->setMedia(QUrl("qrc:/soundEffects/hitStriker.wav"));
+
+    this->winSound = new QMediaPlayer();
+    this->winSound->setMedia(QUrl("qrc:/soundEffects/wins.wav"));
+
+    this->saveGame("reset");
+
+    this->narrator->narrate("FIGHT!");
 
 }
 
@@ -404,8 +427,8 @@ void Game::updatePuckVelocity()
 
 void Game::scoreAtGoalCollision()
 {
-    if(this->puck->collidesWithItem(this->goal1)){/*qDebug()<<"goal1"*/;this->goalAt1=true;}
-    if(this->puck->collidesWithItem(this->goal2)){/*qDebug()<<"goal2"*/;this->goalAt2=true;}
+    if(this->puck->collidesWithItem(this->goal1)){/*qDebug()<<"goal1"*/;this->goalAt1=true;this->goalAt1Sound->play();}
+    if(this->puck->collidesWithItem(this->goal2)){/*qDebug()<<"goal2"*/;this->goalAt2=true;this->goalAt2Sound->play();}
 }
 
 bool Game::isItemOutside(QGraphicsItem * item)
@@ -492,6 +515,7 @@ void Game::markGoalAndRestart()
 
         if(this->score1->getScore() == this->maxScore) //if the comparison is >= it will keep saying the temporal winner everytime one score is higher
         {
+            this->winSound->play();
             this->narrator->narrate("PLAYER 1 WINS!");
             this->pause = true;
             //this->maxScore = this->maxScore * NEW_GAME_GAIN;//if they choose to continue playing
@@ -501,6 +525,7 @@ void Game::markGoalAndRestart()
 
         if(this->score2->getScore() >= this->maxScore)
         {
+            this->winSound->play();
             this->narrator->narrate("PLAYER 2 WINS!");
             this->pause = true;
             //this->maxScore = this->maxScore * NEW_GAME_GAIN;
@@ -701,6 +726,7 @@ void Game::bounceFromWalls(QGraphicsItem *item, VectorXY * velocity)
     if(dummy && item == this->puck)
     {
         this->puck->puckWallSound->play();
+        this->hitWall->play();
     }
 
     return;
@@ -715,6 +741,7 @@ void Game::bounceFromStrikers(QGraphicsItem *item, VectorXY *velocity)
         if(item == this->puck)
         {
             this->puck->puckStrikerSound->play();
+            this->hitStriker->play();
         }
 
     }
@@ -725,7 +752,8 @@ void Game::bounceFromStrikers(QGraphicsItem *item, VectorXY *velocity)
 
         if(item == this->puck)
         {
-            this->puck->puckStrikerSound->play();
+            //this->puck->puckStrikerSound->play();
+            this->hitStriker->play();
         }
 
     }
@@ -776,7 +804,7 @@ void Game::boxesCollidingWithPuck()
     {
         if(typeid (*(this->puck->collidingItems().at(i)))==typeid(Box))
         {
-            this->boxSound->play();
+            this->hitBox->play();
             this->boxes.removeOne((Box *)(this->puck->collidingItems().at(i)));
             this->deleteBox((Box *)(this->puck->collidingItems().at(i)));
             qDebug()<<"Box Deleted by Touch";
@@ -792,6 +820,7 @@ void Game::attractorsCollidingWithPuck()
     {
         if(typeid (*(this->puck->collidingItems().at(i)))==typeid(Accelerator))
         {
+            this->hitAccel->play();
             this->accelerators.removeOne((Accelerator *) (this->puck->collidingItems().at(i)));
             this->deleteAccelerator((Accelerator *) (this->puck->collidingItems().at(i)));
             qDebug()<<"Accelerator Deleted by Touch";
@@ -809,6 +838,8 @@ void Game::chooseRandomEffect()
     {
     case 1:
     {
+        this->addAccels->play();
+
         for(qint32 i = 0; i < ACCELERATOR_PACK; i++)
         {
             this->addAccelerator(this->boundedRandomizer(0,this->width),this->boundedRandomizer(0,this->height));
@@ -1412,7 +1443,21 @@ void Game::readPort(QSerialPort *port, char *data, qint32 player)
 
 void Game::readPorts()
 {
-    this->readPort(this->joyStick1,this->dataPort1,1);
+    //this->readPort(this->joyStick1,this->dataPort1,1);
+    this->control1->read(&(this->moveR1),&(this->moveL1),this->bot1->state);
+    this->control2->read(&(this->moveR2),&(this->moveL2),this->bot2->state);
+    return;
+}
+
+void Game::readController1()
+{
+    this->control1->read(&(this->moveR1),&(this->moveL1),this->bot1->state);
+    return;
+}
+
+void Game::readController2()
+{
+    this->control2->read(&(this->moveR2),&(this->moveL2),this->bot2->state);
     return;
 }
 
@@ -1423,11 +1468,7 @@ Game::~Game()
 
     this->musicPlayer->stop();
 
-    this->joyStick1->close();
 
-    delete this->joyStick1;
-    delete this->serialTimer;
-    delete this->dataPort1;
     qDebug() <<"cleaning game";
 
     while(!this->accelerators.isEmpty())
@@ -1460,7 +1501,8 @@ Game::~Game()
     delete this->acceleratorTimer;
     delete this->bot1;
     delete this->bot2;
-
+    delete this->control1;
+    delete this->control2;
     delete this->musicPlayer;
     delete this->playlist;
 
@@ -1503,6 +1545,7 @@ void Game::addBox()
     this->scene->addItem(this->boxes.last());
     this->posify(this->boxes.last(),0+this->boxes.last()->boundingRect().width(),this->width-this->boxes.last()->boundingRect().width(),0+this->boxes.last()->boundingRect().height(),this->height-this->boxes.last()->boundingRect().height());
     this->velocify(this->boxes.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
+    this->addBoxSound->play();
     }
     return;
 
@@ -1511,6 +1554,7 @@ void Game::addBox()
 void Game::setPuckVisible()
 {
     this->puck->setColor(PUCK_COLOR);
+    this->effectEnds->play();
     this->narrator->narrate(QString("Puck Visible"));
     return;
 }
@@ -1518,6 +1562,7 @@ void Game::setPuckVisible()
 void Game::restoreFieldViscosity()
 {
     this->field->setViscosity(FIELD_VISCOSITY);
+    this->effectEnds->play();
     this->narrator->narrate(QString("Field Viscosity Restored"));
     return;
 }
@@ -1528,6 +1573,7 @@ void Game::restoreWallRestitution()
     this->wallHU->setRestitution(1);
     this->wallVL->setRestitution(1);
     this->wallVR->setRestitution(1);
+    this->effectEnds->play();
     this->narrator->narrate(QString("Walls Restitution Restored"));
     return;
 }
@@ -1536,6 +1582,7 @@ void Game::restoreStrikersRestitution()
 {
     this->striker1->setRestitution(1);
     this->striker2->setRestitution(1);
+    this->effectEnds->play();
     this->narrator->narrate(QString("Strikers Restitution Restored"));
     return;
 }
@@ -1550,8 +1597,10 @@ void Game::addAccelerator()
         this->posify(this->accelerators.last(),0,this->width,0,this->height);
         this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
         this->accelerators.last()->paintAccelerator();
-
+        this->addAccel->play();
     }
+
+
     return;
 }
 

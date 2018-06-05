@@ -28,9 +28,26 @@ private slots:
 
     void on_actionText_triggered();
 
+    void on_actionConfigure_Controller_1_triggered();
+
+    void on_actionConfigure_Controller_2_triggered();
+
+    void on_actionReset_triggered();
+
+    void on_actionChange_Bot_1_Level_triggered();
+
+    void on_actionChange_Bot_2_Level_triggered();
+
+    void on_actionToggle_Bot_1_triggered();
+
+    void on_actionToggle_Bot_2_triggered();
+
+    void on_actionToggle_Pause_triggered();
+
+    void on_actionToggle_Music_triggered();
+
 private:
     Ui::Game_Window *ui;
-    //get_string * getFile;
 
 };
 

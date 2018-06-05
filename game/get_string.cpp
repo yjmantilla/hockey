@@ -8,7 +8,6 @@ get_string::get_string(QWidget *parent, QString * gameString) :
     ui(new Ui::get_string)
 {
     ui->setupUi(this);
-    this->ready = false;
     this->string = gameString;
 }
 

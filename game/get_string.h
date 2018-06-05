@@ -16,7 +16,6 @@ public:
     explicit get_string(QWidget *parent = 0, QString *gameString = NULL);
     ~get_string();
     QString * string;
-    bool ready;
 
 private slots:
     void on_pushButton_clicked();
