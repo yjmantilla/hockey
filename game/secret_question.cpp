@@ -40,7 +40,12 @@ void Secret_question::on_commandLinkButton_clicked()
         qDebug()<<"Error en consuta";
         QMessageBox::critical(this,tr("ERROR"),tr("Pregunta no existe"));
     }
-    if(Answer2==Answer)
+    if(Answer2==""||nombre=="")
+    {
+        qDebug()<<"Error en consuta";
+        QMessageBox::critical(this,tr("ERROR"),tr("Ingrese la pregunta y la respuesta"));
+    }
+    else if(Answer2==Answer)
     {
         QMessageBox::information(this,tr("Bienvenido"),tr("Bienvenido: %1").arg(nombre));
         MainWindow * mainwindow = new MainWindow();
@@ -50,7 +55,7 @@ void Secret_question::on_commandLinkButton_clicked()
     }
     else
     {
-        QMessageBox::critical(this,tr("ERROR"),tr("Respuesta Incorrectra o pregunta incorrecta").arg(nombre));
+        QMessageBox::critical(this,tr("ERROR"),tr("Respuesta Incorrectra ").arg(nombre));
     }
 
 }
