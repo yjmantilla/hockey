@@ -16,17 +16,17 @@ class Game_Window : public QMainWindow
 public:
     explicit Game_Window(QWidget *parent = 0, QString filename = "", bool load = false, bool bot1=false, qreal bot1level = 1, bool bot2 = true, qreal bot2level=1, qint32 maxScore=21);
     ~Game_Window();
-    Game * juego;
-    QString * filename;
+    Game * game;
+    QString * string;
 
 private slots:
     void on_actionExit_triggered();
 
     void on_actionLoad_triggered();
 
-    void on_actionFilename_triggered();
-
     void on_actionSave_triggered();
+
+    void on_actionText_triggered();
 
 private:
     Ui::Game_Window *ui;

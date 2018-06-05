@@ -43,7 +43,8 @@ SOURCES += \
     mainwindow.cpp \
     registro.cpp \
     game_window.cpp \
-    get_string.cpp
+    get_string.cpp \
+    bot.cpp
 
 HEADERS += \
     game.h \
@@ -62,7 +63,8 @@ HEADERS += \
     mainwindow.h \
     registro.h \
     game_window.h \
-    get_string.h
+    get_string.h \
+    bot.h
 
 RESOURCES += \
     images.qrc \

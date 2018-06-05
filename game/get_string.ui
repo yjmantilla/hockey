@@ -33,10 +33,10 @@
     </rect>
    </property>
    <property name="text">
-    <string>Nombre de archivo</string>
+    <string>Insert Text</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="Nombre_arch">
+  <widget class="QLineEdit" name="textString">
    <property name="geometry">
     <rect>
      <x>210</x>

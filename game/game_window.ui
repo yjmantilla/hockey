@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>1344</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menumenu">
@@ -39,7 +39,7 @@
      <string>Menu</string>
     </property>
     <addaction name="actionExit"/>
-    <addaction name="actionFilename"/>
+    <addaction name="actionText"/>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
    </widget>
@@ -51,9 +51,9 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionFilename">
+  <action name="actionText">
    <property name="text">
-    <string>Insert Filename</string>
+    <string>Insert Text</string>
    </property>
   </action>
   <action name="actionLoad">

@@ -7,41 +7,40 @@ Game_Window::Game_Window(QWidget *parent, QString filename, bool load, bool bot1
 {
     ui->setupUi(this);
 
-    this->juego = new Game(ui->widget,ui->widget->width(),ui->widget->height(),filename,load,bot1,bot1level,bot2,bot2level,maxScore);
-    //this->juego = new Game(ui->widget,1280,720,"",false,false,1,true,1,21);
-    this->filename = new QString("");
+    this->game = new Game(ui->widget,ui->widget->width(),ui->widget->height(),filename,load,bot1,bot1level,bot2,bot2level,maxScore);
+    this->string = new QString("");
 
 }
 
 Game_Window::~Game_Window()
 {
-    delete juego;
+    delete game;
 
     delete ui;
 }
 
 void Game_Window::on_actionExit_triggered()
 {
-    delete this->juego;
+    delete this->game;
     this->close();
 }
 
 void Game_Window::on_actionLoad_triggered()
 {
-    this->juego->loadGame(*(this->filename));
+    this->game->loadGame(*(this->string));
 
 }
 
-void Game_Window::on_actionFilename_triggered()
-{
-    this->juego->pause = true;
-    get_string * getFile = new get_string(this, this->filename);
-
-    getFile->show();
-
-}
 
 void Game_Window::on_actionSave_triggered()
 {
-    this->juego->saveGame(*(this->filename));
+    this->game->saveGame(*(this->string));
+}
+
+void Game_Window::on_actionText_triggered()
+{
+    this->game->pause = true;
+    get_string * getString = new get_string(this, this->string);
+
+    getString->show();
 }

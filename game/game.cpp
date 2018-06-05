@@ -41,7 +41,7 @@
 #define PLAYER1_PORT "COM4"
 
 
-Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load, bool bot1, qreal bot1level,bool bot2,qreal bot2level, qint32 maxScore)
+Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load, bool bot1State, qreal bot1Level, bool bot2State, qreal bot2Level, qint32 maxScore)
     : QWidget(parent)
 {
 
@@ -57,12 +57,6 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->pause = true;
     this->goalAt1 = false;
     this->goalAt2 = false;
-    this->bot1 = false;
-    this->bot2 = true;
-    this->bot1Dir = false;
-    this->bot2Dir = true;
-    this->bot1Level = 1;
-    this->bot2Level = 1;
 
 
     /*Set the Geometry of the Game*/
@@ -149,12 +143,9 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     connect(this->boxTimer,SIGNAL(timeout()),this,SLOT(addBox()));
 
     this->acceleratorTimer = new QTimer();
-    this->bot1Timer = new QTimer();
-    this->bot2Timer = new QTimer();
+
 
     connect(this->acceleratorTimer,SIGNAL(timeout()),this,SLOT(addAccelerator()));
-    connect(this->bot1Timer,SIGNAL(timeout()),this,SLOT(reactBot1()));
-    connect(this->bot2Timer,SIGNAL(timeout()),this,SLOT(reactBot2()));
 
 
     /*Show Game*/
@@ -166,8 +157,7 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->motionTimer->start(REFRESH_TIME);
     this->boxTimer->start(1000 * BOX_SPAWN_TIME);
     this->acceleratorTimer->start(1000 * ACCELERATOR_SPAWN_TIME);
-    this->bot1Timer->start(HUMAN_REACTION_TIME * this->bot1Level);
-    this->bot2Timer->start(HUMAN_REACTION_TIME * this->bot2Level);
+
 
     /*Load game if desired*/
 
@@ -178,10 +168,11 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
 
     /*Set bots*/
 
-    this->bot1 = bot1;
-    this->bot1Level = bot1level;
-    this->bot2 = bot2;
-    this->bot2Level = bot2level;
+    this->bot1 = new Bot(bot1State,bot1Level,HUMAN_REACTION_TIME);
+    this->bot2 = new Bot(bot2State,bot2Level,HUMAN_REACTION_TIME);
+
+    connect(this->bot1->timer,SIGNAL(timeout()),this,SLOT(reactBot1()));
+    connect(this->bot2->timer,SIGNAL(timeout()),this,SLOT(reactBot2()));
 
 
     /*Serial Ports*/
@@ -196,31 +187,39 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     //connect(m_serial, &QSerialPort::readyRead, this, &MainWindow::readData);
     connect(this->joyStick1,SIGNAL(readyRead()),this,SLOT(readPorts()));
 
-    // play background music
-//     QMediaPlayer * music = new QMediaPlayer();
-//     music->setMedia(QUrl("qrc:/sounds/bgsound.mp3"));
-//     music->play();
-
+    /*Sound*/
     this->playlist = new QMediaPlaylist();
+    this->playlist->addMedia(QUrl("qrc:/music/GetLucky.mp3"));
+    this->playlist->addMedia(QUrl("qrc:/music/TheNights.mp3"));
+    this->playlist->shuffle();
+
+    this->musicPlayer = new QMediaPlayer();
+    this->musicPlayer->setPlaylist(this->playlist);
+
+    this->boxSound = new QMediaPlayer();
+    this->boxSound->setMedia(QUrl("qrc:/soundEffects/mgsfound.wav"));
+
+    this->musicPlayer->play();
+
 
 
 }
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key()==Qt::Key_J && !this->bot1 )
+    if(event->key()==Qt::Key_J && !this->bot1->state )
     {
         this->moveL1=true;
     }
-    else if(event->key()==Qt::Key_A && !this->bot2)
+    else if(event->key()==Qt::Key_A && !this->bot2->state)
     {
         this->moveL2=true;
     }
-    else if(event->key()==Qt::Key_D && !this->bot2 )
+    else if(event->key()==Qt::Key_D && !this->bot2->state )
     {
         this->moveR2=true;
     }
-    else if(event->key()==Qt::Key_L && !this->bot1 )
+    else if(event->key()==Qt::Key_L && !this->bot1->state )
     {
         this->moveR1=true;
     }
@@ -230,19 +229,19 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_J && !this->bot1)
+    if(event->key() == Qt::Key_J && !this->bot1->state)
     {
         this->moveL1 = false;
     }
-    else if(event->key() == Qt::Key_A && !this->bot2)
+    else if(event->key() == Qt::Key_A && !this->bot2->state)
     {
         this->moveL2 = false;
     }
-    else if(event->key() == Qt::Key_D && !this->bot2)
+    else if(event->key() == Qt::Key_D && !this->bot2->state)
     {
         this->moveR2 = false;
     }
-    else if(event->key() == Qt::Key_L && !this->bot1 )
+    else if(event->key() == Qt::Key_L && !this->bot1->state )
     {
         this->moveR1 = false;
     }
@@ -266,6 +265,8 @@ void Game::keyReleaseEvent(QKeyEvent *event)
 
 void Game::mousePressEvent(QMouseEvent *event)
 {
+    /*This is for debug mainly*/
+
     //Boxes Test
 
     /*
@@ -279,7 +280,7 @@ void Game::mousePressEvent(QMouseEvent *event)
     //Accelerators Test
 
 
-    this->addAccelerator(event->x(),event->y());
+    //this->addAccelerator(event->x(),event->y());
 
 
     /*Random Effect Test*/
@@ -775,6 +776,7 @@ void Game::boxesCollidingWithPuck()
     {
         if(typeid (*(this->puck->collidingItems().at(i)))==typeid(Box))
         {
+            this->boxSound->play();
             this->boxes.removeOne((Box *)(this->puck->collidingItems().at(i)));
             this->deleteBox((Box *)(this->puck->collidingItems().at(i)));
             qDebug()<<"Box Deleted by Touch";
@@ -843,7 +845,7 @@ void Game::chooseRandomEffect()
     {
         this->multiplyStrikerWidthOfRandomPlayer(this->random10PercentMoreOrLess());
         //qDebug()<<"Random Striker Width Changed: "<<this->striker1->rect().width()<<","<<this->striker2->rect().width();
-        comment = QString("Random Striker Width Changed (if possible)");
+        comment = QString("Random Striker Width Changed");
         this->narrator->narrate(comment);
         break;
     }
@@ -1077,7 +1079,7 @@ void Game::saveGame(QString filename)
     qDebug() << "saving data:";
 
     QTextStream out(&file);
-    out << "GAME," << this->width << "," << this->height << "," << this->bot1 << "," << this->bot1Level << "," << this->bot2 << "," << this->bot2Level << "," << this->pause << ","<< this->maxScore<<","<<this->maxScoreStep<<"\n";
+    out << "GAME," << this->width << "," << this->height << "," << this->bot1->state << "," << this->bot1->level << "," << this->bot2->state << "," << this->bot2->level << "," << this->pause << ","<< this->maxScore<<","<<this->maxScoreStep<<"\n";
     out << "PUCK," << this->puck->x() << "," << this->puck->y() << "," << this->puck->velocity->getX() << "," << this->puck->velocity->getY() << "," << this->puck->acceleration->getX() << "," << this->puck->acceleration->getY() << "," << this->puck->radius << "\n";
     out << "STRIKER1," << this->striker1->x() << "," << this->striker1->y() << "," << this->striker1->velocity->getX() << "," << this->striker1->velocity->getY() << "," << this->striker1->rect().width() << "\n";
     out << "STRIKER2," << this->striker2->x() << "," << this->striker2->y() << "," << this->striker2->velocity->getX() << "," << this->striker2->velocity->getY() << "," << this->striker2->rect().width() << "\n";
@@ -1161,20 +1163,20 @@ void Game::loadGame(QString filename)
                 qDebug() << "GAME:" << data.at(i).section(",",1);
                 qreal width = data.at(i).section(",",1,1).toInt();
                 qreal height = data.at(i).section(",",2,2).toInt();
-                bool bot1 = data.at(i).section(",",3,3).toInt();
-                qreal bot1level = data.at(i).section(",",4,4).toFloat();
-                bool bot2 = data.at(i).section(",",5,5).toInt();
-                qreal bot2level = data.at(i).section(",",6,6).toFloat();
+                bool bot1State = data.at(i).section(",",3,3).toInt();
+                qreal bot1Level = data.at(i).section(",",4,4).toFloat();
+                bool bot2State = data.at(i).section(",",5,5).toInt();
+                qreal bot2Level = data.at(i).section(",",6,6).toFloat();
                 bool pause = data.at(i).section(",",7,7).toInt();
                 qint32 maxScore = data.at(i).section(",",8,8).toInt();
                 qint32 maxScoreStep = data.at(i).section(",",9,9).toInt();
 
                 this->width = width;
                 this->height = height;
-                this->bot1 = bot1;
-                this->bot1Level = bot1level;
-                this->bot2 = bot2;
-                this->bot2Level = bot2level;
+                this->bot1->state = bot1State;
+                this->bot1->level = bot1Level;
+                this->bot2->state = bot2State;
+                this->bot2->level = bot2Level;
                 this->pause = pause;
                 this->maxScore = maxScore;
                 this->maxScoreStep = maxScoreStep;
@@ -1419,6 +1421,8 @@ Game::~Game()
 {
     //delete a todos los apuntadores
 
+    this->musicPlayer->stop();
+
     this->joyStick1->close();
 
     delete this->joyStick1;
@@ -1454,8 +1458,11 @@ Game::~Game()
     delete this->motionTimer;
     delete this->boxTimer;
     delete this->acceleratorTimer;
-    delete this->bot1Timer;
-    delete this->bot2Timer;
+    delete this->bot1;
+    delete this->bot2;
+
+    delete this->musicPlayer;
+    delete this->playlist;
 
 
 }
@@ -1465,14 +1472,14 @@ void Game::animate()
     if(!this->pause)
     {
         //this->readPorts();
-        if(this->bot1)
+        if(this->bot1->state)
         {
-            this->botsify(this->striker1,this->bot1Dir);
+            this->botsify(this->striker1,this->bot1->dir);
         }
 
-        if(this->bot2)
+        if(this->bot2->state)
         {
-            this->botsify(this->striker2,this->bot2Dir);
+            this->botsify(this->striker2,this->bot2->dir);
         }
 
         this->boxesCollidingWithPuck();
@@ -1550,16 +1557,16 @@ void Game::addAccelerator()
 
 void Game::reactBot1()
 {
-    if(this->bot1)
+    if(this->bot1->state)
     {
-        this->bot1Dir = this->whereIsTheDamnPuckAskedTheBot(this->striker1);
+        this->bot1->dir = this->whereIsTheDamnPuckAskedTheBot(this->striker1);
     }
 }
 
 void Game::reactBot2()
 {
-    if(this->bot2)
+    if(this->bot2->state)
     {
-        this->bot2Dir = this->whereIsTheDamnPuckAskedTheBot(this->striker2);
+        this->bot2->dir = this->whereIsTheDamnPuckAskedTheBot(this->striker2);
     }
 }

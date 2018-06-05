@@ -2,6 +2,7 @@
     <qresource prefix="/soundEffects">
         <file>striker_puck.wav</file>
         <file>wall_puck.wav</file>
+        <file>mgsfound.wav</file>
     </qresource>
     <qresource prefix="/music">
         <file>GetLucky.mp3</file>

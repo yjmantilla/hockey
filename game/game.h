@@ -25,6 +25,7 @@
 #include "box.h"
 #include "score.h"
 #include "narrator.h"
+#include "bot.h"
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QtSerialPort/QSerialPort>
@@ -73,19 +74,14 @@ public:
     bool goalAt1;
     bool goalAt2;
 
-    /*A bot class may be created later to implement this*/
+    Bot * bot1;
+    Bot * bot2;
 
-    bool bot1;
-    bool bot2;
-    qreal bot1Level;/*Sets the difficulty of the bots given in multiples of the reaction time of humans, lower is harder*/
-    qreal bot2Level;
-    bool bot1Dir; //false left, true right
-    bool bot2Dir;
+
     QTimer * motionTimer;
     QTimer * boxTimer;
     QTimer * acceleratorTimer;
-    QTimer * bot1Timer;
-    QTimer * bot2Timer;
+
 
     QSerialPort * joyStick1;
     QTimer * serialTimer;
@@ -93,11 +89,14 @@ public:
     char * dataPort1;
 
     QMediaPlaylist * playlist;
+    QMediaPlayer * musicPlayer;
+
+    QMediaPlayer * boxSound;
 
 
     /*A lot of the methods that involve other classes could be implemented in those classes, this might done later*/
 
-    Game(QWidget *parent = 0, qreal width=900, qreal height=600, QString filename = "", bool load = false, bool bot1=false, qreal bot1level = 1, bool bot2 = true,qreal bot2level=1, qint32 maxScore=21);
+    Game(QWidget *parent = 0, qreal width=900, qreal height=600, QString filename = "", bool load = false, bool bot1State=false, qreal bot1Level = 1, bool bot2State = true,qreal bot2Level=1, qint32 maxScore=21);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -160,7 +159,6 @@ public slots:
     void addAccelerator(); //overload
     void reactBot1();
     void reactBot2();
-
     void readPorts();
 
 };
