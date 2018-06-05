@@ -48,7 +48,7 @@ void login::on_commandLinkButton_clicked()
    }
    else if(password2==password)
    {
-       QMessageBox::information(this,tr("Bienvenido"),tr("Bienvenido: %1").arg(nombre));
+       QMessageBox::information(this,tr("Welcome"),tr("Welcome: %1").arg(nombre));
        MainWindow * mainwindow = new MainWindow();
        mainwindow->show();
        close();
