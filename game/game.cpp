@@ -21,7 +21,7 @@
 #define ACCELERATOR_SPAWN_TIME 3 //IN SECONDS
 #define REFRESH_TIME 2 //IN MILLISECONDS
 #define ACCELERATOR_RADIUS 20
-#define ACCELERATOR_MASS 10000
+#define ACCELERATOR_MASS 13000
 #define MIN_GOAL_TO_STRIKER_RATIO 3
 #define MIN_STRIKER_VELOCITY 7
 #define MAX_STRIKER_VELOCITY 14
@@ -182,10 +182,14 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->playlist = new QMediaPlaylist();
     this->playlist->addMedia(QUrl("qrc:/music/GetLucky.mp3"));
     this->playlist->addMedia(QUrl("qrc:/music/TheNights.mp3"));
+    this->playlist->addMedia(QUrl("qrc:/music/ABitOfDaftPunk.mp3"));
+    this->playlist->addMedia(QUrl("qrc:/music/Aerodynamic.mp3"));
+    this->playlist->addMedia(QUrl("qrc:/music/PentatonixDaftPunkMedley.mp3"));
     this->playlist->shuffle();
-
+    this->playlist->setPlaybackMode(QMediaPlaylist::Random);
     this->musicPlayer = new QMediaPlayer();
     this->musicPlayer->setPlaylist(this->playlist);
+
 
     /*Sound Effects*/
     this->hitBox = new QMediaPlayer();
@@ -211,7 +215,7 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
 
     this->hitAccel = new QMediaPlayer();
     this->hitAccel->setMedia(QUrl("qrc:/soundEffects/hitAccel.wav"));
-    this->musicPlayer->play();
+
 
     this->hitWall = new QMediaPlayer();
     this->hitWall->setMedia(QUrl("qrc:/soundEffects/hitWall.wav"));
@@ -225,6 +229,8 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->saveGame("reset");
 
     this->narrator->narrate("FIGHT!");
+
+    this->musicPlayer->play();
 
 }
 
@@ -427,8 +433,8 @@ void Game::updatePuckVelocity()
 
 void Game::scoreAtGoalCollision()
 {
-    if(this->puck->collidesWithItem(this->goal1)){/*qDebug()<<"goal1"*/;this->goalAt1=true;this->goalAt1Sound->play();}
-    if(this->puck->collidesWithItem(this->goal2)){/*qDebug()<<"goal2"*/;this->goalAt2=true;this->goalAt2Sound->play();}
+    if(this->puck->collidesWithItem(this->goal1)){/*qDebug()<<"goal1"*/;this->goalAt1=true;}
+    if(this->puck->collidesWithItem(this->goal2)){/*qDebug()<<"goal2"*/;this->goalAt2=true;}
 }
 
 bool Game::isItemOutside(QGraphicsItem * item)
@@ -506,8 +512,8 @@ void Game::markGoalAndRestart()
         this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
         /*Put here score register*/
         /*We increase the score of the other player*/
-        if(this->goalAt1){this->score2->increase();this->changeGoalWidth(this->goal2,this->striker2,1.1);this->changeGoalWidth(this->goal1,this->striker1,0.9);}
-        if(this->goalAt2){this->score1->increase();this->changeGoalWidth(this->goal1,this->striker1,1.1);this->changeGoalWidth(this->goal2,this->striker2,0.9);}
+        if(this->goalAt1){this->score2->increase();this->goalAt1Sound->play();this->changeGoalWidth(this->goal2,this->striker2,1.1);this->changeGoalWidth(this->goal1,this->striker1,0.9);}
+        if(this->goalAt2){this->score1->increase();this->goalAt2Sound->play();this->changeGoalWidth(this->goal1,this->striker1,1.1);this->changeGoalWidth(this->goal2,this->striker2,0.9);}
 
 
         this->goalAt1=false;
@@ -752,7 +758,7 @@ void Game::bounceFromStrikers(QGraphicsItem *item, VectorXY *velocity)
 
         if(item == this->puck)
         {
-            //this->puck->puckStrikerSound->play();
+            this->puck->puckStrikerSound->play();
             this->hitStriker->play();
         }
 
@@ -805,6 +811,7 @@ void Game::boxesCollidingWithPuck()
         if(typeid (*(this->puck->collidingItems().at(i)))==typeid(Box))
         {
             this->hitBox->play();
+            this->addBoxSound->play();
             this->boxes.removeOne((Box *)(this->puck->collidingItems().at(i)));
             this->deleteBox((Box *)(this->puck->collidingItems().at(i)));
             qDebug()<<"Box Deleted by Touch";
@@ -821,6 +828,7 @@ void Game::attractorsCollidingWithPuck()
         if(typeid (*(this->puck->collidingItems().at(i)))==typeid(Accelerator))
         {
             this->hitAccel->play();
+            this->addAccel->play();
             this->accelerators.removeOne((Accelerator *) (this->puck->collidingItems().at(i)));
             this->deleteAccelerator((Accelerator *) (this->puck->collidingItems().at(i)));
             qDebug()<<"Accelerator Deleted by Touch";
@@ -1545,7 +1553,7 @@ void Game::addBox()
     this->scene->addItem(this->boxes.last());
     this->posify(this->boxes.last(),0+this->boxes.last()->boundingRect().width(),this->width-this->boxes.last()->boundingRect().width(),0+this->boxes.last()->boundingRect().height(),this->height-this->boxes.last()->boundingRect().height());
     this->velocify(this->boxes.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
-    this->addBoxSound->play();
+    //this->addBoxSound->play();
     }
     return;
 
@@ -1597,7 +1605,7 @@ void Game::addAccelerator()
         this->posify(this->accelerators.last(),0,this->width,0,this->height);
         this->velocify(this->accelerators.last()->velocity,MIN_XV_AandB,MAX_XV_AandB,MIN_YV_AandB,MAX_YV_AandB);
         this->accelerators.last()->paintAccelerator();
-        this->addAccel->play();
+        //this->addAccel->play();
     }
 
 

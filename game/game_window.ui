@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>1344</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menumenu">
@@ -51,6 +51,8 @@
     <addaction name="actionToggle_Bot_2"/>
     <addaction name="actionToggle_Pause"/>
     <addaction name="actionToggle_Music"/>
+    <addaction name="actionNext_Song"/>
+    <addaction name="actionShuffle"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -130,6 +132,16 @@
   <action name="actioninstructions">
    <property name="text">
     <string>Instructions</string>
+   </property>
+  </action>
+  <action name="actionNext_Song">
+   <property name="text">
+    <string>Next Song</string>
+   </property>
+  </action>
+  <action name="actionShuffle">
+   <property name="text">
+    <string>Shuffle</string>
    </property>
   </action>
  </widget>

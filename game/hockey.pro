@@ -87,3 +87,4 @@ FORMS += \
     help.ui
 
 
+CONFIG += resources_big

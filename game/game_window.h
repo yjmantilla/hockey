@@ -47,9 +47,11 @@ private slots:
 
     void on_actionToggle_Music_triggered();
 
-
-
     void on_actioninstructions_triggered();
+
+    void on_actionNext_Song_triggered();
+
+    void on_actionShuffle_triggered();
 
 private:
     Ui::Game_Window *ui;

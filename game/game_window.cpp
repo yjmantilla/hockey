@@ -100,14 +100,19 @@ void Game_Window::on_actionToggle_Pause_triggered()
 
 void Game_Window::on_actionToggle_Music_triggered()
 {
-    if(this->game->musicPlayer->PlayingState == QMediaPlayer::PlayingState)
+    this->game->pause = true;
+    if(this->game->musicPlayer->state() == QMediaPlayer::PlayingState)
     {
         this->game->musicPlayer->pause();
+        qDebug() << "pause music";
     }
-    else /*if(this->game->musicPlayer->PlayingState == QMediaPlayer::PausedState)*/
+
+    else /*if (this->game->musicPlayer->PlayingState == QMediaPlayer::PausedState) This does not work for some reason...*/
     {
         this->game->musicPlayer->play();
+        qDebug()<< "play music";
     }
+
 
 }
 
@@ -115,4 +120,16 @@ void Game_Window::on_actioninstructions_triggered()
 {
     Help * help = new Help();
     help->show();
+}
+
+void Game_Window::on_actionNext_Song_triggered()
+{
+    this->game->pause = true;
+    this->game->playlist->next();
+}
+
+void Game_Window::on_actionShuffle_triggered()
+{
+    this->game->pause = true;
+    this->game->playlist->shuffle();
 }

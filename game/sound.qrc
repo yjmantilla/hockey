@@ -17,5 +17,8 @@
     <qresource prefix="/music">
         <file>GetLucky.mp3</file>
         <file>TheNights.mp3</file>
+        <file>ABitOfDaftPunk.mp3</file>
+        <file>Aerodynamic.mp3</file>
+        <file>PentatonixDaftPunkMedley.mp3</file>
     </qresource>
 </RCC>

@@ -39,12 +39,12 @@ void login::on_commandLinkButton_clicked()
    else
    {
        qDebug()<<"Error en consuta";
-       QMessageBox::critical(this,tr("ERROR"),tr("Usuario no existe"));
+       QMessageBox::critical(this,tr("ERROR"),tr("That user does not exist"));
    }
    if(password2=="" || nombre=="")
    {
        qDebug()<<"Error en consuta";
-       QMessageBox::critical(this,tr("ERROR"),tr("Ingrese su Nickname y su Password"));
+       QMessageBox::critical(this,tr("ERROR"),tr("Enter nickname and password"));
    }
    else if(password2==password)
    {
@@ -56,7 +56,7 @@ void login::on_commandLinkButton_clicked()
    }
    else
    {
-       QMessageBox::critical(this,tr("ERROR"),tr("Contraseña Incorrecta").arg(nombre));
+       QMessageBox::critical(this,tr("ERROR"),tr("Incorrect Password").arg(nombre));
    }
 
 }

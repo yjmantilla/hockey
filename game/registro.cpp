@@ -62,11 +62,11 @@ void registro::on_pushButton_clicked()
     if(insertar_db.exec())
     {
         qDebug()<<"Datos ingresados a la tabala";
-        QMessageBox::information(this,tr("Exito"),tr("Registro exitoso"));
+        QMessageBox::information(this,tr("Success"),tr("Register done succesfully"));
     }
     else
     {
         qDebug()<<"Error al ingresar los datos"<<insertar_db.lastError();
-        QMessageBox::critical(this,tr("ERROR"),tr("El Nickname ya esta en uso"));
+        QMessageBox::critical(this,tr("ERROR"),tr("Nickname is already in use?"));
     }
 }

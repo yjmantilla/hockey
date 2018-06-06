@@ -38,12 +38,12 @@ void Secret_question::on_commandLinkButton_clicked()
     else
     {
         qDebug()<<"Error en consuta";
-        QMessageBox::critical(this,tr("ERROR"),tr("Pregunta no existe"));
+        QMessageBox::critical(this,tr("ERROR"),tr("That question does not exist"));
     }
     if(Answer2==""||nombre=="")
     {
         qDebug()<<"Error en consuta";
-        QMessageBox::critical(this,tr("ERROR"),tr("Ingrese la pregunta y la respuesta"));
+        QMessageBox::critical(this,tr("ERROR"),tr("Enter question and answer"));
     }
     else if(Answer2==Answer)
     {
@@ -55,7 +55,7 @@ void Secret_question::on_commandLinkButton_clicked()
     }
     else
     {
-        QMessageBox::critical(this,tr("ERROR"),tr("Respuesta Incorrectra ").arg(nombre));
+        QMessageBox::critical(this,tr("ERROR"),tr("Wrong answer").arg(nombre));
     }
 
 }
