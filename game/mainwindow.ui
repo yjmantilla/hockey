@@ -25,6 +25,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">font: 12pt &quot;Consolas&quot;;
+background-color: rgb(255, 15, 15);
 background-color: rgb(185, 0, 0);</string>
     </property>
     <property name="text">
@@ -55,6 +56,7 @@ background-color: rgb(185, 0, 0);</string>
     </property>
     <property name="styleSheet">
      <string notr="true">font: 12pt &quot;Consolas&quot;;
+background-color: rgb(255, 0, 0);
 background-color: rgb(185, 0, 0);</string>
     </property>
     <property name="text">

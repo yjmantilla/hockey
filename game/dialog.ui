@@ -36,7 +36,8 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 12pt &quot;Consolas&quot;;</string>
+    <string notr="true">font: 12pt &quot;Consolas&quot;;
+background-color: rgb(255, 14, 14);</string>
    </property>
    <property name="text">
     <string>Sign Up</string>
@@ -53,7 +54,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">font: 12pt &quot;Consolas&quot;;
-</string>
+background-color: rgb(255, 14, 14);</string>
    </property>
    <property name="text">
     <string>Sign In</string>

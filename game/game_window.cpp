@@ -110,3 +110,9 @@ void Game_Window::on_actionToggle_Music_triggered()
     }
 
 }
+
+void Game_Window::on_actioninstructions_triggered()
+{
+    Help * help = new Help();
+    help->show();
+}

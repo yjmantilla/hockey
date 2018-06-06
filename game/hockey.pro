@@ -45,7 +45,9 @@ SOURCES += \
     game_window.cpp \
     get_string.cpp \
     bot.cpp \
-    controller.cpp
+    controller.cpp \
+    secret_question.cpp \
+    help.cpp
 
 HEADERS += \
     game.h \
@@ -66,7 +68,9 @@ HEADERS += \
     game_window.h \
     get_string.h \
     bot.h \
-    controller.h
+    controller.h \
+    secret_question.h \
+    help.h
 
 RESOURCES += \
     images.qrc \
@@ -78,6 +82,8 @@ FORMS += \
     mainwindow.ui \
     registro.ui \
     game_window.ui \
-    get_string.ui
+    get_string.ui \
+    secret_question.ui \
+    help.ui
 
 

@@ -6,6 +6,7 @@
 #include"QtSql/QSqlError"
 #include"QtSql/QSqlQuery"
 
+
 namespace Ui {
 class registro;
 }
