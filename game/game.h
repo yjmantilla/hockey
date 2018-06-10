@@ -170,6 +170,9 @@ public slots:
     void readPorts();
     void readController1();
     void readController2();
+    void newRound();
+    void swapStrikers();
+    void swapBackStrikers();
 
 };
 

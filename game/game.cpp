@@ -22,7 +22,7 @@
 #define REFRESH_TIME 2 //IN MILLISECONDS
 #define ACCELERATOR_RADIUS 20
 #define ACCELERATOR_MASS 10000
-#define MIN_GOAL_TO_STRIKER_RATIO 3
+#define MIN_GOAL_TO_STRIKER_RATIO 2
 #define MIN_STRIKER_VELOCITY 7
 #define MAX_STRIKER_VELOCITY 14
 #define INVISIBLE_PUCK_TIME 3 //IN SECONDS
@@ -37,9 +37,10 @@
 #define HUMAN_REACTION_TIME 250
 #define BASE_RESTITUTION 1
 #define NEW_GAME_GAIN 2
-#define ACCELERATOR_PACK 10
+#define ACCELERATOR_PACK 11
 #define PLAYER1_PORT "COM4"
-
+#define NEW_ROUND_DELAY 2000
+#define STRIKERS_SWAP_TIME 5 //IN SECONDS
 
 Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load, bool bot1State, qreal bot1Level, bool bot2State, qreal bot2Level, qint32 maxScore)
     : QWidget(parent)
@@ -96,7 +97,6 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
 
 
 
-
     /*Add Objects To Scene*/
     this->scene->addItem(this->puck);
     this->scene->addItem(this->striker1);
@@ -118,15 +118,15 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     /*Give Puck Random Velocity*/
     /*Ensure x,y velocity is enough*/
     //set low x velocity for it to be more frontal
-    this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
+    //this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
 
     /*Set Striker,Scores Positions for each player*/
-    this->striker1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height());
-    this->striker2->setPos(this->scene->width()/2,0);
-    this->score1->setPos(this->scene->width()/2,this->scene->height()-this->striker1->rect().height()+25);
-    this->score2->setPos(this->scene->width()/2,0-25);
+    this->striker1->setPos(this->scene->width()/2 -this->striker1->rect().width()/2,this->scene->height()-this->striker1->rect().height());
+    this->striker2->setPos(this->scene->width()/2 - this->striker2->rect().width()/2,0);
+    this->score1->setPos(this->scene->width()/2,this->scene->height());
+    this->score2->setPos(this->scene->width()/2,0 - this->striker2->rect().height() - 30);
 
-    this->narrator->setPos(this->width/2,this->height/2);
+    this->narrator->setPos(0,this->height);
 
     /*Initialize move booleans of players*/
     this->moveR1=false;
@@ -149,7 +149,6 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     /*Show Game*/
 
     this->view->show();
-    this->pause = true;
 
     /*Start Timers*/
     this->motionTimer->start(REFRESH_TIME);
@@ -228,9 +227,12 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
 
     this->saveGame("reset");
 
-    this->narrator->narrate("FIGHT!");
+
 
     this->musicPlayer->play();
+
+    this->loadGame("reset");
+    this->narrator->narrate("FIGHT!");
 
 }
 
@@ -433,8 +435,18 @@ void Game::updatePuckVelocity()
 
 void Game::scoreAtGoalCollision()
 {
-    if(this->puck->collidesWithItem(this->goal1)){/*qDebug()<<"goal1"*/;this->goalAt1=true;}
-    if(this->puck->collidesWithItem(this->goal2)){/*qDebug()<<"goal2"*/;this->goalAt2=true;}
+    if(this->puck->collidesWithItem(this->goal1))
+    {
+        /*qDebug()<<"goal1"*/;
+        this->goalAt1=true;
+
+    }
+
+    if(this->puck->collidesWithItem(this->goal2))
+    {
+        /*qDebug()<<"goal2"*/;
+        this->goalAt2=true;
+    }
 }
 
 bool Game::isItemOutside(QGraphicsItem * item)
@@ -505,21 +517,44 @@ void Game::centerPuck()
 
 void Game::markGoalAndRestart()
 {
+
     if(this->isItemOutside(this->puck))
     {
+        this->pause = true;
+        //QTimer::singleShot(STRIKER_RESTITUTION_TIME*1000,this,SLOT(restoreStrikersRestitution()));
         //qDebug()<<"outside";
-        this->centerPuck();
-        this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
+
         /*Put here score register*/
         /*We increase the score of the other player*/
-        if(this->goalAt1){this->score2->increase();this->goalAt1Sound->play();this->changeGoalWidth(this->goal2,this->striker2,1.1);this->changeGoalWidth(this->goal1,this->striker1,0.9);}
-        if(this->goalAt2){this->score1->increase();this->goalAt2Sound->play();this->changeGoalWidth(this->goal1,this->striker1,1.1);this->changeGoalWidth(this->goal2,this->striker2,0.9);}
+        if(this->goalAt1 && this->puck->y() > this->height )
+        {
+            this->score2->increase();
+            this->goalAt1Sound->play();
+            this->changeGoalWidth(this->goal2,this->striker2,1.1);
+            this->changeGoalWidth(this->goal1,this->striker1,0.9);
+            this->narrator->narrate("PLAYER 2 SCORES!");
+        }
+
+        if(this->goalAt2 && this->puck->y() < 0){
+            this->score1->increase();
+            this->goalAt2Sound->play();
+            this->changeGoalWidth(this->goal1,this->striker1,1.1);
+            this->changeGoalWidth(this->goal2,this->striker2,0.9);
+            this->narrator->narrate("PLAYER 1 SCORES!");
+        }
 
 
         this->goalAt1=false;
         this->goalAt2=false;
 
-        if(this->score1->getScore() == this->maxScore) //if the comparison is >= it will keep saying the temporal winner everytime one score is higher
+        if(!(this->score1->getScore() == this->maxScore) && !(this->score2->getScore() == this->maxScore))
+        {
+            //this->narrator->narrate("NEW ROUND!");
+            QTimer::singleShot(NEW_ROUND_DELAY,this,SLOT(newRound()));
+        }
+
+
+        else if(this->score1->getScore() == this->maxScore) //if the comparison is >= it will keep saying the temporal winner everytime one score is higher
         {
             this->winSound->play();
             this->narrator->narrate("PLAYER 1 WINS!");
@@ -529,7 +564,7 @@ void Game::markGoalAndRestart()
 
         }
 
-        if(this->score2->getScore() >= this->maxScore)
+        else if(this->score2->getScore() >= this->maxScore)
         {
             this->winSound->play();
             this->narrator->narrate("PLAYER 2 WINS!");
@@ -839,7 +874,7 @@ void Game::attractorsCollidingWithPuck()
 
 void Game::chooseRandomEffect()
 {
-    int effect = this->boundedRandomizer(1,10);
+    int effect = this->boundedRandomizer(1,11);
     qDebug()<<"Effect: "<<effect;
     QString comment;
     switch (effect)
@@ -923,6 +958,15 @@ void Game::chooseRandomEffect()
         comment = QString("Strikers with restitution of ") + QString::number(r)+QString(" for ") + QString::number(STRIKER_RESTITUTION_TIME) + QString(" seconds");
         this->narrator->narrate(comment);
         QTimer::singleShot(STRIKER_RESTITUTION_TIME*1000,this,SLOT(restoreStrikersRestitution()));
+        break;
+    }
+
+    case 11:
+    {
+        comment = QString("Striker switched for ") + QString::number(STRIKERS_SWAP_TIME) + QString(" seconds");
+        this->narrator->narrate(comment);
+        this->swapStrikers();
+        QTimer::singleShot(STRIKERS_SWAP_TIME*1000,this,SLOT(swapBackStrikers()));
         break;
     }
 
@@ -1122,8 +1166,8 @@ void Game::saveGame(QString filename)
     out << "PUCK," << this->puck->x() << "," << this->puck->y() << "," << this->puck->velocity->getX() << "," << this->puck->velocity->getY() << "," << this->puck->acceleration->getX() << "," << this->puck->acceleration->getY() << "," << this->puck->radius << "\n";
     out << "STRIKER1," << this->striker1->x() << "," << this->striker1->y() << "," << this->striker1->velocity->getX() << "," << this->striker1->velocity->getY() << "," << this->striker1->rect().width() << "\n";
     out << "STRIKER2," << this->striker2->x() << "," << this->striker2->y() << "," << this->striker2->velocity->getX() << "," << this->striker2->velocity->getY() << "," << this->striker2->rect().width() << "\n";
-    out << "GOAL1," << this->goal1->line().x1() << "," << this->goal1->line().y1() << "," << this->goal1->line().x2() << "," << this->goal1->width << "\n";
-    out << "GOAL2," << this->goal2->line().x1() << "," << this->goal2->line().y1() << "," << this->goal2->line().x2() << "," << this->goal2->width << "\n";
+    out << "GOAL1," << this->goal1->width << "\n";
+    out << "GOAL2," << this->goal2->width << "\n";
     out << "SCORE1," << this->score1->getScore() << "\n";
     out << "SCORE2," << this->score2->getScore() << "\n";
 
@@ -1276,28 +1320,15 @@ void Game::loadGame(QString filename)
            else if(data.at(i).contains("GOAL1"))
            {
                 qDebug() << "GOAL1:" << data.at(i).section(",",1);
-                qreal px1 = data.at(i).section(",",1,1).toFloat();
-                qreal py1 = data.at(i).section(",",2,2).toFloat();
-                qreal px2 = data.at(i).section(",",3,3).toFloat();
-                qreal width = data.at(i).section(",",4,4).toFloat();
-
-                this->goal1->setLine(px1 + this->goal1->getWidth()/2 - width/2,py1,px2 - this->goal1->getWidth()/2 + width/2,py1);
-                this->goal1->width = width;
+                qreal width = data.at(i).section(",",1,1).toFloat();
                 this->goal1->setWidth(width);
 
-                /*NOT SURE IF WIDTH LOADING FOR GOALS AND STRIKERS ARE CORRECT*/
            }
 
            else if(data.at(i).contains("GOAL2"))
            {
                 qDebug() << "GOAL2:" << data.at(i).section(",",1);
-                qreal px1 = data.at(i).section(",",1,1).toFloat();
-                qreal py1 = data.at(i).section(",",2,2).toFloat();
-                qreal px2 = data.at(i).section(",",3,3).toFloat();
-                qreal width = data.at(i).section(",",4,4).toFloat();
-
-                this->goal2->setLine(px1 + this->goal2->getWidth()/2 - width/2,py1,px2 - this->goal2->getWidth()/2 + width/2,py1);
-                this->goal2->width = width;
+                qreal width = data.at(i).section(",",1,1).toFloat();
                 this->goal2->setWidth(width);
            }
 
@@ -1467,6 +1498,35 @@ void Game::readController2()
 {
     this->control2->read(&(this->moveR2),&(this->moveL2),this->bot2->state);
     return;
+}
+
+void Game::newRound()
+{
+
+        this->narrator->narrate("NEW ROUND!");
+        //this->narrator->narrate("");
+        this->centerPuck();
+        this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
+        this->pause = false;
+
+}
+
+void Game::swapStrikers()
+{
+
+    Striker * dummy;
+    dummy = this->striker1;
+    this->striker1 = this->striker2;
+    this->striker2 = dummy;
+}
+
+void Game::swapBackStrikers()
+{
+    Striker * dummy;
+    dummy = this->striker1;
+    this->striker1 = this->striker2;
+    this->striker2 = dummy;
+    this->narrator->narrate("Strikers swapped back!");
 }
 
 

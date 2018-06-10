@@ -10,7 +10,8 @@ Score::Score(QGraphicsItem * parent, Striker * striker):QGraphicsTextItem(parent
 
     this->setPlainText(/*QString("Score: ") + */QString::number(this->score));//Score: 0
     this->setDefaultTextColor(striker->brush.color());
-    this->setFont(QFont("times",16));
+    this->setFont(QFont("times",21));
+    this->setPos(0,0);
 }
 
 void Score::increase()
