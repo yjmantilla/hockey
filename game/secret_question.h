@@ -9,6 +9,8 @@
 #include <QWidget>
 #include"mainwindow.h"
 
+//Ventana donde el usuario ingresa la preguta secreta y surespuesta.
+
 namespace Ui {
 class Secret_question;
 }
