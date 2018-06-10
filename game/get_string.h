@@ -4,6 +4,9 @@
 #include <QWidget>
 #include "game_window.h"
 
+//Este header genera la vetana donde se ingresa un texto que se usa para guardar archivos, cargarlos,
+//y ademas configurar los controles (joystick).
+
 namespace Ui {
 class get_string;
 }

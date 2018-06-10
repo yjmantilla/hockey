@@ -6,6 +6,8 @@
 #include "get_string.h"
 #include"help.h"
 
+//Este header es el que reproduce la ventana donde se genera el juego.
+
 namespace Ui {
 class Game_Window;
 }
@@ -21,6 +23,8 @@ public:
     QString * string;
 
 private slots:
+    //Estos slots son los que interactua el usuario para guardar partida, cargar partidas, configurar controles,
+    //entre otras funciones que tiene el juego.
     void on_actionExit_triggered();
 
     void on_actionLoad_triggered();

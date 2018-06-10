@@ -5,9 +5,12 @@
 #include"QtSql/QSqlError"
 #include"QtSql/QSqlQuery"
 #include <QWidget>
-
 #include"mainwindow.h"
 #include"secret_question.h"
+
+//Este header es el que muestra la ventana donde el usuario se loguea, con su nickname y su contraseña
+//Ademas se tiene un boton donde el usuario puede ingresar una pregunta secreta con su debida respuesta,
+//en caso de que haya olvidado su contraseña
 
 namespace Ui {
 class login;

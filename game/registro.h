@@ -6,6 +6,8 @@
 #include"QtSql/QSqlError"
 #include"QtSql/QSqlQuery"
 
+//este hedader es el que registra los usuarios, y los guarda en una base de datos, que es creada aqui mismo.
+
 
 namespace Ui {
 class registro;

@@ -5,6 +5,8 @@
 
 #include <QMainWindow>
 
+// este hedader genera la ventana donde el usuario elige si quiere jugar solo o con otra persona; y segun esto
+// se enviara a la ventana donde se enera el juego con las especificaciones necesarias.
 
 namespace Ui {
 class MainWindow;
