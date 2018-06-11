@@ -26,6 +26,12 @@ public:
 
     /* Physics */
     VectorXY * velocity;
+    /*
+     * WARNING:
+     * This striker velocity is set in an absolute value manner. Meaning it just the magnitude of the velocity.
+     * The direction in which it moves is given by the sign applied to this magnitude in the cinematic position equation.
+    */
+
     qreal restitution;
 
     /* Appearance */

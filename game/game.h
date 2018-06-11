@@ -19,7 +19,7 @@
 #include <QMediaPlaylist>
 /* #include <QRandomGenerator> */
 
-/* Personal Library */
+/* Personal Libraries */
 #include "puck.h"
 #include "striker.h"
 #include "wall.h"
@@ -32,6 +32,12 @@
 #include "bot.h"
 #include "controller.h"
 
+/*
+ * Game Class
+ *
+ * This class unifies all of the game entities and
+ * provides most of the game mechanics.
+*/
 
 class Game : public QWidget
 {
@@ -39,141 +45,199 @@ class Game : public QWidget
 
 public:
 
+/* Attributes */
+
+    /* Display */
     QGraphicsScene * scene;
     QGraphicsView * view;
-
     qreal width;
     qreal height;
-    qreal timeStep;
     qreal boundary;
-    qint32 maxScore;
-    qint32 maxScoreStep;
 
-    Puck * puck;
-    Striker * striker1;
-    Striker * striker2;
-    Goal * goal1;
-    Goal * goal2;
-    Score * score1;
-    Score * score2;
-    Narrator * narrator;
-
-    QVector<Accelerator *> accelerators;
-    QVector<Box *> boxes;
-    Wall * wallHU;
-    Wall * wallHD;
-    Wall * wallVL;
-    Wall * wallVR;
-
-    Field * field;
-
-    bool moveL1;
-    bool moveL2;
-    bool moveR1;
-    bool moveR2;
+    /* Time */
+    qreal timeStep;
     bool pause;
-
-    bool goalAt1;
-    bool goalAt2;
-
-    Bot * bot1;
-    Bot * bot2;
-
-
-    Controller * control1;
-    Controller * control2;
-
     QTimer * motionTimer;
     QTimer * boxTimer;
     QTimer * acceleratorTimer;
 
+    /* Controllers */
+    Controller * control1;
+    Controller * control2;
+    bool moveL1;
+    bool moveL2;
+    bool moveR1;
+    bool moveR2;
+
+    /* Bots */
+    Bot * bot1;
+    Bot * bot2;
+
+    /* Game Objects */
+
+        /* Scores */
+        qint32 maxScore;
+        qint32 maxScoreStep;
+        Score * score1;
+        Score * score2;
+
+        /* Strikers */
+        Striker * striker1;
+        Striker * striker2;
+        bool swappedStrikers;
+
+        /* Goals */
+        Goal * goal1;
+        Goal * goal2;
+        bool goalAt1;
+        bool goalAt2;
+
+        /* Field and Walls */
+        Field * field;
+        Wall * wallHU;
+        Wall * wallHD;
+        Wall * wallVL;
+        Wall * wallVR;
+
+        /* Items that move on Field */
+        Puck * puck;
+        QVector<Accelerator *> accelerators;
+        QVector<Box *> boxes;
 
 
-    QMediaPlaylist * playlist;
-    QMediaPlayer * musicPlayer;
+        /* Narrator */
+        Narrator * narrator;
 
-    QMediaPlayer * hitBox;
-    QMediaPlayer * addAccel;
-    QMediaPlayer * addAccels;
-    QMediaPlayer * addBoxSound;
-    QMediaPlayer * effectEnds;
-    QMediaPlayer * goalAt1Sound;
-    QMediaPlayer * goalAt2Sound;
-    QMediaPlayer * hitAccel;
-    QMediaPlayer * hitStriker;
-    QMediaPlayer * hitWall;
-    QMediaPlayer * winSound;
+    /* Sound */
+        /* Music */
+        QMediaPlaylist * playlist;
+        QMediaPlayer * musicPlayer;
+
+        /*Effects*/
+        QMediaPlayer * hitBox;
+        QMediaPlayer * addAccel;
+        QMediaPlayer * addAccels;
+        QMediaPlayer * addBoxSound;
+        QMediaPlayer * effectEnds;
+        QMediaPlayer * goalAt1Sound;
+        QMediaPlayer * goalAt2Sound;
+        QMediaPlayer * hitAccel;
+        QMediaPlayer * hitStriker;
+        QMediaPlayer * hitWall;
+        QMediaPlayer * winSound;
 
     /*A lot of the methods that involve other classes could be implemented in those classes, this might done later*/
 
+
+/* Methods */
+
+    /* Constructor */
     Game(QWidget *parent = 0, qreal width=900, qreal height=600, QString filename = "", bool load = false, bool bot1State=false, qreal bot1Level = 1, bool bot2State = true,qreal bot2Level=1, qint32 maxScore=21);
+
+    /* Keyboard and Mouse Methods */
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
-    void stopStrikersAtWallCollision();
-    void moveStrikers();
+
+    /* Bot Methods */
+    void botsify(Striker * striker, bool dir);
+    bool whereIsTheDamnPuckAskedTheBot(Striker * striker);
+
+    /* Puck Methods */
     void movePuck();
     void updatePuckPosition();
     void updatePuckVelocity();
-    void scoreAtGoalCollision();
-    bool isItemOutside(QGraphicsItem * item);
     void updatePuckAcceleration();
     void centerPuck();
-    void markGoalAndRestart();
     bool didThePuckStop(qreal minX, qreal minY);
-    double squaredDistanceToPuck(qreal x, qreal y);
-    double angleToPuck(qreal x, qreal y);
-    qint32 signRandomizer();
-    qint32 getSign(qreal number);
-    qreal boundedRandomizer(int min, int max);
+    qreal squaredDistanceToPuck(qreal x, qreal y);
+    qreal angleToPuck(qreal x, qreal y);
+        /* Puck Effects */
+        void setPuckColor(Qt::GlobalColor color);
+
+    /* Striker Methods */
+    void stopStrikersAtWallCollision();
+    void moveStrikers();
+        /* Striker Effects */
+        void multiplyStrikerWidthOfRandomPlayer(qreal gain);
+        void changeStrikerWidth(Striker * striker, Goal *goal, qreal gain);
+        void randomStrikerVelocityForRandomPlayer();
+        qreal randomRestitutionForAllPlayers();
+        void negateRandomPlayerStrikerVelocity();
+        void swapStrikers();
+
+    /* Goal and Score Methods */
+    void scoreAtGoalCollision();
+    void markGoalAndRestart();
+        /* Goal Effects */
+        void multiplyGoalWidthOfRandomPlayer(qreal gain);
+        void changeGoalWidth(Goal * goal, Striker *striker, qreal gain);
+
+
+    /* Wall Methods */
+        /* Wall Effects */
+        qreal randomRestitutionForAllWalls();
+
+    /* Box Methods */
+    void deleteBox(Box *box);
+    void boxesCollidingWithPuck();
+    void chooseRandomEffect();
+
+    /* Accelerator Methods */
+    void deleteAccelerator(Accelerator * accel);
+    void attractorsCollidingWithPuck();
+    void addAccelerator(qreal x, qreal y);
+
+
+    /* General Item Methods */
     void velocify(VectorXY * velocity, int minX, int maxX, int minY, int maxY);
     void posify(QGraphicsItem * item, int minX, int maxX, int minY, int maxY);
     void moveEverything();
     void bounceEverything();
     void bounceFromWalls(QGraphicsItem * item, VectorXY *velocity);
     void bounceFromStrikers(QGraphicsItem * item, VectorXY *velocity);
-    void moveItem(QGraphicsItem * item, VectorXY *velocity);    
-    void deleteBox(Box *box);
-    void deleteAccelerator(Accelerator * accel);
-    void boxesCollidingWithPuck();
-    void attractorsCollidingWithPuck();
-    void chooseRandomEffect();
-    void addAccelerator(qreal x, qreal y);
-    void setPuckColor(Qt::GlobalColor color);
-    void multiplyStrikerWidthOfRandomPlayer(qreal gain);
+    void moveItem(QGraphicsItem * item, VectorXY *velocity);
+    bool isItemOutside(QGraphicsItem * item);
+
+    /* General Utility Methods */
+    qint32 signRandomizer();
+    qint32 getSign(qreal number);
+    qreal boundedRandomizer(int min, int max);
     qreal random10PercentMoreOrLess();
-    void changeStrikerWidth(Striker * striker, Goal *goal, qreal gain);
-    void multiplyGoalWidthOfRandomPlayer(qreal gain);
-    void changeGoalWidth(Goal * goal, Striker *striker, qreal gain);
     int generateRandomPlayer();
-    void randomStrikerVelocityForRandomPlayer();
-    void negateRandomPlayerStrikerVelocity();
-    qreal randomRestitutionForAllWalls();
-    qreal randomRestitutionForAllPlayers();
-    void botsify(Striker * striker, bool dir);
-    bool whereIsTheDamnPuckAskedTheBot(Striker * striker);
+
+
+    /* Game Save and Load Methods */
     void saveGame(QString filename);
     void loadGame(QString filename);
-    void readPort(QSerialPort * port, char * data, qint32 player);
-    bool configurePort(QSerialPort * port, QString  portName);
 
+
+    /* Destructor */
     ~Game();
 
 public slots:
+
+    /* Animation Slots */
     void animate();
+    void newRound();
+
+    /* Bot Slots */
+    void reactBot1();
+    void reactBot2();
+
+    /* Controller Slots */
+    void readController1();
+    void readController2();
+
+    /* Add Boxes and Accelerators Slots */
     void addBox();
+    void addAccelerator(); //This methods is overloaded
+
+    /* Restore Effects Slots (for timed effects)*/
     void setPuckVisible();
     void restoreFieldViscosity();
     void restoreWallRestitution();
     void restoreStrikersRestitution();
-    void addAccelerator(); //overload
-    void reactBot1();
-    void reactBot2();
-    void readPorts();
-    void readController1();
-    void readController2();
-    void newRound();
-    void swapStrikers();
     void swapBackStrikers();
 
 };

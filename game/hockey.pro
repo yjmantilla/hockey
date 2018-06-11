@@ -87,4 +87,6 @@ FORMS += \
     help.ui
 
 
-CONFIG += resources_big
+CONFIG += resources_big #without this config the compilation will fail because it runs out of memory
+                        #see https://stackoverflow.com/questions/12231266/qt-compiling-error-out-of-memory-allocating-134mb-cc1plus-exe-not-found
+                        #https://forum.qt.io/topic/62655/cc1plus-exe-out-of-memory-60mb-encrypted-resource-file
