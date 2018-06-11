@@ -7,6 +7,8 @@ namespace Ui {
 class Help;
 }
 
+//Este header es el que despliega una ventana de instrucciones del juego
+
 class Help : public QWidget
 {
     Q_OBJECT
