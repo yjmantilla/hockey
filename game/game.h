@@ -1,13 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
 
+/* Qt Libraries*/
 #include <QtGlobal>
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QTimer>
-//#include <QRandomGenerator>
 #include <QVector>
 #include <QList>
 #include <QtMath>
@@ -17,7 +17,9 @@
 #include <QMessageBox>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+/* #include <QRandomGenerator> */
 
+/* Personal Library */
 #include "puck.h"
 #include "striker.h"
 #include "wall.h"

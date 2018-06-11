@@ -1,18 +1,34 @@
 #ifndef SCORE_H
 #define SCORE_H
 
+/* Libraries */
 #include <QGraphicsTextItem>
-#include "striker.h"
+#include <QFont>
+
+/*
+ * Score Class
+ *
+ * Is an abstracion of the score displayed on the screen.
+ * Includes methods for its handling.
+*/
 
 class Score:public QGraphicsTextItem
 {
 public:
-    Score(QGraphicsItem * = 0, Striker * striker = NULL);
+
+/* Methods */
+
+    /*Constructor*/
+    Score(QGraphicsItem * = 0, QColor color = Qt::blue);
+
+    /* Functionality */
     void increase();
     int getScore();
     void setScore(qint32 score);
     void updateScoreText();
+
 private:
+/* Attributes */
     qint32 score;
 };
 

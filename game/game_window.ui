@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>1296</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menumenu">
@@ -40,19 +40,6 @@
     </property>
     <addaction name="actionExit"/>
     <addaction name="actionText"/>
-    <addaction name="actionLoad"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionConfigure_Controller_1"/>
-    <addaction name="actionConfigure_Controller_2"/>
-    <addaction name="actionReset"/>
-    <addaction name="actionChange_Bot_1_Level"/>
-    <addaction name="actionChange_Bot_2_Level"/>
-    <addaction name="actionToggle_Bot_1"/>
-    <addaction name="actionToggle_Bot_2"/>
-    <addaction name="actionToggle_Pause"/>
-    <addaction name="actionToggle_Music"/>
-    <addaction name="actionNext_Song"/>
-    <addaction name="actionShuffle"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -60,7 +47,44 @@
     </property>
     <addaction name="actioninstructions"/>
    </widget>
+   <widget class="QMenu" name="menuBots">
+    <property name="title">
+     <string>Bots</string>
+    </property>
+    <addaction name="actionToggle_Bot_1"/>
+    <addaction name="actionToggle_Bot_2"/>
+    <addaction name="actionChange_Bot_1_Level"/>
+    <addaction name="actionChange_Bot_2_Level"/>
+   </widget>
+   <widget class="QMenu" name="menuMusic">
+    <property name="title">
+     <string>Music</string>
+    </property>
+    <addaction name="actionToggle_Music"/>
+    <addaction name="actionShuffle"/>
+    <addaction name="actionNext_Song"/>
+   </widget>
+   <widget class="QMenu" name="menuControllers">
+    <property name="title">
+     <string>Controllers</string>
+    </property>
+    <addaction name="actionConfigure_Controller_1"/>
+    <addaction name="actionConfigure_Controller_2"/>
+   </widget>
+   <widget class="QMenu" name="menuGame">
+    <property name="title">
+     <string>Game</string>
+    </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionReset"/>
+    <addaction name="actionToggle_Pause"/>
+   </widget>
    <addaction name="menumenu"/>
+   <addaction name="menuGame"/>
+   <addaction name="menuControllers"/>
+   <addaction name="menuBots"/>
+   <addaction name="menuMusic"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

@@ -2,12 +2,16 @@
 
 Striker::Striker(qreal x, qreal y, qreal width, qreal height, qreal vel,Qt::BrushStyle style, Qt::GlobalColor color)
 {
+    /* Set up physics attributes */
     this->velocity = new VectorXY(vel,0);
+    this->setRestitution(1);
+
+    /* Appearance */
     this->setRect(x,y,width,height);
     this->brush.setColor(color);
     this->brush.setStyle(style);
     this->setBrush(this->brush);
-    this->setRestitution(1);
+
 }
 
 void Striker::setRestitution(qreal r)

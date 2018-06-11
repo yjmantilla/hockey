@@ -2,11 +2,12 @@
 
 VectorXY::VectorXY()
 {
-
+    /* Empty constructor */
 }
 
 VectorXY::VectorXY(qreal x, qreal y)
 {
+    /* Constructor initializing the vector components */
     this->x = x;
     this->y = y;
     return;

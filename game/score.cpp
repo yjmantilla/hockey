@@ -1,24 +1,28 @@
 #include "score.h"
-#include <QFont>
 
-Score::Score(QGraphicsItem * parent, Striker * striker):QGraphicsTextItem(parent)
+#define SCORE_SIZE 21
+
+Score::Score(QGraphicsItem * parent, QColor color):QGraphicsTextItem(parent)
 {
-    //initialize score to 0
+
+    /* Initialize score value */
     this->score =0;
 
-    //draw the text
-
-    this->setPlainText(/*QString("Score: ") + */QString::number(this->score));//Score: 0
-    this->setDefaultTextColor(striker->brush.color());
-    this->setFont(QFont("times",21));
+    /* Configure Font */
+    this->setFont(QFont("times",SCORE_SIZE));
     this->setPos(0,0);
+    this->setDefaultTextColor(color);
+
+    /* Set up Text */
+    this->setPlainText(QString::number(this->score));
+
 }
 
 void Score::increase()
 {
+    /* Increase score and update Text */
     this->score++;
-    //update indicator
-    this->setPlainText(/*QString("Score: ") + */QString::number(this->score));
+    this->setPlainText(QString::number(this->score));
 }
 
 int Score::getScore()
@@ -34,6 +38,7 @@ void Score::setScore(qint32 score)
 
 void Score::updateScoreText()
 {
-    this->setPlainText(/*QString("Score: ") + */QString::number(this->score));
+    /* Update the score Text once the Score attribute has been set */
+    this->setPlainText(QString::number(this->score));
     return;
 }

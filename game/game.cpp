@@ -37,10 +37,11 @@
 #define HUMAN_REACTION_TIME 250
 #define BASE_RESTITUTION 1
 #define NEW_GAME_GAIN 2
-#define ACCELERATOR_PACK 11
+#define ACCELERATOR_PACK 17
 #define PLAYER1_PORT "COM4"
 #define NEW_ROUND_DELAY 2000
 #define STRIKERS_SWAP_TIME 5 //IN SECONDS
+#define EFFECT_VELOCITY_BONUS 11
 
 Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool load, bool bot1State, qreal bot1Level, bool bot2State, qreal bot2Level, qint32 maxScore)
     : QWidget(parent)
@@ -89,8 +90,8 @@ Game::Game(QWidget *parent, qreal width, qreal height, QString filename, bool lo
     this->goal1 = new Goal(this->width/2,this->height,2*this->width/5,FIELD_COLOR);
     this->goal2 = new Goal(this->width/2,0,2*this->width/5,FIELD_COLOR);
     this->field = new Field(FIELD_VISCOSITY);
-    this->score1 = new Score(0,this->striker1);
-    this->score2 = new Score(0,this->striker2);
+    this->score1 = new Score(0,this->striker1->brush.color());
+    this->score2 = new Score(0,this->striker2->brush.color());
     this->narrator = new Narrator(NARRATOR_COLOR);
     this->maxScore = maxScore;
     this->maxScoreStep = maxScore;
@@ -310,6 +311,12 @@ void Game::mousePressEvent(QMouseEvent *event)
 
     //Accelerators Test
 
+//    qreal safeZone = this->boundedRandomizer(50,100);
+//    for(qint32 i = 0; i < ACCELERATOR_PACK; i++)
+//    {
+//        this->addAccelerator(this->puck->x()+safeZone*this->signRandomizer(),this->puck->y()+safeZone*this->signRandomizer());
+//    }
+
 
     //this->addAccelerator(event->x(),event->y());
 
@@ -470,8 +477,8 @@ void Game::updatePuckAcceleration()
     this->puck->acceleration->setY(0);
 
     /*For simplicity the formula is simplified as just a drag proportional to the velocity*/
-    this->puck->acceleration->setX(-1*this->puck->velocity->getX()*this->field->viscosity);
-    this->puck->acceleration->setY(-1*this->puck->velocity->getY()*this->field->viscosity);
+    this->puck->acceleration->setX(-1*this->puck->velocity->getX()*this->field->getViscosity());
+    this->puck->acceleration->setY(-1*this->puck->velocity->getY()*this->field->getViscosity());
 
     double dummyAcceleration;
     double dummyAngle;
@@ -558,9 +565,11 @@ void Game::markGoalAndRestart()
         {
             this->winSound->play();
             this->narrator->narrate("PLAYER 1 WINS!");
-            this->pause = true;
+            //this->pause = true;
             //this->maxScore = this->maxScore * NEW_GAME_GAIN;//if they choose to continue playing
             this->maxScore = this->maxScore + this->maxScoreStep;
+
+            //QTimer::singleShot(NEW_ROUND_DELAY,this,SLOT(newRound()));
 
         }
 
@@ -568,9 +577,11 @@ void Game::markGoalAndRestart()
         {
             this->winSound->play();
             this->narrator->narrate("PLAYER 2 WINS!");
-            this->pause = true;
+            //this->pause = true;
             //this->maxScore = this->maxScore * NEW_GAME_GAIN;
             this->maxScore = this->maxScore + this->maxScoreStep;
+
+            //QTimer::singleShot(NEW_ROUND_DELAY,this,SLOT(newRound()));
         }
 
         /*NOTE: A WIN BOOLEAN COULD BE INCLUDE SO THAT IS NOT POSSIBLE TO UNPAUSE THE GAME ONCE A PLAYER WINS*/
@@ -883,9 +894,10 @@ void Game::chooseRandomEffect()
     {
         this->addAccels->play();
 
+        qreal safeZone = this->boundedRandomizer(50,100);
         for(qint32 i = 0; i < ACCELERATOR_PACK; i++)
         {
-            this->addAccelerator(this->boundedRandomizer(0,this->width),this->boundedRandomizer(0,this->height));
+            this->addAccelerator(this->puck->x()+safeZone*this->signRandomizer(),this->puck->y()+safeZone*this->signRandomizer());
         }
 
         comment = QString::number(ACCELERATOR_PACK) + QString(" Accelerators Added");
@@ -894,7 +906,7 @@ void Game::chooseRandomEffect()
     }
     case 2:
     {
-        this->velocify(this->puck->velocity,MIN_XV_PUCK,MAX_XV_PUCK,MIN_YV_PUCK,MAX_YV_PUCK);
+        this->velocify(this->puck->velocity,MIN_XV_PUCK+EFFECT_VELOCITY_BONUS,MAX_XV_PUCK+EFFECT_VELOCITY_BONUS,MIN_YV_PUCK+EFFECT_VELOCITY_BONUS,MAX_YV_PUCK+EFFECT_VELOCITY_BONUS);
         comment = QString("Puck Velocified");
         this->narrator->narrate(comment);
         break;
@@ -902,7 +914,7 @@ void Game::chooseRandomEffect()
     case 3:
     {
         this->field->setViscosity(this->boundedRandomizer(1,100)*0.001);
-        comment = QString("Field Viscosity Changed to: ") + QString::number(this->field->viscosity);
+        comment = QString("Field Viscosity Changed to: ") + QString::number(this->field->getViscosity());
         this->narrator->narrate(comment);
         QTimer::singleShot(VISCOSITY_TIME*1000,this,SLOT(restoreFieldViscosity()));
         break;
@@ -1527,6 +1539,7 @@ void Game::swapBackStrikers()
     this->striker1 = this->striker2;
     this->striker2 = dummy;
     this->narrator->narrate("Strikers swapped back!");
+    this->effectEnds->play();
 }
 
 
