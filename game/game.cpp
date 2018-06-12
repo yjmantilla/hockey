@@ -374,7 +374,7 @@ void Game::mousePressEvent(QMouseEvent *event)
     //this->loadGame("game.sav");
 
     //swap test
-    this->swapStrikers();
+//    this->swapStrikers();
     return;
 }
 
@@ -1664,6 +1664,11 @@ void Game::saveGame(QString filename)
 
     qDebug() << "saving data:";
 
+    if(this->swappedStrikers)
+    {
+        this->swapStrikers();
+    }
+
     //write game data to file in a csv manner and each record separater by newline
     QTextStream out(&file);
     out << "GAME," << this->width << "," << this->height << "," << this->bot1->state << "," << this->bot1->level << "," << this->bot2->state << "," << this->bot2->level << "," << this->pause << ","<< this->maxScore<<","<<this->maxScoreStep<<"\n";
@@ -1702,6 +1707,11 @@ void Game::loadGame(QString filename)
     */
     //pause game upon loading
     this->pause = true;
+
+    if(this->swappedStrikers)
+    {
+        this->swapStrikers();
+    }
 
     //open file in read text mode
 
