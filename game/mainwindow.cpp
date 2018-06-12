@@ -26,8 +26,9 @@ void MainWindow::on_pushButton_2_clicked()//boton que configura el jugo como mul
 {
    M = new Game_Window(0,"",false,false,1,false,1,7);
    M->show();
-    close();
+   close();
 }
+
 
 //solo bots
 //cargar partida

@@ -5,6 +5,7 @@
 #include "game.h"
 #include "get_string.h"
 #include"help.h"
+#include <QCloseEvent>
 
 //Este header es el que reproduce la ventana donde se genera el juego.
 
@@ -21,6 +22,7 @@ public:
     ~Game_Window();
     Game * game;
     QString * string;
+    void closeEvent(QCloseEvent * event);
 
 private slots:
     //Estos slots son los que interactua el usuario para guardar partida, cargar partidas, configurar controles,

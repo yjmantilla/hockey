@@ -20,6 +20,14 @@ Game_Window::~Game_Window()
     delete ui;
 }
 
+void Game_Window::closeEvent(QCloseEvent *event)
+{
+    //see https://stackoverflow.com/questions/17480984/qt-how-do-i-handle-the-event-of-the-user-pressing-the-x-close-button
+    delete this->game;
+    this->close();
+}
+
+
 void Game_Window::on_actionExit_triggered() // Este boton es el que cierra el juego (destructor del juego),
                                             // y devuelve al menu principal.
 {
