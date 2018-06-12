@@ -374,7 +374,7 @@ void Game::mousePressEvent(QMouseEvent *event)
     //this->loadGame("game.sav");
 
     //swap test
-//    this->swapStrikers();
+    //this->swapStrikers();
     return;
 }
 
@@ -1982,8 +1982,16 @@ Game::~Game()
 {
     //delete of all pointers allocated
 
-    this->musicPlayer->stop();
+    if(this->musicPlayer->state() == QMediaPlayer::PlayingState)
+    {
+        this->musicPlayer->stop();
+    }
 
+
+    if(this->swappedStrikers)
+    {
+        this->swapStrikers();
+    }
 
     qDebug() <<"cleaning game";
 

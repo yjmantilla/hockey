@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Login</string>
   </property>
   <widget class="QGraphicsView" name="graphicsView">
    <property name="geometry">
@@ -24,22 +24,6 @@
    </property>
    <property name="styleSheet">
     <string notr="true">background-image: url(:/air-hockey3.jpg);</string>
-   </property>
-  </widget>
-  <widget class="QCommandLinkButton" name="commandLinkButton">
-   <property name="geometry">
-    <rect>
-     <x>230</x>
-     <y>510</y>
-     <width>121</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">color: rgb(255, 0, 0);</string>
-   </property>
-   <property name="text">
-    <string>Enter</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -91,21 +75,37 @@
     <enum>QLineEdit::Password</enum>
    </property>
   </widget>
-  <widget class="QCommandLinkButton" name="commandLinkButton_2">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
      <x>220</x>
-     <y>570</y>
-     <width>187</width>
-     <height>41</height>
+     <y>510</y>
+     <width>170</width>
+     <height>80</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">color: rgb(255, 0, 0);</string>
-   </property>
-   <property name="text">
-    <string>Forgot password?</string>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QCommandLinkButton" name="commandLinkButton">
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 0, 0);</string>
+      </property>
+      <property name="text">
+       <string>Enter</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCommandLinkButton" name="commandLinkButton_2">
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 0, 0);</string>
+      </property>
+      <property name="text">
+       <string>Forgot password?</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

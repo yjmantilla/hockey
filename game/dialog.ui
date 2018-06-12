@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Sign</string>
   </property>
   <widget class="QGraphicsView" name="graphicsView">
    <property name="geometry">

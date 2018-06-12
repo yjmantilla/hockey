@@ -7,7 +7,7 @@
 
 // este hedader genera la ventana donde el usuario elige si quiere jugar solo o con otra persona; y segun esto
 // se enviara a la ventana donde se enera el juego con las especificaciones necesarias.
-
+// change title, see https://stackoverflow.com/questions/10598269/how-to-change-the-title-of-the-window-in-qt
 namespace Ui {
 class MainWindow;
 }

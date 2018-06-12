@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>box.png</file>
         <file>air-hockey3.jpg</file>
+        <file>NotAirHockey.ico</file>
     </qresource>
 </RCC>

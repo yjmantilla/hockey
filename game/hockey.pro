@@ -86,6 +86,8 @@ FORMS += \
     secret_question.ui \
     help.ui
 
+win32:RC_ICONS += NotAirHockey.ico
+#set icon , see https://stackoverflow.com/questions/1460361/how-to-set-application-icon-in-a-qt-based-project
 
 CONFIG += resources_big #without this config the compilation will fail because it runs out of memory
                         #see https://stackoverflow.com/questions/12231266/qt-compiling-error-out-of-memory-allocating-134mb-cc1plus-exe-not-found

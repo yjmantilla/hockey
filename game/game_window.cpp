@@ -31,7 +31,7 @@ void Game_Window::closeEvent(QCloseEvent *event)
 void Game_Window::on_actionExit_triggered() // Este boton es el que cierra el juego (destructor del juego),
                                             // y devuelve al menu principal.
 {
-    delete this->game;
+    //delete this->game; this is done on the close event, it will give an error if uncommented for obvious reasons
     this->close();
 }
 

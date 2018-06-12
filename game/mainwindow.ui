@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Game Type</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="pushButton">
@@ -73,7 +73,7 @@ background-color: rgb(185, 0, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>1177</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
